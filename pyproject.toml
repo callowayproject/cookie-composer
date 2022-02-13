@@ -74,7 +74,7 @@ color_output = true
 
 [tool.pydocstyle]
 convention = "google"
-add-ignore = ["D107", "D200", "D212"]
+add-ignore = ["D107", "D200", "D212", "D214"]
 match = "(?!test_).*\\.py"
 
 [tool.vendoring]
