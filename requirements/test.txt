@@ -8,6 +8,7 @@ myst-parser
 pre-commit>=2.15.0
 pydata-sphinx-theme
 pytest-cov>=3.0.0
+pytest-env
 pytest>=6.0.0
 Sphinx>=4.3.0
 sphinx-autodoc-typehints

@@ -76,3 +76,14 @@ color_output = true
 convention = "google"
 add-ignore = ["D107", "D200", "D212"]
 match = "(?!test_).*\\.py"
+
+[tool.vendoring]
+destination = "cookie_composer/_vendor/"
+requirements = "cookie_composer/_vendor/vendor.txt"
+namespace = "cookie_composer._vendor"
+protected-files = ["__init__.py", "vendor.txt"]
+
+[tool.vendoring.transformations]
+substitute = [
+    { match='cookiecutter\.(?!json)', replace="cookie_composer._vendor.cookiecutter." },
+]

@@ -1,3 +1,14 @@
-
-elastic-apm>=6.6.3
-environs>=9.3.5
+aiohttp
+binaryornot>=0.4.4
+click
+fsspec
+gitpython>=3.0
+Jinja2
+jinja2-time>=0.2.0
+pydantic
+python-slugify
+pyyaml>=5.3.1
+requests
+requests
+ruyaml
+typer[all]
