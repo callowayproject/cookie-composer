@@ -49,9 +49,3 @@ repos:
     rev: 1.4.0  # or master if you're bold
     hooks:
       - id: interrogate
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.0
-    hooks:
-    - id: bandit
-      args:
-        - --format=custom
