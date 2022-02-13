@@ -1,0 +1,5 @@
+{
+  "project_name": "Test Project",
+  "repo_name": "testproject",
+  "_requirements": {"foo": "", "bar": ">=5.0.0"}
+}

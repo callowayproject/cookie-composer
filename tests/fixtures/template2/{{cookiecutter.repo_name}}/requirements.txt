@@ -1,0 +1,3 @@
+{%- for pkg, version in cookiecutter._requirements.items() %}
+{{ pkg }}{{ version }}
+{%- endfor %}
