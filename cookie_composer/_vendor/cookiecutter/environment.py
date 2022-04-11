@@ -20,21 +20,21 @@ class ExtensionLoaderMixin(object):
         2. Reads extensions set in the cookiecutter.json _extensions key.
         3. Attempts to load the extensions. Provides useful error if fails.
         """
-        context = kwargs.pop('context', {})
+        context = kwargs.pop("context", {})
 
         default_extensions = [
-            'cookie_composer._vendor.cookiecutter.extensions.JsonifyExtension',
-            'cookie_composer._vendor.cookiecutter.extensions.RandomStringExtension',
-            'cookie_composer._vendor.cookiecutter.extensions.SlugifyExtension',
-            'cookie_composer._vendor.cookiecutter.extensions.UUIDExtension',
-            'jinja2_time.TimeExtension',
+            "cookie_composer._vendor.cookiecutter.extensions.JsonifyExtension",
+            "cookie_composer._vendor.cookiecutter.extensions.RandomStringExtension",
+            "cookie_composer._vendor.cookiecutter.extensions.SlugifyExtension",
+            "cookie_composer._vendor.cookiecutter.extensions.UUIDExtension",
+            "jinja2_time.TimeExtension",
         ]
         extensions = default_extensions + self._read_extensions(context)
 
         try:
             super(ExtensionLoaderMixin, self).__init__(extensions=extensions, **kwargs)
         except ImportError as err:
-            raise UnknownExtension('Unable to load extension: {}'.format(err))
+            raise UnknownExtension("Unable to load extension: {}".format(err))
 
     def _read_extensions(self, context):
         """Return list of extensions as str to be passed on to the Jinja2 env.
@@ -43,7 +43,7 @@ class ExtensionLoaderMixin(object):
         list instead.
         """
         try:
-            extensions = context['cookiecutter']['_extensions']
+            extensions = context["cookiecutter"]["_extensions"]
         except KeyError:
             return []
         else:

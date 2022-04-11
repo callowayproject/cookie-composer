@@ -309,4 +309,3 @@ revs = [
     Caret(FileFirstRegexMatch(OUTPUT_FILE, INSERT_POINT_REGEX)),
     "HEAD"
 ]
-
