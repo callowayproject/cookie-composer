@@ -5,14 +5,14 @@ from pathlib import Path
 from setuptools import setup
 
 
-def parse_reqs(filepath: str) -> list:
+def parse_reqs_in(filepath: str) -> list:
     """
-    Parse a file path containing requirements and return a list of requirements.
+    Parse a file path containing a pip-tools requirements.in and return a list of requirements.
 
-    Will properly follow ``-r`` and ``--requirements`` links like ``pip``. This
-    means nested requirements will be returned as one list.
+    Will properly follow ``-r`` and ``-c`` links like ``pip-tools``. This
+    means layered requirements will be returned as one list.
 
-    Other ``pip``-specific lines are excluded.
+    Other ``pip-tools`` and ``pip``-specific lines are excluded.
 
     Args:
         filepath: The path to the requirements file
@@ -30,10 +30,14 @@ def parse_reqs(filepath: str) -> list:
         elif not line or line.startswith("#"):
             # comments are lines that start with # only
             continue
-        elif line.startswith("-r") or line.startswith("--requirement"):
+        elif line.startswith("-c"):
+            _, new_filename = line.split()
+            new_file_path = path.parent / new_filename.replace(".txt", ".in")
+            reqs.extend(parse_reqs_in(new_file_path))
+        elif line.startswith(("-r", "--requirement")):
             _, new_filename = line.split()
             new_file_path = path.parent / new_filename
-            reqs.extend(parse_reqs(new_file_path))
+            reqs.extend(parse_reqs_in(new_file_path))
         elif line.startswith("-f") or line.startswith("-i") or line.startswith("--"):
             continue
         elif line.startswith("-Z") or line.startswith("--always-unzip"):
@@ -43,9 +47,9 @@ def parse_reqs(filepath: str) -> list:
     return reqs
 
 
-requirements = parse_reqs("requirements.txt")
-dev_requirements = parse_reqs("requirements/dev.txt")
-test_requirements = parse_reqs("requirements/test.txt")
+requirements = parse_reqs_in("requirements/prod.in")
+dev_requirements = parse_reqs_in("requirements/dev.in")
+test_requirements = parse_reqs_in("requirements/test.in")
 
 setup(
     install_requires=requirements,

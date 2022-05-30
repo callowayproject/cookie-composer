@@ -1,0 +1,11 @@
+-c prod.txt
+
+black>=19.10b0
+coverage>=6.1.2
+flake8>=4.0.1
+pre-commit>=2.15.0
+pytest-cov>=3.0.0
+pytest-env
+pytest>=6.0.0
+twine>=3.6.0
+wheel>=0.37.0

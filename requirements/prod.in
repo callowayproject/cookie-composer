@@ -1,0 +1,7 @@
+-c cookiecutter.txt
+
+click
+fsspec
+pydantic
+requests
+ruyaml
