@@ -14,6 +14,7 @@ omit = [
     "*site-packages*",
     "*tests*",
     "*.tox*",
+    "**/_vendor/**",
 ]
 show_missing = true
 exclude_lines = [
