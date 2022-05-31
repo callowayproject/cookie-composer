@@ -42,9 +42,7 @@ class WriteStrategy(Enum):
     """Merge the file with an existing file, or write a new file."""
 
 
-def render_layer(
-    layer_config: LayerConfig, render_dir: Path, full_context: Mapping = None
-) -> RenderedLayer:
+def render_layer(layer_config: LayerConfig, render_dir: Path, full_context: Mapping = None) -> RenderedLayer:
     """
     Process one layer of the template composition.
 
@@ -69,6 +67,13 @@ def render_layer(
         password=layer_config.password,
         directory=layer_config.directory,
     )
+    # _copy_without_render is template-specific and fails if overridden
+    # So we are going to remove it from the "defaults" when generating the context
+    config_dict["default_context"].pop("_copy_without_render", None)
+    if full_context and "_copy_without_render" in full_context:
+        del full_context["_copy_without_render"]
+
+    print(config_dict["default_context"])
     context = generate_context(
         context_file=Path(layer_config.template) / "cookiecutter.json",
         default_context=config_dict["default_context"],
@@ -116,12 +121,8 @@ def merge_layers(destination: Path, rendered_layer: RenderedLayer):
             origin_path = Path(f"{root}/{f}")
             write_strat = get_write_strategy(origin_path, dest_path, rendered_layer)
             if write_strat == WriteStrategy.MERGE:
-                merge_strategy = get_merge_strategy(
-                    origin_path, rendered_layer.layer.merge_strategies
-                )
-                MERGE_FUNCTIONS[dest_path.suffix](
-                    origin_path, dest_path, merge_strategy
-                )
+                merge_strategy = get_merge_strategy(origin_path, rendered_layer.layer.merge_strategies)
+                MERGE_FUNCTIONS[dest_path.suffix](origin_path, dest_path, merge_strategy)
             elif write_strat == WriteStrategy.WRITE:
                 shutil.copy(origin_path, dest_path)
 
@@ -133,9 +134,7 @@ def merge_layers(destination: Path, rendered_layer: RenderedLayer):
                 dest_path.mkdir(parents=True, exist_ok=True)
 
 
-def get_write_strategy(
-    origin: Path, destination: Path, rendered_layer: RenderedLayer
-) -> WriteStrategy:
+def get_write_strategy(origin: Path, destination: Path, rendered_layer: RenderedLayer) -> WriteStrategy:
     """
     Based on the layer_config rules, determine if we should overwrite an existin path.
 
