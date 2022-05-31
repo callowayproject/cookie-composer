@@ -1,8 +1,8 @@
+from pathlib import Path
+
 import pytest
 
 from cookie_composer import composition
-from pathlib import Path
-
 from cookie_composer.composition import LayerConfig
 from cookie_composer.exceptions import MissingCompositionFileError
 

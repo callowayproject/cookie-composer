@@ -1,5 +1,5 @@
--r test.txt
 --find-links https://github.com/PennyDreadfulMTG/pystache/releases/
+-r test.txt
 
 bump2version>=1.0.1
 git-fame>=1.12.2

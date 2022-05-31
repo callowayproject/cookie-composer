@@ -3,6 +3,7 @@ from typing import Any
 
 import pytest
 from pytest import param
+
 from cookie_composer import data_merge
 
 
@@ -48,7 +49,11 @@ def test_deepmerge(dict_list: list, expected: dict):
         param([[1, 2], [2, 3]], [1, 2, 3], id="merge lists"),
         param([(1, 2), (2, 3)], (1, 2, 3), id="merge tuples"),
         param([{1, 2}, {2, 3}], {1, 2, 3}, id="merge sets"),
-        param([{"a": [1]}, {"a": [2]}], {"a": [1, 2]}, id="dict 2 iterable merges with dict 1 iterable"),
+        param(
+            [{"a": [1]}, {"a": [2]}],
+            {"a": [1, 2]},
+            id="dict 2 iterable merges with dict 1 iterable",
+        ),
         param([1, 2], 2, id="scalar 2 overwrites scalar 1"),
     ],
 )
