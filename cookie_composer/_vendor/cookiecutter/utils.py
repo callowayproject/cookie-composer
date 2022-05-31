@@ -35,10 +35,10 @@ def make_sure_path_exists(path):
 
     :param path: A directory path.
     """
-    logger.debug('Making sure path exists: %s', path)
+    logger.debug("Making sure path exists: %s", path)
     try:
         os.makedirs(path)
-        logger.debug('Created directory at: %s', path)
+        logger.debug("Created directory at: %s", path)
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             return False
@@ -88,7 +88,7 @@ def prompt_and_delete(path, no_input=False):
             "You've downloaded {} before. Is it okay to delete and re-download it?"
         ).format(path)
 
-        ok_to_delete = read_user_yes_no(question, 'yes')
+        ok_to_delete = read_user_yes_no(question, "yes")
 
     if ok_to_delete:
         if os.path.isdir(path):
@@ -98,7 +98,7 @@ def prompt_and_delete(path, no_input=False):
         return True
     else:
         ok_to_reuse = read_user_yes_no(
-            "Do you want to re-use the existing version?", 'yes'
+            "Do you want to re-use the existing version?", "yes"
         )
 
         if ok_to_reuse:
