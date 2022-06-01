@@ -1,11 +1,13 @@
 # Changelog
 
 ## Unreleased (2022-05-31)
-
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.1.0...HEAD)
 
 ### Fixes
 
+- Fixed a bug when two templates have `_copy_without_render`. [9e89347](https://github.com/coordt/cookie-composer/commit/9e89347edd227332c50430c0bd8a26d2690fe182)
+    
+  `_copy_without_render` is template-specific and attempting to override it raises an error in cookiecutter. Now that key is deleted for the default context and full context when generating each layer.
 - Fixed configurations. [df365df](https://github.com/coordt/cookie-composer/commit/df365dff8c522b6eb3fbc5efb4fef71162cd1f8b)
     
 ### New
@@ -33,10 +35,8 @@
     
 ## 0.1.0 (2022-02-28)
 
-[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/None...0.1.0)
-
 ### Other
 
 - Initial commit. [abdef79](https://github.com/coordt/cookie-composer/commit/abdef79ef9413faaa9602847f1f98317f58a74f3)
     
-  - Initial commit. [8965b8a](https://github.com/coordt/cookie-composer/commit/8965b8abb708212dbfe664a211989e6c5c81966a)
+- Initial commit. [8965b8a](https://github.com/coordt/cookie-composer/commit/8965b8abb708212dbfe664a211989e6c5c81966a)
