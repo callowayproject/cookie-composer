@@ -1,5 +1,5 @@
--c test.txt
--c docs.txt
+-r test.txt
+-r docs.txt
 
 bump2version>=1.0.1
 git-fame>=1.12.2

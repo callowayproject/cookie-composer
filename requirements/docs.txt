@@ -11,28 +11,37 @@ babel==2.10.1
 beautifulsoup4==4.11.1
     # via furo
 certifi==2022.5.18.1
-    # via requests
+    # via
+    #   -c test.txt
+    #   requests
 charset-normalizer==2.0.12
-    # via requests
+    # via
+    #   -c test.txt
+    #   requests
 click==8.1.3
-    # via sphinx-click
+    # via
+    #   -c test.txt
+    #   sphinx-click
 docutils==0.17.1
     # via
     #   myst-parser
     #   sphinx
     #   sphinx-click
-furo==2022.4.7
+furo==2022.6.4.1
     # via -r docs.in
 ghp-import==2.1.0
     # via -r docs.in
 idna==3.3
-    # via requests
+    # via
+    #   -c test.txt
+    #   requests
 imagesize==1.3.0
     # via sphinx
 importlib-metadata==4.11.4
     # via sphinx
 jinja2==3.1.2
     # via
+    #   -c test.txt
     #   myst-parser
     #   sphinx
 linkify-it-py==2.0.0
@@ -42,7 +51,9 @@ markdown-it-py==2.1.0
     #   mdit-py-plugins
     #   myst-parser
 markupsafe==2.1.1
-    # via jinja2
+    # via
+    #   -c test.txt
+    #   jinja2
 mdit-py-plugins==0.3.0
     # via myst-parser
 mdurl==0.1.1
@@ -50,23 +61,36 @@ mdurl==0.1.1
 myst-parser==0.17.2
     # via -r docs.in
 packaging==21.3
-    # via sphinx
+    # via
+    #   -c test.txt
+    #   sphinx
 pygments==2.12.0
     # via
+    #   -c test.txt
     #   furo
     #   sphinx
 pyparsing==3.0.9
-    # via packaging
+    # via
+    #   -c test.txt
+    #   packaging
 python-dateutil==2.8.2
-    # via ghp-import
+    # via
+    #   -c test.txt
+    #   ghp-import
 pytz==2022.1
     # via babel
 pyyaml==6.0
-    # via myst-parser
+    # via
+    #   -c test.txt
+    #   myst-parser
 requests==2.27.1
-    # via sphinx
+    # via
+    #   -c test.txt
+    #   sphinx
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   -c test.txt
+    #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.3.2.post1
@@ -77,10 +101,13 @@ sphinx==4.5.0
     #   furo
     #   myst-parser
     #   sphinx-autodoc-typehints
+    #   sphinx-basic-ng
     #   sphinx-click
     #   sphinx-copybutton
-sphinx-autodoc-typehints==1.18.1
+sphinx-autodoc-typehints==1.18.2
     # via -r docs.in
+sphinx-basic-ng==0.0.1a11
+    # via furo
 sphinx-click==4.1.0
     # via -r docs.in
 sphinx-copybutton==0.5.0
@@ -98,10 +125,14 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 typing-extensions==4.2.0
-    # via myst-parser
+    # via
+    #   -c test.txt
+    #   myst-parser
 uc-micro-py==1.0.1
     # via linkify-it-py
 urllib3==1.26.9
-    # via requests
+    # via
+    #   -c test.txt
+    #   requests
 zipp==3.8.0
     # via importlib-metadata

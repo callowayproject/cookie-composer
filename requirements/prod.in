@@ -1,7 +1,7 @@
--c cookiecutter.txt
+-r cookiecutter.txt
 
-click
 fsspec
 pydantic
 requests
-ruyaml
+rich-click
+ruamel.yaml
