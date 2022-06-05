@@ -2,7 +2,7 @@
 import shutil
 
 import pytest
-from ruyaml import YAML
+from ruamel.yaml import YAML
 
 from cookie_composer.composition import MergeStrategy
 from cookie_composer.exceptions import MergeError
