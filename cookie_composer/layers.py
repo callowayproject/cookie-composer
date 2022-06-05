@@ -73,7 +73,6 @@ def render_layer(layer_config: LayerConfig, render_dir: Path, full_context: Mapp
     if full_context and "_copy_without_render" in full_context:
         del full_context["_copy_without_render"]
 
-    print(config_dict["default_context"])
     context = generate_context(
         context_file=Path(layer_config.template) / "cookiecutter.json",
         default_context=config_dict["default_context"],
@@ -84,19 +83,19 @@ def render_layer(layer_config: LayerConfig, render_dir: Path, full_context: Mapp
     # TODO: Get the latest commit, if it is a git repository
     latest_commit = None
 
-    rendered_layer = RenderedLayer(
-        layer=layer_config,
-        location=render_dir,
-        new_context=context["cookiecutter"],
-        latest_commit=latest_commit,
-    )
-
     # call cookiecutter's generate files function
     generate_files(
         repo_dir=repo_dir,
         context=context,
         overwrite_if_exists=False,
         output_dir=str(render_dir),
+    )
+
+    rendered_layer = RenderedLayer(
+        layer=layer_config,
+        location=render_dir,
+        new_context=context["cookiecutter"],
+        latest_commit=latest_commit,
     )
 
     if cleanup:
@@ -192,9 +191,14 @@ def process_composition(composition: ProjectComposition):
         full_context = comprehensive_merge(full_context, rendered_layer.new_context)
 
     layers = []
+    layer_names = set()
     for rendered_layer in rendered_layers:
         rendered_layer.layer.commit = rendered_layer.latest_commit
+        rendered_layer.layer.context = rendered_layer.new_context
         layers.append(rendered_layer.layer)
+        layer_names.add(rendered_layer.layer_name)
 
-    composition_file = composition.destination / ".composition.yaml"
+    if len(layer_names) != 1:
+        raise ValueError("Can not write composition file because multiple directories were rendered.")
+    composition_file = composition.destination / layer_names.pop() / ".composition.yaml"
     write_composition(layers, composition_file)

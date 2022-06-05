@@ -2,10 +2,11 @@
 from typing import Any, Dict, List, Optional, Union
 
 import logging
+import os
 from enum import Enum
 from pathlib import Path
 
-from pydantic import AnyHttpUrl, BaseModel, DirectoryPath, Field
+from pydantic import AnyHttpUrl, BaseModel, DirectoryPath, Field, root_validator
 
 from cookie_composer.exceptions import MissingCompositionFileError
 from cookie_composer.matching import rel_fnmatch
@@ -89,9 +90,7 @@ class LayerConfig(BaseModel):
     overwrite_exclude: List[str] = Field(default_factory=list)
     """Paths or glob patterns to exclude from overwriting."""
 
-    merge_strategies: Dict[str, MergeStrategy] = Field(
-        default_factory=lambda: {"*": "do-not-merge"}
-    )
+    merge_strategies: Dict[str, MergeStrategy] = Field(default_factory=lambda: {"*": "do-not-merge"})
     """The method to merge specific paths or glob patterns."""
 
 
@@ -109,6 +108,25 @@ class RenderedLayer(BaseModel):
 
     latest_commit: Optional[str] = None
     """The latest commit checkout out."""
+
+    layer_name: Optional[str] = None
+    """The name of the rendered template directory."""
+
+    @root_validator(pre=True)
+    def set_layer_name(cls, values):
+        """Set the ``layer_name`` to the name of the rendered template directory."""
+        if "layer_name" in values:
+            return values
+
+        dirs = list(os.scandir(values["location"]))
+        if len(dirs) > 1:
+            raise ValueError("More than one item in render location.")
+        elif len(dirs) == 0:
+            raise ValueError("There are no items in render location.")
+        if not dirs[0].is_dir():
+            raise ValueError("The rendered template is not a directory.")
+        values["layer_name"] = dirs[0].name
+        return values
 
 
 class ProjectComposition(BaseModel):
@@ -131,9 +149,7 @@ def is_composition_file(path_or_url: Union[str, Path]) -> bool:
     return Path(path_or_url).suffix in {".yaml", ".yml"}
 
 
-def read_composition(
-    path_or_url: Union[str, Path], destination: Union[str, Path]
-) -> ProjectComposition:
+def read_composition(path_or_url: Union[str, Path], destination: Union[str, Path]) -> ProjectComposition:
     """
     Read a JSON or YAML file and return a ProjectComposition.
 
@@ -148,7 +164,7 @@ def read_composition(
         MissingCompositionFileError: Raised when it can not access the configuration file.
     """
     import fsspec
-    from ruyaml import YAML
+    from ruamel.yaml import YAML
 
     yaml = YAML(typ="safe")
     try:
@@ -156,9 +172,7 @@ def read_composition(
         with of as f:
             contents = list(yaml.load_all(f))
             templates = [LayerConfig(**doc) for doc in contents]
-        return ProjectComposition(
-            layers=templates, destination=Path(destination).expanduser().resolve()
-        )
+        return ProjectComposition(layers=templates, destination=Path(destination).expanduser().resolve())
     except (ValueError, FileNotFoundError) as e:
         raise MissingCompositionFileError(path_or_url) from e
 
@@ -172,7 +186,7 @@ def write_composition(layers: list, destination: Union[str, Path]):
         destination: Where to write the file
     """
     import fsspec
-    from ruyaml import YAML
+    from ruamel.yaml import YAML
 
     yaml = YAML(typ="safe")
     of = fsspec.open(destination, mode="wt")
