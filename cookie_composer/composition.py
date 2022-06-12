@@ -99,39 +99,53 @@ class RenderedLayer(BaseModel):
     """The original layer configuration that was rendered."""
 
     location: DirectoryPath
-    """The location to the rendered layer."""
+    """The directory where the layer was rendered."""
 
     new_context: Dict[str, Any]
     """The context based on questions asked."""
 
     latest_commit: Optional[str] = None
-    """The latest commit checkout out."""
+    """The latest commit checked out if the layer source was a git repo."""
 
-    layer_name: Optional[str] = None
+    rendered_name: Optional[str] = None
     """The name of the rendered template directory."""
 
     @root_validator(pre=True)
-    def set_layer_name(cls, values):
+    def set_rendered_name(cls, values):
         """Set the ``layer_name`` to the name of the rendered template directory."""
-        if "layer_name" in values:
+        if "rendered_name" in values:
             return values
 
         dirs = list(os.scandir(values["location"]))
         if len(dirs) > 1:
             raise ValueError("More than one item in render location.")
-        elif len(dirs) == 0:
+        elif not dirs:
             raise ValueError("There are no items in render location.")
         if not dirs[0].is_dir():
             raise ValueError("The rendered template is not a directory.")
-        values["layer_name"] = dirs[0].name
+        values["rendered_name"] = dirs[0].name
         return values
 
 
-class ProjectComposition(BaseModel):
+class Composition(BaseModel):
     """Composition of templates for a project."""
 
     layers: List[LayerConfig]
-    destination: DirectoryPath
+
+
+class RenderedComposition(BaseModel):
+    """A rendered composition of templates for a project."""
+
+    layers: List[RenderedLayer]
+    """Rendered layers."""
+
+    render_dir: DirectoryPath
+    """The directory in which the layers were rendered.
+
+    The ``render_dir`` + ``rendered_name`` is the location of the project."""
+
+    rendered_name: str
+    """The name of the rendered project."""
 
 
 def is_composition_file(path_or_url: Union[str, Path]) -> bool:
@@ -147,13 +161,12 @@ def is_composition_file(path_or_url: Union[str, Path]) -> bool:
     return Path(path_or_url).suffix in {".yaml", ".yml"}
 
 
-def read_composition(path_or_url: Union[str, Path], destination: Union[str, Path]) -> ProjectComposition:
+def read_composition(path_or_url: Union[str, Path]) -> Composition:
     """
-    Read a JSON or YAML file and return a ProjectComposition.
+    Read a JSON or YAML file and return a Composition.
 
     Args:
         path_or_url: The location of the configuration file
-        destination: Where the destination of the project should be rendered
 
     Returns:
         A project composition
@@ -170,12 +183,40 @@ def read_composition(path_or_url: Union[str, Path], destination: Union[str, Path
         with of as f:
             contents = list(yaml.load_all(f))
             templates = [LayerConfig(**doc) for doc in contents]
-        return ProjectComposition(layers=templates, destination=Path(destination).expanduser().resolve())
+        return Composition(layers=templates)
     except (ValueError, FileNotFoundError) as e:
         raise MissingCompositionFileError(path_or_url) from e
 
 
-def write_composition(layers: list, destination: Union[str, Path]):
+def read_rendered_composition(path: Path) -> RenderedComposition:
+    """
+    Read a ``.composition.yaml`` from a rendered project.
+
+    Args:
+        path: The path to the .composition.yaml file to read
+
+    Returns:
+        The rendered composition information
+    """
+    composition = read_composition(path)
+    rendered_layers = [
+        RenderedLayer(
+            layer=layer,
+            location=path.parent,
+            new_context=layer.context,
+            latest_commit=layer.commit,
+            rendered_name=path.parent.name,
+        )
+        for layer in composition.layers
+    ]
+    return RenderedComposition(
+        layers=rendered_layers,
+        render_dir=path.parent,
+        rendered_name=path.parent.name,
+    )
+
+
+def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
     """
     Write a JSON or YAML composition file.
 
@@ -220,3 +261,18 @@ def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
             break
 
     return strategy
+
+
+def write_rendered_composition(composition: RenderedComposition):
+    """
+    Write the composition file using the rendered layers to the appropriate.
+
+    Args:
+        composition: The rendered composition object to export
+    """
+    layers = []
+    for rendered_layer in composition.layers:
+        layers.append(rendered_layer.layer)
+
+    composition_file = composition.render_dir / composition.rendered_name / ".composition.yaml"
+    write_composition(layers, composition_file)
