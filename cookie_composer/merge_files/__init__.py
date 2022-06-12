@@ -26,11 +26,10 @@ from typing import Callable, Dict
 
 from pathlib import Path
 
-from cookie_composer.composition import MergeStrategy
 from cookie_composer.merge_files.json_file import merge_json_files
 from cookie_composer.merge_files.yaml_file import merge_yaml_files
 
-merge_function = Callable[[Path, Path, MergeStrategy], None]
+merge_function = Callable[[Path, Path, str], None]
 
 MERGE_FUNCTIONS: Dict[str, merge_function] = {
     ".json": merge_json_files,

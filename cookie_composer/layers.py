@@ -1,5 +1,5 @@
 """Layer management."""
-from typing import Mapping
+from typing import List, Mapping, Optional
 
 import logging
 import os
@@ -9,12 +9,10 @@ from enum import Enum
 from pathlib import Path
 
 from cookie_composer.composition import (
+    DO_NOT_MERGE,
     LayerConfig,
-    MergeStrategy,
-    ProjectComposition,
     RenderedLayer,
     get_merge_strategy,
-    write_composition,
 )
 from cookie_composer.data_merge import comprehensive_merge
 from cookie_composer.matching import matches_any_glob
@@ -154,7 +152,7 @@ def get_write_strategy(origin: Path, destination: Path, rendered_layer: Rendered
         return WriteStrategy.WRITE
 
     merge_strat = get_merge_strategy(origin, rendered_layer.layer.merge_strategies)
-    if merge_strat != MergeStrategy.DO_NOT_MERGE:
+    if merge_strat != DO_NOT_MERGE:
         logger.debug("Strategy is not do-not-merge. Merging.")
         return WriteStrategy.MERGE
     logger.debug("Strategy is do-not-merge. Continuing evaluation.")
@@ -175,30 +173,35 @@ def get_write_strategy(origin: Path, destination: Path, rendered_layer: Rendered
         return WriteStrategy.WRITE
 
 
-def process_composition(composition: ProjectComposition):
-    """Process the composition."""
-    full_context = {}
+def render_layers(
+    layers: List[LayerConfig], destination: Path, initial_context: Optional[dict] = None, no_input: bool = False
+) -> List[RenderedLayer]:
+    """
+    Render layers to a destination.
+
+    Args:
+        layers: A list of ``LayerConfig`` to render
+        destination: The location to merge the rendered layers to
+        initial_context: An initial context to pass to the rendering
+        no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+
+    Returns:
+        A list of the rendered layer information
+    """
+    full_context = initial_context or {}
     rendered_layers = []
 
-    for layer_config in composition.layers:
+    for layer_config in layers:
+        layer_config.no_input = True if no_input else layer_config.no_input
         if layer_config.context:
             full_context = comprehensive_merge(full_context, layer_config.context)
 
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, render_dir, full_context)
-            merge_layers(composition.destination, rendered_layer)
+            merge_layers(destination, rendered_layer)
+        rendered_layer.layer.commit = rendered_layer.latest_commit
+        rendered_layer.layer.context = rendered_layer.new_context
         rendered_layers.append(rendered_layer)
         full_context = comprehensive_merge(full_context, rendered_layer.new_context)
 
-    layers = []
-    layer_names = set()
-    for rendered_layer in rendered_layers:
-        rendered_layer.layer.commit = rendered_layer.latest_commit
-        rendered_layer.layer.context = rendered_layer.new_context
-        layers.append(rendered_layer.layer)
-        layer_names.add(rendered_layer.layer_name)
-
-    if len(layer_names) != 1:
-        raise ValueError("Can not write composition file because multiple directories were rendered.")
-    composition_file = composition.destination / layer_names.pop() / ".composition.yaml"
-    write_composition(layers, composition_file)
+    return rendered_layers

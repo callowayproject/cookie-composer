@@ -3,13 +3,16 @@ import json
 from pathlib import Path
 
 from cookie_composer import data_merge
-from cookie_composer.composition import MergeStrategy
+from cookie_composer.composition import (
+    COMPREHENSIVE,
+    DO_NOT_MERGE,
+    NESTED_OVERWRITE,
+    OVERWRITE,
+)
 from cookie_composer.exceptions import MergeError
 
 
-def merge_json_files(
-    new_file: Path, existing_file: Path, merge_strategy: MergeStrategy
-):
+def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
     """
     Merge two json files into one.
 
@@ -21,11 +24,11 @@ def merge_json_files(
     Raises:
         MergeError: If something goes wrong
     """
-    if merge_strategy == MergeStrategy.DO_NOT_MERGE:
+    if merge_strategy == DO_NOT_MERGE:
         raise MergeError(
             str(new_file),
             str(existing_file),
-            str(merge_strategy),
+            merge_strategy,
             "Can not merge with do-not-merge strategy.",
         )
 
@@ -33,13 +36,13 @@ def merge_json_files(
         new_data = json.loads(new_file.read_text())
         existing_data = json.loads(existing_file.read_text())
     except (json.JSONDecodeError, FileNotFoundError) as e:
-        raise MergeError(str(new_file), str(existing_file), str(merge_strategy), str(e))
+        raise MergeError(str(new_file), str(existing_file), merge_strategy, str(e)) from e
 
-    if merge_strategy == MergeStrategy.OVERWRITE:
+    if merge_strategy == OVERWRITE:
         existing_data.update(new_data)
-    elif merge_strategy == MergeStrategy.NESTED_OVERWRITE:
+    elif merge_strategy == NESTED_OVERWRITE:
         existing_data = data_merge.deep_merge(existing_data, new_data)
-    elif merge_strategy == MergeStrategy.COMPREHENSIVE:
+    elif merge_strategy == COMPREHENSIVE:
         existing_data = data_merge.comprehensive_merge(existing_data, new_data)
     else:
         raise MergeError(error_message=f"Unrecognized merge strategy {merge_strategy}")

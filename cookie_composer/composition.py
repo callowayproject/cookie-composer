@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Optional, Union
 
 import logging
 import os
-from enum import Enum
 from pathlib import Path
 
 from pydantic import AnyHttpUrl, BaseModel, DirectoryPath, Field, root_validator
@@ -14,25 +13,24 @@ from cookie_composer.matching import rel_fnmatch
 logger = logging.getLogger(__name__)
 
 
-class MergeStrategy(str, Enum):
-    """Strategies of merging files and data."""
+# Strategies merging files and data.
 
-    DO_NOT_MERGE = "do-not-merge"
-    """Do not merge the data, use the file path to determine what to do."""
+DO_NOT_MERGE = "do-not-merge"
+"""Do not merge the data, use the file path to determine what to do."""
 
-    NESTED_OVERWRITE = "nested-overwrite"
-    """Merge deeply nested structures and overwrite at the lowest level; A deep ``dict.update()``."""
+NESTED_OVERWRITE = "nested-overwrite"
+"""Merge deeply nested structures and overwrite at the lowest level; A deep ``dict.update()``."""
 
-    OVERWRITE = "overwrite"
-    """Overwrite at the top level like ``dict.update()``."""
+OVERWRITE = "overwrite"
+"""Overwrite at the top level like ``dict.update()``."""
 
-    COMPREHENSIVE = "comprehensive"
-    """Comprehensively merge the two data structures.
+COMPREHENSIVE = "comprehensive"
+"""Comprehensively merge the two data structures.
 
-    - Scalars are overwritten by the new values
-    - lists are merged and de-duplicated
-    - dicts are recursively merged
-    """
+- Scalars are overwritten by the new values
+- lists are merged and de-duplicated
+- dicts are recursively merged
+"""
 
 
 class LayerConfig(BaseModel):
@@ -90,7 +88,7 @@ class LayerConfig(BaseModel):
     overwrite_exclude: List[str] = Field(default_factory=list)
     """Paths or glob patterns to exclude from overwriting."""
 
-    merge_strategies: Dict[str, MergeStrategy] = Field(default_factory=lambda: {"*": "do-not-merge"})
+    merge_strategies: Dict[str, str] = Field(default_factory=lambda: {"*": DO_NOT_MERGE})
     """The method to merge specific paths or glob patterns."""
 
 
@@ -195,11 +193,11 @@ def write_composition(layers: list, destination: Union[str, Path]):
         yaml.dump_all(dict_layers, f)
 
 
-def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> MergeStrategy:
+def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
     """
     Return the merge strategy of the path based on the layer configured rules.
 
-    Files that are not mergable return ``MergeStrategy.DO_NOT_MERGE``
+    Files that are not mergable return ``DO_NOT_MERGE``
 
     Args:
         path: The file path to evaluate.
@@ -210,10 +208,10 @@ def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> MergeStr
     """
     from cookie_composer.merge_files import MERGE_FUNCTIONS
 
-    strategy = MergeStrategy.DO_NOT_MERGE  # The default
+    strategy = DO_NOT_MERGE  # The default
 
     if path.suffix not in MERGE_FUNCTIONS:
-        return MergeStrategy.DO_NOT_MERGE
+        return DO_NOT_MERGE
 
     for pattern, strat in merge_strategies.items():
         if rel_fnmatch(str(path), pattern):
