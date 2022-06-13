@@ -68,6 +68,7 @@ cookie-composer add https://github.com/coordt/cookiecutter-fastAPI.git
   - `--default-config`
   - `--accept-hooks`
 
+
 1. Cookie composer combines and de-duplicates the `cookiecutter.json` files
    - If the options are exactly the same, they are removed
    - If the new one is different from previous ones, it is kept.
