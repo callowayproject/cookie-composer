@@ -110,8 +110,7 @@ def clone(repo_url, checkout=None, clone_to_dir=".", no_input=False):
             output = clone_error.output.decode("utf-8")
             if "not found" in output.lower():
                 raise RepositoryNotFound(
-                    "The repository {} could not be found, "
-                    "have you made a typo?".format(repo_url)
+                    "The repository {} could not be found, " "have you made a typo?".format(repo_url)
                 )
             if any(error in output for error in BRANCH_ERRORS):
                 raise RepositoryCloneFailed(

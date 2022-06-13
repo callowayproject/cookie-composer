@@ -84,9 +84,7 @@ def prompt_and_delete(path, no_input=False):
     if no_input:
         ok_to_delete = True
     else:
-        question = (
-            "You've downloaded {} before. Is it okay to delete and re-download it?"
-        ).format(path)
+        question = ("You've downloaded {} before. Is it okay to delete and re-download it?").format(path)
 
         ok_to_delete = read_user_yes_no(question, "yes")
 
@@ -97,9 +95,7 @@ def prompt_and_delete(path, no_input=False):
             os.remove(path)
         return True
     else:
-        ok_to_reuse = read_user_yes_no(
-            "Do you want to re-use the existing version?", "yes"
-        )
+        ok_to_reuse = read_user_yes_no("Do you want to re-use the existing version?", "yes")
 
         if ok_to_reuse:
             return False
