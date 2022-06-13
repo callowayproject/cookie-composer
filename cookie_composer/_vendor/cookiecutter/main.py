@@ -56,10 +56,7 @@ def cookiecutter(
     :param accept_hooks: Accept pre and post hooks if set to `True`.
     """
     if replay and ((no_input is not False) or (extra_context is not None)):
-        err_msg = (
-            "You can not use both replay and no_input or extra_context "
-            "at the same time."
-        )
+        err_msg = "You can not use both replay and no_input or extra_context " "at the same time."
         raise InvalidModeException(err_msg)
 
     config_dict = get_user_config(

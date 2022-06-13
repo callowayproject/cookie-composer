@@ -58,9 +58,7 @@ def read_user_choice(var_name, options):
     if not options:
         raise ValueError
 
-    choice_map = OrderedDict(
-        ("{}".format(i), value) for i, value in enumerate(options, 1)
-    )
+    choice_map = OrderedDict(("{}".format(i), value) for i, value in enumerate(options, 1))
     choices = choice_map.keys()
     default = "1"
 
@@ -73,9 +71,7 @@ def read_user_choice(var_name, options):
         )
     )
 
-    user_choice = click.prompt(
-        prompt, type=click.Choice(choices), default=default, show_choices=False
-    )
+    user_choice = click.prompt(prompt, type=click.Choice(choices), default=default, show_choices=False)
     return choice_map[user_choice]
 
 
@@ -149,9 +145,7 @@ def render_variable(env, raw, cookiecutter_dict):
         return None
     elif isinstance(raw, dict):
         return {
-            render_variable(env, k, cookiecutter_dict): render_variable(
-                env, v, cookiecutter_dict
-            )
+            render_variable(env, k, cookiecutter_dict): render_variable(env, v, cookiecutter_dict)
             for k, v in raw.items()
         }
     elif isinstance(raw, list):
@@ -200,9 +194,7 @@ def prompt_for_config(context, no_input=False):
         try:
             if isinstance(raw, list):
                 # We are dealing with a choice variable
-                val = prompt_choice_for_config(
-                    cookiecutter_dict, env, key, raw, no_input
-                )
+                val = prompt_choice_for_config(cookiecutter_dict, env, key, raw, no_input)
                 cookiecutter_dict[key] = val
             elif not isinstance(raw, dict):
                 # We are dealing with a regular variable
