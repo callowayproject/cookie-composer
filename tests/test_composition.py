@@ -10,17 +10,17 @@ from cookie_composer.exceptions import MissingCompositionFileError
 # TODO: test missing info in the template composition
 
 
-def test_multiple_templates(fixtures_path, tmp_path):
+def test_multiple_templates(fixtures_path):
     filepath = fixtures_path / "multi-template.yaml"
-    comp = composition.read_composition(filepath, tmp_path)
+    comp = composition.read_composition(filepath)
     assert len(comp.layers) == 2
     assert comp.layers[0].template == "tests/fixtures/template1"
     assert comp.layers[1].template == "tests/fixtures/template2"
 
 
-def test_single_template(fixtures_path, tmp_path):
+def test_single_template(fixtures_path):
     filepath = fixtures_path / "single-template.yaml"
-    comp = composition.read_composition(filepath, tmp_path)
+    comp = composition.read_composition(filepath)
     assert len(comp.layers) == 1
     assert comp.layers[0].template == "tests/fixtures/template1"
 
@@ -33,7 +33,13 @@ def test_is_composition_file():
 
 def test_missing_composition():
     with pytest.raises(MissingCompositionFileError):
-        composition.read_composition("/does/not/exist", "/foo/")
+        composition.read_composition("/does/not/exist")
+
+
+def test_empty_composition(fixtures_path):
+    filepath = fixtures_path / "empty.yaml"
+    comp = composition.read_composition(filepath)
+    assert len(comp.layers) == 0
 
 
 def test_write_composition(tmp_path):
@@ -44,6 +50,6 @@ def test_write_composition(tmp_path):
     ]
     filepath = tmp_path / "composition.yaml"
     composition.write_composition(layers, filepath)
-    comp = composition.read_composition(filepath, tmp_path)
+    comp = composition.read_composition(filepath)
     assert comp.layers[0] == layers[0]
     assert comp.layers[1] == layers[1]

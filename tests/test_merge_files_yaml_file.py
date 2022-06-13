@@ -4,7 +4,12 @@ import shutil
 import pytest
 from ruamel.yaml import YAML
 
-from cookie_composer.composition import MergeStrategy
+from cookie_composer.composition import (
+    COMPREHENSIVE,
+    DO_NOT_MERGE,
+    NESTED_OVERWRITE,
+    OVERWRITE,
+)
 from cookie_composer.exceptions import MergeError
 from cookie_composer.merge_files import yaml_file
 
@@ -16,7 +21,7 @@ def test_do_not_merge(fixtures_path):
     with pytest.raises(MergeError):
         existing_file = fixtures_path / "existing.yaml"
         new_file = fixtures_path / "new.yaml"
-        yaml_file.merge_yaml_files(new_file, existing_file, MergeStrategy.DO_NOT_MERGE)
+        yaml_file.merge_yaml_files(new_file, existing_file, DO_NOT_MERGE)
 
 
 def test_overwrite_merge(tmp_path, fixtures_path):
@@ -27,7 +32,7 @@ def test_overwrite_merge(tmp_path, fixtures_path):
 
     new_file = fixtures_path / "new.yaml"
 
-    yaml_file.merge_yaml_files(new_file, existing_file, MergeStrategy.OVERWRITE)
+    yaml_file.merge_yaml_files(new_file, existing_file, OVERWRITE)
     rendered = yaml.load(existing_file)
     assert rendered == {
         "number": 2,
@@ -44,7 +49,7 @@ def test_overwrite_nested_merge(tmp_path, fixtures_path):
     shutil.copy(initial_file, existing_file)
 
     new_file = fixtures_path / "new.yaml"
-    yaml_file.merge_yaml_files(new_file, existing_file, MergeStrategy.NESTED_OVERWRITE)
+    yaml_file.merge_yaml_files(new_file, existing_file, NESTED_OVERWRITE)
     rendered = yaml.load(existing_file)
     assert rendered == {
         "number": 2,
@@ -61,7 +66,7 @@ def test_comprehensive_merge(tmp_path, fixtures_path):
     shutil.copy(initial_file, existing_file)
 
     new_file = fixtures_path / "new.yaml"
-    yaml_file.merge_yaml_files(new_file, existing_file, MergeStrategy.COMPREHENSIVE)
+    yaml_file.merge_yaml_files(new_file, existing_file, COMPREHENSIVE)
     rendered = yaml.load(existing_file)
     assert rendered["number"] == 2
     assert rendered["string"] == "def"
@@ -76,21 +81,21 @@ def test_bad_files(tmp_path, fixtures_path):
         yaml_file.merge_yaml_files(
             fixtures_path / "missing.yaml",
             fixtures_path / "new.yaml",
-            MergeStrategy.OVERWRITE,
+            OVERWRITE,
         )
 
     with pytest.raises(MergeError):
         yaml_file.merge_yaml_files(
             fixtures_path / "existing.yaml",
             fixtures_path / "missing.yaml",
-            MergeStrategy.OVERWRITE,
+            OVERWRITE,
         )
 
     with pytest.raises(MergeError):
         yaml_file.merge_yaml_files(
             fixtures_path / "gibberish.txt",
             fixtures_path / "new.json",
-            MergeStrategy.OVERWRITE,
+            OVERWRITE,
         )
 
 

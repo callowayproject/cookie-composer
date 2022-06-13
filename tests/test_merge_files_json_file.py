@@ -4,7 +4,12 @@ import shutil
 
 import pytest
 
-from cookie_composer.composition import MergeStrategy
+from cookie_composer.composition import (
+    COMPREHENSIVE,
+    DO_NOT_MERGE,
+    NESTED_OVERWRITE,
+    OVERWRITE,
+)
 from cookie_composer.exceptions import MergeError
 from cookie_composer.merge_files import json_file
 
@@ -14,7 +19,7 @@ def test_do_not_merge(fixtures_path):
     with pytest.raises(MergeError):
         existing_file = fixtures_path / "existing.json"
         new_file = fixtures_path / "new.json"
-        json_file.merge_json_files(new_file, existing_file, MergeStrategy.DO_NOT_MERGE)
+        json_file.merge_json_files(new_file, existing_file, DO_NOT_MERGE)
 
 
 def test_overwrite_merge(tmp_path, fixtures_path):
@@ -23,7 +28,7 @@ def test_overwrite_merge(tmp_path, fixtures_path):
     shutil.copy(initial_file, existing_file)
 
     new_file = fixtures_path / "new.json"
-    json_file.merge_json_files(new_file, existing_file, MergeStrategy.OVERWRITE)
+    json_file.merge_json_files(new_file, existing_file, OVERWRITE)
     rendered = json.loads(existing_file.read_text())
     assert rendered == {
         "number": 2,
@@ -40,7 +45,7 @@ def test_overwrite_nested_merge(tmp_path, fixtures_path):
     shutil.copy(initial_file, existing_file)
 
     new_file = fixtures_path / "new.json"
-    json_file.merge_json_files(new_file, existing_file, MergeStrategy.NESTED_OVERWRITE)
+    json_file.merge_json_files(new_file, existing_file, NESTED_OVERWRITE)
     rendered = json.loads(existing_file.read_text())
     assert rendered == {
         "number": 2,
@@ -57,7 +62,7 @@ def test_comprehensive_merge(tmp_path, fixtures_path):
     shutil.copy(initial_file, existing_file)
 
     new_file = fixtures_path / "new.json"
-    json_file.merge_json_files(new_file, existing_file, MergeStrategy.COMPREHENSIVE)
+    json_file.merge_json_files(new_file, existing_file, COMPREHENSIVE)
     rendered = json.loads(existing_file.read_text())
     assert rendered["number"] == 2
     assert rendered["string"] == "def"
@@ -72,21 +77,21 @@ def test_bad_files(fixtures_path):
         json_file.merge_json_files(
             fixtures_path / "missing.json",
             fixtures_path / "new.json",
-            MergeStrategy.OVERWRITE,
+            OVERWRITE,
         )
 
     with pytest.raises(MergeError):
         json_file.merge_json_files(
             fixtures_path / "existing.json",
             fixtures_path / "missing.json",
-            MergeStrategy.OVERWRITE,
+            OVERWRITE,
         )
 
     with pytest.raises(MergeError):
         json_file.merge_json_files(
             fixtures_path / "gibberish.txt",
             fixtures_path / "new.json",
-            MergeStrategy.OVERWRITE,
+            OVERWRITE,
         )
 
 

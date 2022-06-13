@@ -1,10 +1,17 @@
 """Test layer rendering."""
 import json
+import os
 import shutil
 from pathlib import Path
 
 from cookie_composer import layers
-from cookie_composer.composition import LayerConfig, MergeStrategy, RenderedLayer
+from cookie_composer.composition import (
+    DO_NOT_MERGE,
+    OVERWRITE,
+    LayerConfig,
+    RenderedLayer,
+    read_composition,
+)
 from cookie_composer.data_merge import comprehensive_merge
 
 
@@ -30,7 +37,7 @@ def test_get_write_strategy_skip_generation(fixtures_path):
         skip_generation=["README.md"],
         skip_if_file_exists=False,
     )
-    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, layer_name="test")
+    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, rendered_name="test")
     filepath = fixtures_path / "template1" / "{{cookiecutter.repo_name}}" / "README.md"
     assert layers.get_write_strategy(filepath, filepath, rendered_layer) == layers.WriteStrategy.SKIP
 
@@ -42,7 +49,7 @@ def test_get_write_strategy_dest_not_exist(tmp_path, fixtures_path):
         template=str(fixtures_path / "template1"),
         skip_if_file_exists=True,
     )
-    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, layer_name="test")
+    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, rendered_name="test")
     filepath = fixtures_path / "template1" / "{{cookiecutter.repo_name}}" / "README.md"
     dest_path = tmp_path / "foo" / "README.md"
     assert layers.get_write_strategy(filepath, dest_path, rendered_layer) == layers.WriteStrategy.WRITE
@@ -54,13 +61,13 @@ def test_get_write_strategy_merge_strategy(fixtures_path):
     layer_config = LayerConfig(
         template=str(fixtures_path / "template1"),
         merge_strategies={
-            "*.yml": MergeStrategy.OVERWRITE,
-            "*.yaml": MergeStrategy.OVERWRITE,
-            "*.json": MergeStrategy.DO_NOT_MERGE,
+            "*.yml": OVERWRITE,
+            "*.yaml": OVERWRITE,
+            "*.json": DO_NOT_MERGE,
         },
         skip_if_file_exists=True,
     )
-    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, layer_name="test")
+    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, rendered_name="test")
     filepath = fixtures_path / "existing.yaml"
     assert layers.get_write_strategy(filepath, filepath, rendered_layer) == layers.WriteStrategy.MERGE
     filepath = fixtures_path / "existing.json"
@@ -75,7 +82,7 @@ def test_get_write_strategy_overwrite_exclude(fixtures_path):
         overwrite_exclude=["*.yaml"],
         skip_if_file_exists=True,
     )
-    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, layer_name="test")
+    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, rendered_name="test")
     filepath = fixtures_path / "existing.yaml"
     assert layers.get_write_strategy(filepath, filepath, rendered_layer) == layers.WriteStrategy.SKIP
 
@@ -88,7 +95,7 @@ def test_get_write_strategy_overwrite(fixtures_path):
         overwrite=["*.yaml"],
         skip_if_file_exists=True,
     )
-    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, layer_name="test")
+    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, rendered_name="test")
     filepath = fixtures_path / "existing.yaml"
     assert layers.get_write_strategy(filepath, filepath, rendered_layer) == layers.WriteStrategy.WRITE
 
@@ -100,7 +107,7 @@ def test_get_write_strategy_skip_if_file_exists(fixtures_path):
         template=str(fixtures_path / "template1"),
         skip_if_file_exists=True,
     )
-    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, layer_name="test")
+    rendered_layer = RenderedLayer(layer=layer_config, location=fixtures_path, new_context={}, rendered_name="test")
     filepath = fixtures_path / "existing.yaml"
     assert layers.get_write_strategy(filepath, filepath, rendered_layer) == layers.WriteStrategy.SKIP
 
@@ -120,14 +127,14 @@ def test_merge_layers(tmp_path, fixtures_path):
         template=str(fixtures_path / "template2"),
         skip_if_file_exists=False,
         merge_strategies={
-            "*.json": MergeStrategy.DO_NOT_MERGE,
-            "*.yaml": MergeStrategy.OVERWRITE,
+            "*.json": DO_NOT_MERGE,
+            "*.yaml": OVERWRITE,
         },
     )
     context2 = json.loads((fixtures_path / "rendered2" / "context.json").read_text())
     full_context = comprehensive_merge(context1, context2)
     rendered2_config = RenderedLayer(
-        layer=layer_config, location=fixtures_path / "rendered2", new_context=full_context, layer_name="testproject"
+        layer=layer_config, location=fixtures_path / "rendered2", new_context=full_context, rendered_name="testproject"
     )
     # merge the layers
     layers.merge_layers(rendered_layer_path, rendered2_config)
@@ -141,3 +148,18 @@ def test_merge_layers(tmp_path, fixtures_path):
 
     requirements_content = (rendered_layer_path / "testproject/requirements.txt").read_text()
     assert requirements_content == "bar>=5.0.0\nbaz\nfoo\n"
+
+
+def test_render_layers(fixtures_path, tmp_path):
+    """Render layers generates a list of rendered layer objects."""
+    filepath = fixtures_path / "multi-template.yaml"
+    comp = read_composition(filepath)
+    context1 = json.loads((fixtures_path / "template1" / "cookiecutter.json").read_text())
+    context2 = json.loads((fixtures_path / "template2" / "cookiecutter.json").read_text())
+    full_context = comprehensive_merge(context1, context2)
+
+    rendered_layers = layers.render_layers(comp.layers, tmp_path, full_context, no_input=True)
+    rendered_project = tmp_path / rendered_layers[0].rendered_name
+    rendered_items = set([item.name for item in os.scandir(rendered_project)])
+
+    assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt"}
