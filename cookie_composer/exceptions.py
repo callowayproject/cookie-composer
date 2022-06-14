@@ -24,3 +24,9 @@ class MergeError(Exception):
             msg = f"There was a problem merging {origin} and {destination} using {strategy}: {error_message}"
             super().__init__(msg)
         super().__init__(error_message)
+
+
+class GitError(Exception):
+    """There was a problem doing git operations."""
+
+    pass

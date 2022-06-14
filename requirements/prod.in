@@ -1,6 +1,7 @@
 -r cookiecutter.txt
 
 fsspec
+gitpython
 pydantic
 requests
 rich-click

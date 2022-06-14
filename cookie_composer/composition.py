@@ -234,6 +234,21 @@ def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
         yaml.dump_all(dict_layers, f)
 
 
+def write_rendered_composition(composition: RenderedComposition):
+    """
+    Write the composition file using the rendered layers to the appropriate.
+
+    Args:
+        composition: The rendered composition object to export
+    """
+    layers = []
+    for rendered_layer in composition.layers:
+        layers.append(rendered_layer.layer)
+
+    composition_file = composition.render_dir / composition.rendered_name / ".composition.yaml"
+    write_composition(layers, composition_file)
+
+
 def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
     """
     Return the merge strategy of the path based on the layer configured rules.
@@ -261,18 +276,3 @@ def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
             break
 
     return strategy
-
-
-def write_rendered_composition(composition: RenderedComposition):
-    """
-    Write the composition file using the rendered layers to the appropriate.
-
-    Args:
-        composition: The rendered composition object to export
-    """
-    layers = []
-    for rendered_layer in composition.layers:
-        layers.append(rendered_layer.layer)
-
-    composition_file = composition.render_dir / composition.rendered_name / ".composition.yaml"
-    write_composition(layers, composition_file)
