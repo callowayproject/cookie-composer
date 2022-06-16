@@ -198,6 +198,7 @@ def read_rendered_composition(path: Path) -> RenderedComposition:
     Returns:
         The rendered composition information
     """
+    path = path.resolve()
     composition = read_composition(path)
     rendered_layers = [
         RenderedLayer(
@@ -211,7 +212,7 @@ def read_rendered_composition(path: Path) -> RenderedComposition:
     ]
     return RenderedComposition(
         layers=rendered_layers,
-        render_dir=path.parent,
+        render_dir=path.parent.parent,
         rendered_name=path.parent.name,
     )
 

@@ -26,7 +26,7 @@ repos:
         exclude: test.*
       - id: debug-statements
       - id: end-of-file-fixer
-        exclude: "^tests/resources/"
+        exclude: "^tests/fixtures/"
       - id: fix-byte-order-marker
       - id: fix-encoding-pragma
         args: ["--remove"]
@@ -35,18 +35,18 @@ repos:
     rev: 4.0.1
     hooks:
       - id: flake8
-        exclude: test.*
+        exclude: (_vendor|test).*
   - repo: https://github.com/pycqa/pydocstyle
     rev: 6.1.1
     hooks:
       - id: pydocstyle
-        exclude: test.*
+        exclude: (_vendor|test).*
         additional_dependencies: [toml]
   - repo: https://github.com/terrencepreilly/darglint
     rev: v1.8.1
     hooks:
       - id: darglint
-        exclude: test.*
+        exclude: (_vendor|test).*
         args:
           - -v 2
           - "--message-template={path}:{line} in `{obj}`:\n        {msg_id}: {msg}"
@@ -55,4 +55,4 @@ repos:
     rev: 1.5.0  # or master if you're bold
     hooks:
       - id: interrogate
-        exclude: test.*
+        exclude: (_vendor|test).*

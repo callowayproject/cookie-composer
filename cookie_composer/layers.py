@@ -40,7 +40,9 @@ class WriteStrategy(Enum):
     """Merge the file with an existing file, or write a new file."""
 
 
-def render_layer(layer_config: LayerConfig, render_dir: Path, full_context: Mapping = None) -> RenderedLayer:
+def render_layer(
+    layer_config: LayerConfig, render_dir: Path, full_context: Mapping = None, accept_hooks: bool = True
+) -> RenderedLayer:
     """
     Process one layer of the template composition.
 
@@ -50,6 +52,7 @@ def render_layer(layer_config: LayerConfig, render_dir: Path, full_context: Mapp
         layer_config: The configuration of the layer to render
         render_dir: Where to render the template
         full_context: The extra context from all layers in the composition
+        accept_hooks: Accept pre- and post-hooks if set to ``True``
 
     Returns:
         The rendered layer information
@@ -87,6 +90,7 @@ def render_layer(layer_config: LayerConfig, render_dir: Path, full_context: Mapp
         context=context,
         overwrite_if_exists=False,
         output_dir=str(render_dir),
+        accept_hooks=accept_hooks,
     )
 
     rendered_layer = RenderedLayer(
@@ -174,7 +178,11 @@ def get_write_strategy(origin: Path, destination: Path, rendered_layer: Rendered
 
 
 def render_layers(
-    layers: List[LayerConfig], destination: Path, initial_context: Optional[dict] = None, no_input: bool = False
+    layers: List[LayerConfig],
+    destination: Path,
+    initial_context: Optional[dict] = None,
+    no_input: bool = False,
+    accept_hooks: bool = True,
 ) -> List[RenderedLayer]:
     """
     Render layers to a destination.
@@ -184,6 +192,7 @@ def render_layers(
         destination: The location to merge the rendered layers to
         initial_context: An initial context to pass to the rendering
         no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+        accept_hooks: Accept pre- and post-hooks if set to ``True``
 
     Returns:
         A list of the rendered layer information
@@ -197,7 +206,7 @@ def render_layers(
             full_context = comprehensive_merge(full_context, layer_config.context)
 
         with tempfile.TemporaryDirectory() as render_dir:
-            rendered_layer = render_layer(layer_config, render_dir, full_context)
+            rendered_layer = render_layer(layer_config, render_dir, full_context, accept_hooks)
             merge_layers(destination, rendered_layer)
         rendered_layer.layer.commit = rendered_layer.latest_commit
         rendered_layer.layer.context = rendered_layer.new_context

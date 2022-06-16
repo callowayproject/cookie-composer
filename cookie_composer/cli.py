@@ -5,7 +5,9 @@ from pathlib import Path
 
 import rich_click as click
 
+from cookie_composer.commands.add import add_cmd
 from cookie_composer.commands.create import create_cmd
+from cookie_composer.exceptions import GitError
 
 
 @click.group()
@@ -34,14 +36,16 @@ def create(path_or_url: str, output_dir: Optional[Path]):
 
 
 @cli.command()
+@click.option("--no-input", is_flag=True)
 @click.argument("path_or_url", type=str, required=True)
-def add(path_or_url: str):
-    """
-    Add a template or configuration to an existing project.
-
-    Args:
-        path_or_url: A URL or string to add the template or configuration
-    """
+@click.argument("destination", type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path))
+def add(no_input: bool, path_or_url: str, destination: Optional[Path]):
+    """Add a template or configuration to an existing project."""
+    destination = destination or Path(".")
+    try:
+        add_cmd(path_or_url, destination, no_input=no_input)
+    except GitError as e:
+        raise click.Abort(str(e))
 
 
 @cli.command()
@@ -49,3 +53,11 @@ def update():
     """
     Update the project to the latest version of each template.
     """
+    pass
+
+
+@cli.command()
+@click.argument("path_or_url", type=str, required=True)
+def link():
+    """Link an existing project to a template or composition."""
+    pass
