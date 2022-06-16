@@ -7,9 +7,7 @@ from cookie_composer.composition import MergeStrategy
 from cookie_composer.exceptions import MergeError
 
 
-def merge_json_files(
-    new_file: Path, existing_file: Path, merge_strategy: MergeStrategy
-):
+def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: MergeStrategy):
     """
     Merge two json files into one.
 

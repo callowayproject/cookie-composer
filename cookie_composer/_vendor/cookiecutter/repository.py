@@ -54,9 +54,7 @@ def repository_has_cookiecutter_json(repo_directory):
     """
     repo_directory_exists = os.path.isdir(repo_directory)
 
-    repo_config_exists = os.path.isfile(
-        os.path.join(repo_directory, "cookiecutter.json")
-    )
+    repo_config_exists = os.path.isfile(os.path.join(repo_directory, "cookiecutter.json"))
     return repo_directory_exists and repo_config_exists
 
 
@@ -116,9 +114,7 @@ def determine_repo_dir(
         cleanup = False
 
     if directory:
-        repository_candidates = [
-            os.path.join(s, directory) for s in repository_candidates
-        ]
+        repository_candidates = [os.path.join(s, directory) for s in repository_candidates]
 
     for repo_candidate in repository_candidates:
         if repository_has_cookiecutter_json(repo_candidate):

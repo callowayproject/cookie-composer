@@ -89,9 +89,7 @@ class LayerConfig(BaseModel):
     overwrite_exclude: List[str] = Field(default_factory=list)
     """Paths or glob patterns to exclude from overwriting."""
 
-    merge_strategies: Dict[str, MergeStrategy] = Field(
-        default_factory=lambda: {"*": "do-not-merge"}
-    )
+    merge_strategies: Dict[str, MergeStrategy] = Field(default_factory=lambda: {"*": "do-not-merge"})
     """The method to merge specific paths or glob patterns."""
 
 
@@ -131,9 +129,7 @@ def is_composition_file(path_or_url: Union[str, Path]) -> bool:
     return Path(path_or_url).suffix in {".yaml", ".yml"}
 
 
-def read_composition(
-    path_or_url: Union[str, Path], destination: Union[str, Path]
-) -> ProjectComposition:
+def read_composition(path_or_url: Union[str, Path], destination: Union[str, Path]) -> ProjectComposition:
     """
     Read a JSON or YAML file and return a ProjectComposition.
 
@@ -156,9 +152,7 @@ def read_composition(
         with of as f:
             contents = list(yaml.load_all(f))
             templates = [LayerConfig(**doc) for doc in contents]
-        return ProjectComposition(
-            layers=templates, destination=Path(destination).expanduser().resolve()
-        )
+        return ProjectComposition(layers=templates, destination=Path(destination).expanduser().resolve())
     except (ValueError, FileNotFoundError) as e:
         raise MissingCompositionFileError(path_or_url) from e
 
