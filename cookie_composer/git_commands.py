@@ -1,8 +1,9 @@
 """Functions for using git."""
-from ctypes import Union
+from typing import Union
+
 from pathlib import Path
 
-from git import InvalidGitRepositoryError, Repo
+from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
 
@@ -22,7 +23,7 @@ def get_repo(project_dir: Union[str, Path]) -> Repo:
     """
     try:
         return Repo(str(project_dir))
-    except InvalidGitRepositoryError as e:
+    except (InvalidGitRepositoryError, NoSuchPathError) as e:
         raise GitError("Some cookie composer commands only work on git repositories.") from e
 
 
@@ -52,7 +53,10 @@ def remote_branch_exists(repo: Repo, branch_name: str, remote_name: str = "origi
     Returns:
         ``True`` if the branch exists in the remote repository
     """
-    return branch_name in repo.remotes[remote_name].refs
+    if remote_name in repo.remotes:
+        return branch_name in repo.remotes[remote_name].refs
+
+    return False
 
 
 def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin"):
@@ -62,12 +66,16 @@ def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin"):
             "Cookie composer cannot apply updates on an unclean git project."
             " Please make sure your git working tree is clean before proceeding."
         )
-    repo.remotes[0].fetch()
+    if len(repo.remotes) > 0:
+        repo.remotes[0].fetch()
     if branch_exists(repo, branch_name):
         repo.heads[branch_name].checkout()
     elif remote_branch_exists(repo, branch_name, remote_name):
         repo.create_head(branch_name, f"origin/{branch_name}")
         repo.heads[branch_name].checkout()
+
+    repo.create_head(branch_name)
+    repo.heads[branch_name].checkout()
 
 
 def branch_from_first_commit(repo: Repo, branch_name: str):
