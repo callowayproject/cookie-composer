@@ -82,14 +82,10 @@ def run_script(script_path, cwd="."):
         proc = subprocess.Popen(script_command, shell=run_thru_shell, cwd=cwd)  # nosec
         exit_status = proc.wait()
         if exit_status != EXIT_SUCCESS:
-            raise FailedHookException(
-                "Hook script failed (exit status: {})".format(exit_status)
-            )
+            raise FailedHookException("Hook script failed (exit status: {})".format(exit_status))
     except OSError as os_error:
         if os_error.errno == errno.ENOEXEC:
-            raise FailedHookException(
-                "Hook script failed, might be an empty file or missing a shebang"
-            )
+            raise FailedHookException("Hook script failed, might be an empty file or missing a shebang")
         raise FailedHookException("Hook script failed (error: {})".format(os_error))
 
 

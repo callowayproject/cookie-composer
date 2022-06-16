@@ -64,10 +64,7 @@ def unzip(zip_uri, is_url, clone_to_dir=".", no_input=False, password=None):
         # the archive. If it isn't a directory, there's a problem.
         first_filename = zip_file.namelist()[0]
         if not first_filename.endswith("/"):
-            raise InvalidZipRepository(
-                "Zip repository {} does not include "
-                "a top-level directory".format(zip_uri)
-            )
+            raise InvalidZipRepository("Zip repository {} does not include " "a top-level directory".format(zip_uri))
 
         # Construct the final target directory
         project_name = first_filename[:-1]
@@ -84,32 +81,22 @@ def unzip(zip_uri, is_url, clone_to_dir=".", no_input=False, password=None):
                 try:
                     zip_file.extractall(path=unzip_base, pwd=password.encode("utf-8"))
                 except RuntimeError:
-                    raise InvalidZipRepository(
-                        "Invalid password provided for protected repository"
-                    )
+                    raise InvalidZipRepository("Invalid password provided for protected repository")
             elif no_input:
-                raise InvalidZipRepository(
-                    "Unable to unlock password protected repository"
-                )
+                raise InvalidZipRepository("Unable to unlock password protected repository")
             else:
                 retry = 0
                 while retry is not None:
                     try:
                         password = read_repo_password("Repo password")
-                        zip_file.extractall(
-                            path=unzip_base, pwd=password.encode("utf-8")
-                        )
+                        zip_file.extractall(path=unzip_base, pwd=password.encode("utf-8"))
                         retry = None
                     except RuntimeError:
                         retry += 1
                         if retry == 3:
-                            raise InvalidZipRepository(
-                                "Invalid password provided for protected repository"
-                            )
+                            raise InvalidZipRepository("Invalid password provided for protected repository")
 
     except BadZipFile:
-        raise InvalidZipRepository(
-            "Zip repository {} is not a valid zip archive:".format(zip_uri)
-        )
+        raise InvalidZipRepository("Zip repository {} is not a valid zip archive:".format(zip_uri))
 
     return unzip_path

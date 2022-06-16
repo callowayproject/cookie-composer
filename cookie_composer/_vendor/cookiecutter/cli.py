@@ -36,8 +36,7 @@ def validate_extra_context(ctx, param, value):
     for s in value:
         if "=" not in s:
             raise click.BadParameter(
-                "EXTRA_CONTEXT should contain items of the form key=value; "
-                "'{}' doesn't match that form".format(s)
+                "EXTRA_CONTEXT should contain items of the form key=value; " "'{}' doesn't match that form".format(s)
             )
 
     # Convert tuple -- e.g.: ('program_name=foobar', 'startsecs=66')
@@ -50,18 +49,13 @@ def list_installed_templates(default_config, passed_config_file):
     config = get_user_config(passed_config_file, default_config)
     cookiecutter_folder = config.get("cookiecutters_dir")
     if not os.path.exists(cookiecutter_folder):
-        click.echo(
-            "Error: Cannot list installed templates. Folder does not exist: "
-            "{}".format(cookiecutter_folder)
-        )
+        click.echo("Error: Cannot list installed templates. Folder does not exist: " "{}".format(cookiecutter_folder))
         sys.exit(-1)
 
     template_names = [
         folder
         for folder in os.listdir(cookiecutter_folder)
-        if os.path.exists(
-            os.path.join(cookiecutter_folder, folder, "cookiecutter.json")
-        )
+        if os.path.exists(os.path.join(cookiecutter_folder, folder, "cookiecutter.json"))
     ]
     click.echo("{} installed templates: ".format(len(template_names)))
     for name in template_names:
@@ -87,9 +81,7 @@ def list_installed_templates(default_config, passed_config_file):
     help="Directory within repo that holds cookiecutter.json file "
     "for advanced repositories with multi templates in it",
 )
-@click.option(
-    "-v", "--verbose", is_flag=True, help="Print debug information", default=False
-)
+@click.option("-v", "--verbose", is_flag=True, help="Print debug information", default=False)
 @click.option(
     "--replay",
     is_flag=True,
@@ -121,9 +113,7 @@ def list_installed_templates(default_config, passed_config_file):
     type=click.Path(),
     help="Where to output the generated project dir into",
 )
-@click.option(
-    "--config-file", type=click.Path(), default=None, help="User configuration file"
-)
+@click.option("--config-file", type=click.Path(), default=None, help="User configuration file")
 @click.option(
     "--default-config",
     is_flag=True,
@@ -141,9 +131,7 @@ def list_installed_templates(default_config, passed_config_file):
     default="yes",
     help="Accept pre/post hooks",
 )
-@click.option(
-    "-l", "--list-installed", is_flag=True, help="List currently installed templates."
-)
+@click.option("-l", "--list-installed", is_flag=True, help="List currently installed templates.")
 def main(
     template,
     extra_context,
