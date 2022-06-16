@@ -56,3 +56,8 @@ repos:
     hooks:
       - id: interrogate
         exclude: (_vendor|test).*
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 6.6.2
+    hooks:
+      - id: pip-compile
+        files: ^requirements.*?\.(in|txt)$
