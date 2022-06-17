@@ -9,9 +9,9 @@ sys.path.insert(0, os.path.abspath(".."))
 
 import cookie_composer  # NOQA
 
-project = "bin-cookie_composer"
-copyright = f"{date.today():%Y}, C H Robinson"
-author = "Data Science Team"
+project = "Cookie Composer"
+author = "Corey Oordt"
+copyright = f"{date.today():%Y}, {author}"
 
 version = cookie_composer.__version__
 release = cookie_composer.__version__
@@ -56,15 +56,16 @@ intersphinx_mapping = {
 templates_path = ["_templates"]
 source_suffix = [".rst", ".md"]
 master_doc = "index"
-language = None
+language = "en"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 pygments_style = "sphinx"
 todo_include_todos = False
+primary_domain = "py"
 
 
 # -- Options for HTML output -------------------------------------------
 
-html_theme = "pydata_sphinx_theme"
+html_theme = "furo"
 html_static_path = ["_static"]
 html_css_files = [
     "css/custom.css",

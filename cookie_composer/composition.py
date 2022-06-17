@@ -112,7 +112,7 @@ class RenderedLayer(BaseModel):
 
     @root_validator(pre=True)
     def set_rendered_name(cls, values):
-        """Set the ``layer_name`` to the name of the rendered template directory."""
+        """Set the :attr:`~.RenderedLayer.layer_name`` to the name of the rendered template directory."""
         if "rendered_name" in values:
             return values
 
@@ -163,13 +163,13 @@ def is_composition_file(path_or_url: Union[str, Path]) -> bool:
 
 def read_composition(path_or_url: Union[str, Path]) -> Composition:
     """
-    Read a JSON or YAML file and return a Composition.
+    Read a YAML file and return a :class:`~.Composition`.
 
     Args:
         path_or_url: The location of the configuration file
 
     Returns:
-        A project composition
+        A composition
 
     Raises:
         MissingCompositionFileError: Raised when it can not access the configuration file.
@@ -219,7 +219,7 @@ def read_rendered_composition(path: Path) -> RenderedComposition:
 
 def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
     """
-    Write a JSON or YAML composition file.
+    Write a YAML composition file.
 
     Args:
         layers: The layers of the composition
@@ -254,7 +254,7 @@ def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
     """
     Return the merge strategy of the path based on the layer configured rules.
 
-    Files that are not mergable return ``DO_NOT_MERGE``
+    Files that are not mergable return :attr:`~cookie_composer.composition.DO_NOT_MERGE`
 
     Args:
         path: The file path to evaluate.

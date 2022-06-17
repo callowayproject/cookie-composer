@@ -1,4 +1,4 @@
-# cookie_composer's documentation
+# Cookie Composer
 
 ```{toctree}
 ---
@@ -6,9 +6,9 @@ maxdepth: 2
 caption: Contents
 ---
 Introduction <readme>
-usage
+composition-files
 cli
-api/index
+api
 contributing
 changelog
 ```

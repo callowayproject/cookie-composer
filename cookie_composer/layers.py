@@ -46,7 +46,7 @@ def render_layer(
     """
     Process one layer of the template composition.
 
-    Renders the template using cookiecutter
+    Renders the template using cookiecutter.
 
     Args:
         layer_config: The configuration of the layer to render
@@ -75,7 +75,7 @@ def render_layer(
         del full_context["_copy_without_render"]
 
     context = generate_context(
-        context_file=Path(layer_config.template) / "cookiecutter.json",
+        context_file=Path(repo_dir) / "cookiecutter.json",
         default_context=config_dict["default_context"],
         extra_context=full_context,
     )
@@ -137,7 +137,7 @@ def merge_layers(destination: Path, rendered_layer: RenderedLayer):
 
 def get_write_strategy(origin: Path, destination: Path, rendered_layer: RenderedLayer) -> WriteStrategy:
     """
-    Based on the layer_config rules, determine if we should overwrite an existin path.
+    Based on the layer_config rules, determine if we should overwrite an existing path.
 
     Args:
         origin: Path within the rendered layer that we are evaluating.

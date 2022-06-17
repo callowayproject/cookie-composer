@@ -1,5 +1,6 @@
 -r cookiecutter.txt
 
+aiohttp
 fsspec
 gitpython
 pydantic

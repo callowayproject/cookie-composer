@@ -20,7 +20,7 @@ The merging functions should look similar to the following:
 
 The function must write the file to destination.
 
-The function must wrap any errors into a MergeError and raise it.
+The function must wrap any errors into a :py:exc:`~cookie_composer.exceptions.MergeError` and raise it.
 """
 from typing import Callable, Dict
 
