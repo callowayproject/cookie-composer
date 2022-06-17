@@ -1,4 +1,4 @@
-.. rst-class:: h4 text-secondary
+.. rst-class:: subheading
 
 {{ fullname }}
 
