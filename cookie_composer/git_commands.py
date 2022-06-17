@@ -1,5 +1,5 @@
 """Functions for using git."""
-from typing import Union
+from typing import Optional, Union
 
 from pathlib import Path
 
@@ -8,12 +8,13 @@ from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 from cookie_composer.exceptions import GitError
 
 
-def get_repo(project_dir: Union[str, Path]) -> Repo:
+def get_repo(project_dir: Union[str, Path], search_parent_directories: bool = False) -> Repo:
     """
     Get the git Repo object for a directory.
 
     Args:
         project_dir: The directory containing the .git folder
+        search_parent_directories: if ``True``, all parent directories will be searched for a valid repo as well.
 
     Raises:
         GitError: If the directory is not a git repo
@@ -22,7 +23,7 @@ def get_repo(project_dir: Union[str, Path]) -> Repo:
         The GitPython Repo object
     """
     try:
-        return Repo(str(project_dir))
+        return Repo(str(project_dir), search_parent_directories=search_parent_directories)
     except (InvalidGitRepositoryError, NoSuchPathError) as e:
         raise GitError("Some cookie composer commands only work on git repositories.") from e
 
@@ -88,3 +89,22 @@ def branch_from_first_commit(repo: Repo, branch_name: str):
     first_commit = list(repo.iter_commits("HEAD", max_parents=0, max_count=1))[0]
     repo.create_head(branch_name, first_commit.hexsha)
     repo.heads[branch_name].checkout()
+
+
+def get_latest_template_commit(template_path: str) -> Optional[str]:
+    """
+    Get the hexsha of the latest commit on the template path.
+
+    If the path is not a git repository, it returns ``None``.
+
+    Args:
+        template_path: The path to the potentially-cloned template
+
+    Returns:
+        The hexsha of the latest commit or ``None``
+    """
+    try:
+        repo = get_repo(template_path, search_parent_directories=True)
+        return repo.head.commit.hexsha
+    except GitError:
+        return None
