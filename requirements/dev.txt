@@ -4,6 +4,12 @@
 #
 #    pip-compile --output-file=dev.txt dev.in
 #
+aiohttp==3.8.1
+    # via -r test.txt
+aiosignal==1.2.0
+    # via
+    #   -r test.txt
+    #   aiohttp
 alabaster==0.7.12
     # via
     #   -r docs.txt
@@ -14,9 +20,14 @@ arrow==1.2.2
     # via
     #   -r test.txt
     #   jinja2-time
+async-timeout==4.0.2
+    # via
+    #   -r test.txt
+    #   aiohttp
 attrs==21.4.0
     # via
     #   -r test.txt
+    #   aiohttp
     #   jsonschema
     #   pytest
 babel==2.10.1
@@ -50,6 +61,7 @@ charset-normalizer==2.0.12
     # via
     #   -r docs.txt
     #   -r test.txt
+    #   aiohttp
     #   requests
 click==8.1.3
     # via
@@ -85,6 +97,11 @@ filelock==3.7.1
     #   virtualenv
 flake8==4.0.1
     # via -r test.txt
+frozenlist==1.3.0
+    # via
+    #   -r test.txt
+    #   aiohttp
+    #   aiosignal
 fsspec==2022.5.0
     # via -r test.txt
 furo==2022.6.4.1
@@ -112,6 +129,7 @@ idna==3.3
     #   -r docs.txt
     #   -r test.txt
     #   requests
+    #   yarl
 imagesize==1.3.0
     # via
     #   -r docs.txt
@@ -162,6 +180,11 @@ mdurl==0.1.1
     #   markdown-it-py
 more-itertools==8.13.0
     # via generate-changelog
+multidict==6.0.2
+    # via
+    #   -r test.txt
+    #   aiohttp
+    #   yarl
 mypy-extensions==0.4.3
     # via
     #   -r test.txt
@@ -381,6 +404,10 @@ virtualenv==20.14.1
     #   pre-commit
 wheel==0.37.1
     # via pip-tools
+yarl==1.7.2
+    # via
+    #   -r test.txt
+    #   aiohttp
 zipp==3.8.0
     # via
     #   -r docs.txt

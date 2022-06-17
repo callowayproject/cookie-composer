@@ -6,7 +6,7 @@ outputs := $(objects:.in=.txt)
 all: $(outputs)
 
 %.txt: %.in
-	pip-compile --verbose --output-file $@ $<
+	pip-compile --quiet --output-file $@ $<
 
 prod.txt: cookiecutter.txt
 

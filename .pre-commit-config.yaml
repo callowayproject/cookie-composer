@@ -56,8 +56,13 @@ repos:
     hooks:
       - id: interrogate
         exclude: (_vendor|test).*
-  - repo: https://github.com/jazzband/pip-tools
-    rev: 6.6.2
+  - repo: local
     hooks:
-      - id: pip-compile
+      - id: check-dependencies
+        name: check-dependencies
+        language: python
+        entry: make -C requirements all
         files: ^requirements.*?\.(in|txt)$
+        pass_filenames: false
+        additional_dependencies:
+          - pip-tools

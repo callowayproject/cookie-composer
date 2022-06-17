@@ -75,7 +75,7 @@ def render_layer(
         del full_context["_copy_without_render"]
 
     context = generate_context(
-        context_file=Path(layer_config.template) / "cookiecutter.json",
+        context_file=Path(repo_dir) / "cookiecutter.json",
         default_context=config_dict["default_context"],
         extra_context=full_context,
     )
