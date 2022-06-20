@@ -38,14 +38,16 @@ def create(path_or_url: str, output_dir: Optional[Path]):
 @cli.command()
 @click.option("--no-input", is_flag=True)
 @click.argument("path_or_url", type=str, required=True)
-@click.argument("destination", type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path))
+@click.argument(
+    "destination", required=False, type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path)
+)
 def add(no_input: bool, path_or_url: str, destination: Optional[Path]):
     """Add a template or configuration to an existing project."""
     destination = destination or Path(".")
     try:
         add_cmd(path_or_url, destination, no_input=no_input)
     except GitError as e:
-        raise click.Abort(str(e))
+        raise click.UsageError(str(e))
 
 
 @cli.command()
