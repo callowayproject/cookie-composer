@@ -229,6 +229,8 @@ def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
     from ruamel.yaml import YAML
 
     yaml = YAML(typ="safe")
+    yaml.default_flow_style = False
+    yaml.indent(mapping=2, sequence=4, offset=2)
     of = fsspec.open(destination, mode="wt")
     dict_layers = [layer.dict() for layer in layers]
     with of as f:
