@@ -1,13 +1,18 @@
 """Command line setup."""
 from typing import Optional
 
+import logging
 from pathlib import Path
 
+import click_log
 import rich_click as click
 
 from cookie_composer.commands.add import add_cmd
 from cookie_composer.commands.create import create_cmd
 from cookie_composer.exceptions import GitError
+
+logger = logging.getLogger(__name__)
+click_log.basic_config(logger)
 
 
 @click.group()
@@ -17,6 +22,7 @@ def cli():
 
 
 @cli.command()
+@click_log.simple_verbosity_option(logger)
 @click.argument("path_or_url", type=str, required=True)
 @click.argument(
     "output_dir",
@@ -25,17 +31,12 @@ def cli():
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
 )
 def create(path_or_url: str, output_dir: Optional[Path]):
-    """
-    Create a project from a template or configuration.
-
-    Args:
-        path_or_url: The path or URL to the template or composition file
-        output_dir: Where to write the output
-    """
+    """Create a project from a template or configuration."""
     create_cmd(path_or_url, output_dir)
 
 
 @cli.command()
+@click_log.simple_verbosity_option(logger)
 @click.option("--no-input", is_flag=True)
 @click.argument("path_or_url", type=str, required=True)
 @click.argument(

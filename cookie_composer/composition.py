@@ -249,6 +249,7 @@ def write_rendered_composition(composition: RenderedComposition):
         layers.append(rendered_layer.layer)
 
     composition_file = composition.render_dir / composition.rendered_name / ".composition.yaml"
+    logger.debug(f"Writing rendered composition to {composition_file}")
     write_composition(layers, composition_file)
 
 

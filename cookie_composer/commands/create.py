@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+import logging
 from pathlib import Path
 
 from cookie_composer.composition import (
@@ -13,6 +14,8 @@ from cookie_composer.composition import (
     write_rendered_composition,
 )
 from cookie_composer.layers import render_layers
+
+logger = logging.getLogger(__name__)
 
 
 def create_cmd(
@@ -31,12 +34,14 @@ def create_cmd(
     Returns:
         The path to the generated project.
     """
-    output_dir = output_dir or Path(".")
+    output_dir = Path(output_dir).resolve() or Path().cwd().resolve()
     if is_composition_file(path_or_url):
         composition = read_composition(path_or_url)
+        logger.info(f"Rendering composition {path_or_url} to {output_dir}.")
     else:
         tmpl = LayerConfig(template=path_or_url)
         composition = Composition(layers=[tmpl], destination=output_dir)
+        logger.info(f"Rendering template {path_or_url} to {output_dir}.")
     rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input)
     rendered_composition = RenderedComposition(
         layers=rendered_layers,

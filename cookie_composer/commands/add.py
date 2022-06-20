@@ -1,6 +1,7 @@
 """The implementation of the add command."""
 from typing import Optional
 
+import logging
 from pathlib import Path
 
 from cookie_composer.composition import (
@@ -21,6 +22,8 @@ from cookie_composer.git_commands import (
 from cookie_composer.layers import render_layers
 from cookie_composer.utils import get_context_for_layer, get_template_name
 
+logger = logging.getLogger(__name__)
+
 
 def add_cmd(
     path_or_url: str,
@@ -40,7 +43,7 @@ def add_cmd(
         GitError: If the destination_dir is not a git repository
         ValueError: If there is not a .composition.yaml file in the destination directory
     """
-    destination_dir = destination_dir or Path(".")
+    destination_dir = Path(destination_dir).resolve() or Path().cwd().resolve()
     output_dir = destination_dir.parent
 
     # Read the project composition file
@@ -53,9 +56,11 @@ def add_cmd(
     # Read the additional composition
     if is_composition_file(path_or_url):
         addl_composition = read_composition(path_or_url)
+        logger.info(f"Adding composition {path_or_url} to {output_dir}.")
     else:
         tmpl = LayerConfig(template=path_or_url)
         addl_composition = Composition(layers=[tmpl])
+        logger.info(f"Adding template {path_or_url} to {output_dir}.")
 
     # Get the merged context for all layers
     initial_context = get_context_for_layer(proj_composition)
