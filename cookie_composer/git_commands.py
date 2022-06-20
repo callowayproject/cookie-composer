@@ -25,7 +25,10 @@ def get_repo(project_dir: Union[str, Path], search_parent_directories: bool = Fa
     try:
         return Repo(str(project_dir), search_parent_directories=search_parent_directories)
     except (InvalidGitRepositoryError, NoSuchPathError) as e:
-        raise GitError("Some cookie composer commands only work on git repositories.") from e
+        raise GitError(
+            "Some cookie composer commands only work on git repositories. "
+            "Please make the destination directory a git repo."
+        ) from e
 
 
 def branch_exists(repo: Repo, branch_name: str) -> bool:
