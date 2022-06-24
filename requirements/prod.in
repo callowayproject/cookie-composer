@@ -1,7 +1,6 @@
--r cookiecutter.txt
-
 aiohttp
 click-log
+cookiecutter>=2.0.0
 fsspec
 gitpython
 pydantic

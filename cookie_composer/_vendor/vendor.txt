@@ -1,1 +1,0 @@
-git+https://github.com/cookiecutter/cookiecutter.git@0b406256d2c0aa728f860692d57f49c0d2beb39d#egg=cookiecutter

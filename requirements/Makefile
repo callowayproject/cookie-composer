@@ -8,8 +8,6 @@ all: $(outputs)
 %.txt: %.in
 	pip-compile --quiet --output-file $@ $<
 
-prod.txt: cookiecutter.txt
-
 test.txt: prod.txt
 
 dev.txt: test.txt docs.txt
