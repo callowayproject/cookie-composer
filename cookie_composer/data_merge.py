@@ -2,6 +2,7 @@
 from typing import Any, Iterable
 
 import copy
+from collections import ChainMap, OrderedDict
 from functools import reduce
 
 
@@ -10,7 +11,7 @@ def deep_merge(*dicts) -> dict:
     Merges dicts deeply.
 
     Args:
-        dicts: List of dicts to merge with the first one the base
+        dicts: List of dicts to merge with the first one as the base
 
     Returns:
         dict: The merged dict
@@ -60,28 +61,25 @@ def comprehensive_merge(*args) -> Any:
 
     Returns:
         The merged data
-
-    Raises:
-        ValueError: If the values are not of the same type
     """
+    dict_types = (dict, OrderedDict)
+    iterable_types = (list, set, tuple)
 
     def merge_into(d1, d2):
-        if type(d1) != type(d2):
-            raise ValueError(f"Cannot merge {type(d2)} into {type(d1)}.")
+        if isinstance(d1, dict_types) and isinstance(d2, dict_types):
+            if isinstance(d1, OrderedDict) or isinstance(d2, OrderedDict):
+                d1 = OrderedDict(d1)
+                d2 = OrderedDict(d2)
 
-        if isinstance(d1, list):
-            return list(merge_iterables(d1, d2))
-        elif isinstance(d1, set):
-            return merge_iterables(d1, d2)
-        elif isinstance(d1, tuple):
-            return tuple(merge_iterables(d1, d2))
-        elif isinstance(d1, dict):
             for key in d2:
-                if key in d1:
-                    d1[key] = merge_into(d1[key], d2[key])
-                else:
-                    d1[key] = copy.deepcopy(d2[key])
+                d1[key] = merge_into(d1[key], d2[key]) if key in d1 else copy.deepcopy(d2[key])
             return d1
+        elif isinstance(d1, list) and isinstance(d2, iterable_types):
+            return list(merge_iterables(d1, d2))
+        elif isinstance(d1, set) and isinstance(d2, iterable_types):
+            return merge_iterables(d1, d2)
+        elif isinstance(d1, tuple) and isinstance(d2, iterable_types):
+            return tuple(merge_iterables(d1, d2))
         else:
             return copy.deepcopy(d2)
 
@@ -91,7 +89,20 @@ def comprehensive_merge(*args) -> Any:
         return reduce(merge_into, args, tuple())
     elif isinstance(args[0], set):
         return reduce(merge_into, args, set())
-    elif isinstance(args[0], dict):
+    elif isinstance(args[0], dict_types):
         return reduce(merge_into, args, {})
     else:
         return reduce(merge_into, args)
+
+
+class Context(ChainMap):
+    """Provides merging and convenence functions for managing contexts."""
+
+    @property
+    def is_empty(self) -> bool:
+        """The context has only one mapping and it is empty."""
+        return len(self.maps) == 1 and len(self.maps[0]) == 0
+
+    def flatten(self) -> dict:
+        """Comprehensively merge all the maps into a single mapping."""
+        return reduce(comprehensive_merge, self.maps, {})

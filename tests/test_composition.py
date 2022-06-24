@@ -6,9 +6,6 @@ from cookie_composer import composition
 from cookie_composer.composition import LayerConfig
 from cookie_composer.exceptions import MissingCompositionFileError
 
-# TODO: test bad info in the template composition
-# TODO: test missing info in the template composition
-
 
 def test_multiple_templates(fixtures_path):
     filepath = fixtures_path / "multi-template.yaml"

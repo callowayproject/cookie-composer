@@ -1,31 +1,38 @@
 """Layer management."""
-from typing import List, Mapping, Optional
+from typing import List, Optional
 
-import logging
 import os
 import shutil
 import tempfile
 from enum import Enum
 from pathlib import Path
 
+import structlog
+
+# from ._vendor.cookiecutter.config import get_user_config
+# from ._vendor.cookiecutter.generate import generate_context, generate_files
+# from ._vendor.cookiecutter.prompt import prompt_for_config
+# from ._vendor.cookiecutter.repository import determine_repo_dir
+# from ._vendor.cookiecutter.utils import rmtree
+from cookiecutter.config import get_user_config
+from cookiecutter.generate import generate_context, generate_files
+from cookiecutter.repository import determine_repo_dir
+from cookiecutter.utils import rmtree
+
+from cookie_composer.cc_overrides import prompt_for_config
 from cookie_composer.composition import (
     DO_NOT_MERGE,
     LayerConfig,
     RenderedLayer,
     get_merge_strategy,
 )
-from cookie_composer.data_merge import comprehensive_merge
+from cookie_composer.data_merge import Context
 from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
 
-from ._vendor.cookiecutter.config import get_user_config
-from ._vendor.cookiecutter.generate import generate_context, generate_files
-from ._vendor.cookiecutter.prompt import prompt_for_config
-from ._vendor.cookiecutter.repository import determine_repo_dir
-from ._vendor.cookiecutter.utils import rmtree
 from .git_commands import get_latest_template_commit
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class WriteStrategy(Enum):
@@ -84,7 +91,7 @@ def get_write_strategy(origin: Path, destination: Path, rendered_layer: Rendered
 
 
 def render_layer(
-    layer_config: LayerConfig, render_dir: Path, full_context: Mapping = None, accept_hooks: bool = True
+    layer_config: LayerConfig, render_dir: Path, full_context: Optional[Context] = None, accept_hooks: bool = True
 ) -> RenderedLayer:
     """
     Process one layer of the template composition.
@@ -100,36 +107,25 @@ def render_layer(
     Returns:
         The rendered layer information
     """
-    config_dict = get_user_config(config_file=None, default_config=False)
-
+    full_context = full_context or Context()
+    user_config = get_user_config(config_file=None, default_config=False)
     repo_dir, cleanup = determine_repo_dir(
         template=layer_config.template,
-        abbreviations=config_dict["abbreviations"],
-        clone_to_dir=config_dict["cookiecutters_dir"],
+        abbreviations=user_config["abbreviations"],
+        clone_to_dir=user_config["cookiecutters_dir"],
         checkout=layer_config.commit or layer_config.checkout,
         no_input=layer_config.no_input,
         password=layer_config.password,
         directory=layer_config.directory,
     )
-    # _copy_without_render is template-specific and fails if overridden
-    # So we are going to remove it from the "defaults" when generating the context
-    config_dict["default_context"].pop("_copy_without_render", None)
-    if full_context and "_copy_without_render" in full_context:
-        del full_context["_copy_without_render"]
-
-    context = generate_context(
-        context_file=Path(repo_dir) / "cookiecutter.json",
-        default_context=config_dict["default_context"],
-        extra_context=full_context,
-    )
-    context["cookiecutter"] = prompt_for_config(context, layer_config.no_input)
+    context = get_layer_context(layer_config, repo_dir, user_config, full_context)
 
     layer_config.commit = latest_commit = get_latest_template_commit(repo_dir)
 
     # call cookiecutter's generate files function
     generate_files(
         repo_dir=repo_dir,
-        context=context,
+        context={"cookiecutter": context.flatten()},
         overwrite_if_exists=False,
         output_dir=str(render_dir),
         accept_hooks=accept_hooks,
@@ -138,7 +134,7 @@ def render_layer(
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
-        new_context=context["cookiecutter"],
+        new_context=context.maps[0],
         latest_commit=latest_commit,
     )
 
@@ -146,6 +142,39 @@ def render_layer(
         rmtree(repo_dir)
 
     return rendered_layer
+
+
+def get_layer_context(
+    layer_config: LayerConfig, repo_dir: str, user_config: dict, full_context: Optional[Context] = None
+) -> Context:
+    """
+    Get the context for a layer pre-rendering values using previous layers contexts as defaults.
+
+    Args:
+        layer_config: The configuration for this layer
+        repo_dir: The directory containing the template's ``cookiecutter.json`` file
+        user_config: The user's cookiecutter configuration
+        full_context: A full context from previous layers.
+
+    Returns:
+        The context for rendering the layer
+    """
+    full_context = full_context or Context()
+
+    # _copy_without_render is template-specific and fails if overridden
+    # So we are going to remove it from the "defaults" when generating the context
+    user_config["default_context"].pop("_copy_without_render", None)
+    # if full_context and "_copy_without_render" in full_context:
+    #     del full_context["_copy_without_render"]
+
+    # This pulls in the template context and overrides the values with the user config defaults
+    #   and the defaults specified in the layer.
+    prompts = generate_context(
+        context_file=Path(repo_dir) / "cookiecutter.json",
+        default_context=user_config["default_context"],
+        extra_context=layer_config.context or {},
+    )
+    return prompt_for_config(prompts["cookiecutter"], full_context, layer_config.no_input)
 
 
 def render_layers(
@@ -168,21 +197,18 @@ def render_layers(
     Returns:
         A list of the rendered layer information
     """
-    full_context = initial_context or {}
+    full_context = Context(initial_context) if initial_context else Context()
     rendered_layers = []
 
     for layer_config in layers:
         layer_config.no_input = True if no_input else layer_config.no_input
-        if layer_config.context:
-            full_context = comprehensive_merge(full_context, layer_config.context)
-
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, render_dir, full_context, accept_hooks)
             merge_layers(destination, rendered_layer)
         rendered_layer.layer.commit = rendered_layer.latest_commit
         rendered_layer.layer.context = rendered_layer.new_context
         rendered_layers.append(rendered_layer)
-        full_context = comprehensive_merge(full_context, rendered_layer.new_context)
+        full_context = full_context.new_child(rendered_layer.new_context)
 
     return rendered_layers
 

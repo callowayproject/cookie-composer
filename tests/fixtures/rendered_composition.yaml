@@ -1,0 +1,95 @@
+checkout: null
+commit: 3391f60471939dd412e93e9853e3328e7a5a8c44
+context:
+  _copy_without_render:
+  - .github/**/*.jinja
+  _dev_requirements:
+    bump2version: '>=1.0.1'
+    generate-changelog: '>=0.7.6'
+    git-fame: '>=1.12.2'
+    pip-tools: ''
+  _prod_requirements:
+    environs: '>=9.3.5'
+  _test_requirements:
+    black: '>=19.10b0'
+    coverage: '>=6.1.2'
+    flake8: '>=4.0.1'
+    pre-commit: '>=2.15.0'
+    pytest: '>=6.0.0'
+    pytest-cov: '>=3.0.0'
+  author: Who am I?
+  email: whoami@existential-crisis.doom
+  friendly_name: My Test Project
+  github_user: whoami
+  project_name: my-test-project
+  project_short_description: ''
+  version: 0.1.0
+directory: cookiecutter-boilerplate
+merge_strategies:
+  '*.json': comprehensive
+  '*.yaml': comprehensive
+  '*.yml': comprehensive
+no_input: false
+overwrite: []
+overwrite_exclude: []
+password: null
+skip_generation: []
+skip_hooks: false
+skip_if_file_exists: true
+template: https://github.com/coordt/cookiecomposer-templates
+---
+checkout: null
+commit: 3391f60471939dd412e93e9853e3328e7a5a8c44
+context:
+  friendly_name: My Test Project
+  project_name: my-test-project
+  project_short_description: ''
+  project_slug: my_test_project
+  version: 0.1.0
+directory: cookiecutter-package
+merge_strategies:
+  '*.json': comprehensive
+  '*.yaml': comprehensive
+  '*.yml': comprehensive
+no_input: false
+overwrite: []
+overwrite_exclude: []
+password: null
+skip_generation: []
+skip_hooks: false
+skip_if_file_exists: true
+template: https://github.com/coordt/cookiecomposer-templates
+---
+checkout: null
+commit: 3391f60471939dd412e93e9853e3328e7a5a8c44
+context:
+  _copy_without_render:
+  - docsrc/**/*.rst
+  _dev_requirements: {}
+  _docs_requirements:
+    Sphinx: '>=4.3.0'
+    furo: ''
+    ghp-import: ''
+    linkify-it-py: ''
+    myst-parser: ''
+    sphinx-autodoc-typehints: ''
+    sphinx-click: ''
+    sphinx-copybutton: ''
+  _prod_requirements: {}
+  friendly_name: My Test Project
+  github_user: whoami
+  project_name: my-test-project
+  project_slug: my_test_project
+directory: cookiecutter-docs
+merge_strategies:
+  '*.json': comprehensive
+  '*.yaml': comprehensive
+  '*.yml': comprehensive
+no_input: false
+overwrite: []
+overwrite_exclude: []
+password: null
+skip_generation: []
+skip_hooks: false
+skip_if_file_exists: true
+template: https://github.com/coordt/cookiecomposer-templates

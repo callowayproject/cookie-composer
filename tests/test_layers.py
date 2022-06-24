@@ -2,7 +2,10 @@
 import json
 import os
 import shutil
+from collections import OrderedDict
 from pathlib import Path
+
+from cookiecutter.config import get_user_config
 
 from cookie_composer import layers
 from cookie_composer.composition import (
@@ -12,7 +15,7 @@ from cookie_composer.composition import (
     RenderedLayer,
     read_composition,
 )
-from cookie_composer.data_merge import comprehensive_merge
+from cookie_composer.data_merge import Context, comprehensive_merge
 from cookie_composer.git_commands import get_latest_template_commit
 
 
@@ -22,6 +25,7 @@ def test_render_layer(fixtures_path, tmp_path):
     rendered_layer = layers.render_layer(layer_conf, tmp_path)
     expected_context = json.loads(Path(fixtures_path / "template1/cookiecutter.json").read_text())
     expected_context["repo_name"] = "fake-project-template"
+    expected_context["repo_slug"] = "fake-project-template"
     expected = RenderedLayer(
         layer=layer_conf,
         location=tmp_path,
@@ -154,15 +158,17 @@ def test_merge_layers(tmp_path, fixtures_path):
 
 def test_render_layers(fixtures_path, tmp_path):
     """Render layers generates a list of rendered layer objects."""
-    filepath = fixtures_path / "multi-template.yaml"
-    comp = read_composition(filepath)
+    tmpl_layers = [
+        LayerConfig(template=str(fixtures_path / "template1")),
+        LayerConfig(template=str(fixtures_path / "template2")),
+    ]
     context1 = json.loads((fixtures_path / "template1" / "cookiecutter.json").read_text())
     context2 = json.loads((fixtures_path / "template2" / "cookiecutter.json").read_text())
     full_context = comprehensive_merge(context1, context2)
 
-    rendered_layers = layers.render_layers(comp.layers, tmp_path, full_context, no_input=True)
+    rendered_layers = layers.render_layers(tmpl_layers, tmp_path, None, no_input=True)
     rendered_project = tmp_path / rendered_layers[0].rendered_name
-    rendered_items = set([item.name for item in os.scandir(rendered_project)])
+    rendered_items = {item.name for item in os.scandir(rendered_project)}
 
     assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt"}
 
@@ -188,6 +194,7 @@ def test_render_layer_git_template(fixtures_path, tmp_path):
     rendered_layer = layers.render_layer(layer_conf, render_dir)
     expected_context = json.loads(Path(fixtures_path / "template1/cookiecutter.json").read_text())
     expected_context["repo_name"] = "fake-project-template"
+    expected_context["repo_slug"] = "fake-project-template"
     expected = RenderedLayer(
         layer=layer_conf,
         location=render_dir,
@@ -198,3 +205,54 @@ def test_render_layer_git_template(fixtures_path, tmp_path):
     assert rendered_layer.latest_commit == latest_sha
     assert rendered_layer.layer.commit == latest_sha
     assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {"README.md", "requirements.txt"}
+
+
+def test_get_layer_context(fixtures_path):
+    repo_dir = str(fixtures_path / "template1")
+    layer_conf = LayerConfig(template=repo_dir, no_input=True)
+    user_config = get_user_config(config_file=None, default_config=False)
+
+    context = layers.get_layer_context(layer_conf, repo_dir, user_config)
+    assert context == Context(
+        dict(
+            [
+                ("project_name", "Fake Project Template"),
+                ("repo_name", "fake-project-template"),
+                ("repo_slug", "fake-project-template"),
+                ("_requirements", OrderedDict([("foo", ""), ("bar", ">=5.0.0")])),
+            ]
+        )
+    )
+
+
+def test_get_layer_context_with_extra(fixtures_path):
+    repo_dir = str(fixtures_path / "template2")
+    layer_conf = LayerConfig(
+        template=repo_dir, context={"project_slug": "{{ cookiecutter.repo_slug }}"}, no_input=True
+    )
+    user_config = get_user_config(config_file=None, default_config=False)
+    full_context = Context(
+        {
+            "project_name": "Fake Project Template2",
+            "repo_name": "fake-project-template2",
+            "repo_slug": "fake-project-template-two",
+            "_requirements": {"foo": "", "bar": ">=5.0.0"},
+        }
+    )
+    context = layers.get_layer_context(layer_conf, repo_dir, user_config, full_context)
+
+    assert context == Context(
+        {
+            "project_name": "Fake Project Template2",
+            "repo_name": "fake-project-template2",
+            "project_slug": "fake-project-template-two",
+            "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
+            "lower_project_name": "fake project template2",
+        },
+        {
+            "project_name": "Fake Project Template2",
+            "repo_name": "fake-project-template2",
+            "repo_slug": "fake-project-template-two",
+            "_requirements": {"foo": "", "bar": ">=5.0.0"},
+        },
+    )

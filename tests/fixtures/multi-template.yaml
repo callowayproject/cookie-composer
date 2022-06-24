@@ -1,3 +1,5 @@
 template: tests/fixtures/template1
 ---
 template: tests/fixtures/template2
+context:
+  project_slug: "{{ cookiecutter.repo_slug }}"

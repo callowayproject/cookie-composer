@@ -1,6 +1,8 @@
 """Test the merge_files.helpers functions."""
 from typing import Any
 
+from collections import OrderedDict
+
 import pytest
 from pytest import param
 
@@ -55,6 +57,16 @@ def test_deepmerge(dict_list: list, expected: dict):
             id="dict 2 iterable merges with dict 1 iterable",
         ),
         param([1, 2], 2, id="scalar 2 overwrites scalar 1"),
+        param(
+            [OrderedDict({"first": 1, "second": 2}), {"second": "two", "third": 3}],
+            OrderedDict({"first": 1, "second": "two", "third": 3}),
+            id="dict into ordered dict",
+        ),
+        param(
+            [{"first": 1, "second": 2}, OrderedDict({"third": 3})],
+            OrderedDict({"first": 1, "second": 2, "third": 3}),
+            id="ordered dict into dict",
+        ),
     ],
 )
 def test_comprehensive_merge(args: list, expected: Any):
@@ -64,9 +76,35 @@ def test_comprehensive_merge(args: list, expected: Any):
     assert data_merge.comprehensive_merge(*args) == expected
 
 
-def test_comprehensive_merge_bad_types():
-    """
-    Make sure it raises an error if the types are not the same.
-    """
-    with pytest.raises(ValueError):
-        data_merge.comprehensive_merge([1, 2], (2, 3))
+def test_context_flatten():
+    """Should return a merged dict."""
+    context = data_merge.Context(
+        {
+            "project_name": "Fake Project Template2",
+            "repo_name": "fake-project-template2",
+            "project_slug": "fake-project-template-two",
+            "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
+            "lower_project_name": "fake project template2",
+        },
+        {
+            "project_name": "Fake Project Template2",
+            "repo_name": "fake-project-template2",
+            "repo_slug": "fake-project-template-two",
+            "_requirements": {"foo": "", "bar": ">=5.0.0"},
+        },
+    )
+    expected = {
+        "project_name": "Fake Project Template2",
+        "repo_name": "fake-project-template2",
+        "project_slug": "fake-project-template-two",
+        "repo_slug": "fake-project-template-two",
+        "_requirements": OrderedDict(
+            [
+                ("bar", ">=5.0.0"),
+                ("baz", ""),
+                ("foo", ""),
+            ]
+        ),
+        "lower_project_name": "fake project template2",
+    }
+    assert context.flatten() == expected
