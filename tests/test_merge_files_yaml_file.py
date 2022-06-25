@@ -108,6 +108,4 @@ def test_bad_strategy(tmp_path, fixtures_path):
     new_file = fixtures_path / "new.yaml"
 
     with pytest.raises(MergeError):
-        print(f"{new_file=}")
-        print(f"{existing_file=}")
         yaml_file.merge_yaml_files(new_file, existing_file, "not-a-stragegy")
