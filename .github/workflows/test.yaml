@@ -36,7 +36,7 @@ jobs:
         pip install -r requirements/test.txt
     - name: Test with pytest
       run: |
-        pytest --no-cov
+        pytest
         coverage lcov
     - name: Coveralls Upload
       uses: coverallsapp/github-action@master
