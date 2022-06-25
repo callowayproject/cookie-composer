@@ -1,5 +1,5 @@
 """This overrides the default cookie cutter environment."""
-from typing import Any
+from typing import Any, List
 
 import json
 
@@ -53,7 +53,7 @@ class CustomStrictEnvironment(StrictEnvironment):
             del self.extensions["cookiecutter.extensions.JsonifyExtension"]
         self.add_extension("cookie_composer.cc_overrides.JsonifyContextExtension")
 
-    def _read_extensions(self, context) -> list[str]:
+    def _read_extensions(self, context) -> List[str]:
         """
         Return list of extensions as str to be passed on to the Jinja2 env.
 
