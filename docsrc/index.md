@@ -1,12 +1,13 @@
-# Cookie Composer
+```{include} ../README.md
+```
 
 ```{toctree}
 ---
-maxdepth: 2
-caption: Contents
+hidden:
 ---
-Introduction <readme>
-composition-files
+installation
+tutorial/index
+topic-guides/index
 cli
 api
 contributing

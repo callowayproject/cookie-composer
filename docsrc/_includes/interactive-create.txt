@@ -1,0 +1,9 @@
+$ cookie-composer create https://raw.githubusercontent.com/coordt/cookiecomposer-templates/master/package-composition.yaml
+project_name [python-boilerplate]: my-test-project
+project_slug [my_test_project]:
+friendly_name [My Test Project]:
+project_short_description []:
+version [0.1.0]:
+author [Who am I?]:
+email [whoami@existential-crisis.doom]:
+github_user [whoami]:
