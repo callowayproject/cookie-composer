@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 (2022-06-26)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.2.1...0.2.2)
+
+### New
+
+- Added badges to the readme. [9fdcad0](https://github.com/coordt/cookie-composer/commit/9fdcad099883c532f990acb2afbdd10118db4476)
+    
+
 ## 0.2.1 (2022-06-26)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.2.0...0.2.1)
 
