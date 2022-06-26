@@ -14,6 +14,8 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==21.4.0
     # via aiohttp
+backports-shutil-copytree==0.0.0.2
+    # via -r prod.in
 binaryornot==0.4.4
     # via cookiecutter
 certifi==2022.5.18.1

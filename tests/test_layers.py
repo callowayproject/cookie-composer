@@ -1,9 +1,10 @@
 """Test layer rendering."""
 import json
 import os
-import shutil
 from collections import OrderedDict
+from inspect import signature
 from pathlib import Path
+from shutil import copytree
 
 from cookiecutter.config import get_user_config
 
@@ -13,10 +14,12 @@ from cookie_composer.composition import (
     OVERWRITE,
     LayerConfig,
     RenderedLayer,
-    read_composition,
 )
 from cookie_composer.data_merge import Context, comprehensive_merge
 from cookie_composer.git_commands import get_latest_template_commit
+
+if "dirs_exist_ok" not in signature(copytree).parameters:
+    from backports.shutil_copytree import copytree
 
 
 def test_render_layer(fixtures_path, tmp_path):
@@ -125,7 +128,7 @@ def test_merge_layers(tmp_path, fixtures_path):
     """Test merging layers together."""
     # copy rendered1 layer to temp dir
     rendered1 = fixtures_path / "rendered1"
-    rendered_layer_path = shutil.copytree(rendered1, tmp_path, dirs_exist_ok=True)
+    rendered_layer_path = copytree(rendered1, tmp_path, dirs_exist_ok=True)
     context1 = json.loads((rendered1 / "context.json").read_text())
 
     # create a rendered layer object for rendered2
@@ -180,7 +183,7 @@ def test_render_layer_git_template(fixtures_path, tmp_path):
     from git import Actor, Repo
 
     template_path = fixtures_path / "template1"
-    git_tmpl_path = shutil.copytree(template_path, tmp_path / "template1")
+    git_tmpl_path = copytree(template_path, tmp_path / "template1")
     repo = Repo.init(str(git_tmpl_path))
     repo.git.add(".")
     repo.index.commit(

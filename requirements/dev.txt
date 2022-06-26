@@ -33,6 +33,8 @@ babel==2.10.1
     # via
     #   -r docs.txt
     #   sphinx
+backports-shutil-copytree==0.0.0.2
+    # via -r test.txt
 beautifulsoup4==4.11.1
     # via
     #   -r docs.txt

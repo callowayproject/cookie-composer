@@ -1,19 +1,13 @@
 """Layer management."""
 from typing import List, Optional
 
+import logging
 import os
 import shutil
 import tempfile
 from enum import Enum
 from pathlib import Path
 
-import structlog
-
-# from ._vendor.cookiecutter.config import get_user_config
-# from ._vendor.cookiecutter.generate import generate_context, generate_files
-# from ._vendor.cookiecutter.prompt import prompt_for_config
-# from ._vendor.cookiecutter.repository import determine_repo_dir
-# from ._vendor.cookiecutter.utils import rmtree
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.repository import determine_repo_dir
@@ -32,7 +26,7 @@ from cookie_composer.merge_files import MERGE_FUNCTIONS
 
 from .git_commands import get_latest_template_commit
 
-logger = structlog.get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class WriteStrategy(Enum):
