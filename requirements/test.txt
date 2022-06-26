@@ -23,6 +23,8 @@ attrs==21.4.0
     #   -r prod.txt
     #   aiohttp
     #   pytest
+backports-shutil-copytree==0.0.0.2
+    # via -r prod.txt
 binaryornot==0.4.4
     # via
     #   -r prod.txt
