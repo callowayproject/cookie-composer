@@ -1,5 +1,21 @@
 # Cookie Composer
 
+<!-- start-badges -->
+
+[![PyPI](https://img.shields.io/pypi/v/cookie-composer)][pypi_]
+[![Status](https://img.shields.io/pypi/status/cookie-composer)][status]
+[![Python Version](https://img.shields.io/pypi/pyversions/cookie-composer)][python version]
+[![License](https://img.shields.io/pypi/l/cookie-composer)][license]
+[![Coverage Status](https://coveralls.io/repos/github/coordt/cookie-composer/badge.svg?branch=master)][coveralls]
+
+[pypi_]: https://pypi.org/project/{{cookiecutter.project_name}}/
+[status]: https://pypi.org/project/{{cookiecutter.project_name}}/
+[python version]: https://pypi.org/project/{{cookiecutter.project_name}}
+[license]: https://github.com/{{cookiecutter.github_user}}/{{cookiecutter.project_name}}/blob/main/LICENSE
+[coveralls]: https://coveralls.io/github/coordt/cookie-composer?branch=master
+
+<!-- end-badges -->
+
 Cookie composer builds on the [cookie cutter](https://github.com/cookiecutter/cookiecutter) project to generate projects based on one or more cookiecutter templates.
 
 ## Goals
