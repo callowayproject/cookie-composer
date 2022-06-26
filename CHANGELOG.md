@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.2.0 (2022-06-26)
-[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.1.0...HEAD)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.1.0...0.2.0)
 
 ### Fixes
 
