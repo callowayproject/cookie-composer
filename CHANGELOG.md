@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 (2022-06-26)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.2.0...0.2.1)
+
+### Fixes
+
+- Fixed minor issues with packaging tools. [d0f49d4](https://github.com/coordt/cookie-composer/commit/d0f49d42854410b86db38f019f4b2e287d260ccb)
+    
+
 ## 0.2.0 (2022-06-26)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.1.0...0.2.0)
 
