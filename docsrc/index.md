@@ -1,4 +1,9 @@
+# Cookie composer
+
 ```{include} ../README.md
+---
+start-after: <!-- end-badges -->
+---
 ```
 
 ```{toctree}
