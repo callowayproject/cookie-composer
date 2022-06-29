@@ -6,4 +6,5 @@ flake8>=4.0.1
 pre-commit>=2.15.0
 pytest-cov>=3.0.0
 pytest-env
+pytest-mock
 pytest>=6.0.0

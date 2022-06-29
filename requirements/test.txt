@@ -148,9 +148,12 @@ pytest==7.1.2
     #   -r test.in
     #   pytest-cov
     #   pytest-env
+    #   pytest-mock
 pytest-cov==3.0.0
     # via -r test.in
 pytest-env==0.6.2
+    # via -r test.in
+pytest-mock==3.8.1
     # via -r test.in
 python-dateutil==2.8.2
     # via

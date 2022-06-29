@@ -260,9 +260,12 @@ pytest==7.1.2
     #   -r test.txt
     #   pytest-cov
     #   pytest-env
+    #   pytest-mock
 pytest-cov==3.0.0
     # via -r test.txt
 pytest-env==0.6.2
+    # via -r test.txt
+pytest-mock==3.8.1
     # via -r test.txt
 python-dateutil==2.8.2
     # via
