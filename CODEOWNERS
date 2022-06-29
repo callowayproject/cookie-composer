@@ -79,6 +79,7 @@ tests/fixtures/multi-template.yaml coreyoordt@gmail.com
 tests/fixtures/new.json coreyoordt@gmail.com
 tests/fixtures/new.yaml coreyoordt@gmail.com
 tests/fixtures/rendered1/context.json coreyoordt@gmail.com
+tests/fixtures/rendered1/rendered-composition.yaml coreyoordt@gmail.com
 tests/fixtures/rendered1/testproject/README.md coreyoordt@gmail.com
 tests/fixtures/rendered1/testproject/dontmerge.json coreyoordt@gmail.com
 tests/fixtures/rendered1/testproject/merge.yaml coreyoordt@gmail.com
@@ -96,6 +97,8 @@ tests/fixtures/template1/{{cookiecutter.repo_name}}/requirements.txt coreyoordt@
 tests/fixtures/template2/cookiecutter.json coreyoordt@gmail.com
 tests/fixtures/template2/{{cookiecutter.repo_name}}/ABOUT.md coreyoordt@gmail.com
 tests/fixtures/template2/{{cookiecutter.repo_name}}/requirements.txt coreyoordt@gmail.com 66853113+pre-commit-ci[bot]@users.noreply.github.com
+tests/test_cc_overrides.py coreyoordt@gmail.com
+tests/test_commands/test_add.py coreyoordt@gmail.com
 tests/test_commands/test_create.py coreyoordt@gmail.com
 tests/test_composition.py coreyoordt@gmail.com
 tests/test_git_commands.py coreyoordt@gmail.com

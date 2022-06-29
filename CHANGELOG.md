@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0 (2022-06-29)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.2.2...0.3.0)
+
+### Fixes
+
+- Fixed metadata's long description content type. [99470e9](https://github.com/coordt/cookie-composer/commit/99470e936dc440012d8542cd590853836a6454b6)
+    
+### Other
+
+- Created tests for the add command. [358e189](https://github.com/coordt/cookie-composer/commit/358e189020fead21646397e56399e920e85a7ac2)
+    
+### Updates
+
+- Updated cc_override's tests. [5388df7](https://github.com/coordt/cookie-composer/commit/5388df7cb4abe6f460a6f4ddd71f24cb9b02012f)
+    
+
 ## 0.2.2 (2022-06-26)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.2.1...0.2.2)
 
