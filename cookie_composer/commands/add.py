@@ -68,7 +68,7 @@ def add_cmd(
     # Make sure the destination directory is a git repository
     repo = get_repo(destination_dir)
 
-    # Create and check out a new branch named ... figure out branch update/add naming conventions
+    # Create and check out a new branch
     tmpl_name = get_template_name(path_or_url)
     branch_name = f"add_layer_{tmpl_name}"
     if branch_exists(repo, branch_name) or remote_branch_exists(repo, branch_name):

@@ -184,7 +184,7 @@ def read_composition(path_or_url: Union[str, Path]) -> Composition:
             contents = list(yaml.load_all(f))
             templates = [LayerConfig(**doc) for doc in contents]
         return Composition(layers=templates)
-    except (ValueError, FileNotFoundError) as e:
+    except FileNotFoundError as e:
         raise MissingCompositionFileError(path_or_url) from e
 
 
@@ -244,10 +244,7 @@ def write_rendered_composition(composition: RenderedComposition):
     Args:
         composition: The rendered composition object to export
     """
-    layers = []
-    for rendered_layer in composition.layers:
-        layers.append(rendered_layer.layer)
-
+    layers = [rendered_layer.layer for rendered_layer in composition.layers]
     composition_file = composition.render_dir / composition.rendered_name / ".composition.yaml"
     logger.debug(f"Writing rendered composition to {composition_file}")
     write_composition(layers, composition_file)

@@ -1,0 +1,20 @@
+checkout: null
+commit: 5388df7cb4abe6f460a6f4ddd71f24cb9b02012f
+context:
+  _requirements:
+    bar: '>=5.0.0'
+    foo: ''
+  project_name: Fake Project Template
+  repo_name: fake-project-template
+  repo_slug: fake-project-template
+directory: null
+merge_strategies:
+  '*': do-not-merge
+no_input: true
+overwrite: []
+overwrite_exclude: []
+password: null
+skip_generation: []
+skip_hooks: false
+skip_if_file_exists: true
+template: /tests/fixtures/template1
