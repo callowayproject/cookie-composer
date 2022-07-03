@@ -46,9 +46,7 @@ class LayerConfig(BaseModel):
     """Directory within a git repository template that holds the cookiecutter.json file."""
 
     checkout: Optional[str]
-    """The branch, tag or commit to use if template is a git repository.
-
-    Also used for updating projects."""
+    """The branch, tag or commit to use if template is a git repository."""
 
     password: Optional[str]
     """The password to use if template is a password-protected Zip archive."""
@@ -90,6 +88,13 @@ class LayerConfig(BaseModel):
 
     merge_strategies: Dict[str, str] = Field(default_factory=lambda: {"*": DO_NOT_MERGE})
     """The method to merge specific paths or glob patterns."""
+
+    @property
+    def layer_name(self) -> str:
+        """The name of the template layer."""
+        from cookie_composer.utils import get_template_name
+
+        return get_template_name(self.template, self.directory, self.checkout)
 
 
 class RenderedLayer(BaseModel):
@@ -146,6 +151,11 @@ class RenderedComposition(BaseModel):
 
     rendered_name: str
     """The name of the rendered project."""
+
+    @property
+    def layer_names(self) -> List[str]:
+        """Return a list of the names of all the layers."""
+        return [x.layer.layer_name for x in self.layers]
 
 
 def is_composition_file(path_or_url: Union[str, Path]) -> bool:
