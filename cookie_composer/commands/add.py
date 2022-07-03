@@ -38,7 +38,6 @@ def add_cmd(
         destination_dir: The project directory to add the layer to
         no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
 
-
     Raises:
         GitError: If the destination_dir is not a git repository
         ValueError: If there is not a .composition.yaml file in the destination directory

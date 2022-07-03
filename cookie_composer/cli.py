@@ -48,7 +48,7 @@ def add(no_input: bool, path_or_url: str, destination: Optional[Path]):
     try:
         add_cmd(path_or_url, destination, no_input=no_input)
     except GitError as e:
-        raise click.UsageError(str(e))
+        raise click.UsageError(str(e)) from e
 
 
 @cli.command()
