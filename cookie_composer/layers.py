@@ -199,6 +199,7 @@ def render_layers(
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, render_dir, full_context, accept_hooks)
             merge_layers(destination, rendered_layer)
+        rendered_layer.location = destination
         rendered_layer.layer.commit = rendered_layer.latest_commit
         rendered_layer.layer.context = rendered_layer.new_context
         rendered_layers.append(rendered_layer)
