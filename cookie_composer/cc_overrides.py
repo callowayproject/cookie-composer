@@ -146,6 +146,6 @@ def prompt_for_config(prompts: dict, existing_config: Context, no_input=False) -
                 context[key] = val
         except UndefinedError as err:
             msg = f"Unable to render variable '{key}'"
-            raise UndefinedVariableInTemplate(msg, err, context)
+            raise UndefinedVariableInTemplate(msg, err, context) from err
 
     return context
