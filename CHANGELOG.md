@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.4.0 (2022-09-06)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.3.0...0.4.0)
+
+### New
+
+- Added subset of cookiecutter options to CLI. [a66f17a](https://github.com/coordt/cookie-composer/commit/a66f17a0471f7178742f9d8d80010bb8d6628cac)
+    
+- Added documentation images. [86113dc](https://github.com/coordt/cookie-composer/commit/86113dcb19588ede45cfedcebda7f6e840c3b652)
+    
+- Added template layer updating. [20c6fe3](https://github.com/coordt/cookie-composer/commit/20c6fe326955deb3514420abb12d2bfaef7353a7)
+    
+- Added layer naming convention. [5e61312](https://github.com/coordt/cookie-composer/commit/5e613121130a640ff6721fec322a9a948cfa7a1e)
+    
+### Other
+
+- [pre-commit.ci] pre-commit autoupdate. [e516a18](https://github.com/coordt/cookie-composer/commit/e516a181e4a3ebe3d3c93800ef8a059125494d82)
+    
+  **updates:** - [github.com/PyCQA/flake8: 4.0.1 → 5.0.4](https://github.com/PyCQA/flake8/compare/4.0.1...5.0.4)
+
+- [pre-commit.ci] pre-commit autoupdate. [3e6f695](https://github.com/coordt/cookie-composer/commit/3e6f695a3126c52beec1a1bcd3f39e4df09cc2ee)
+    
+  **updates:** - [github.com/psf/black: 22.3.0 → 22.6.0](https://github.com/psf/black/compare/22.3.0...22.6.0)
+
+### Updates
+
+- Updated documentation configuration. [a4c9652](https://github.com/coordt/cookie-composer/commit/a4c9652625f8e42df722f046f13a2f4e74f7c4bf)
+    
+- Updated README.md. [a7ead0d](https://github.com/coordt/cookie-composer/commit/a7ead0d745aae637948661e3bb6ac7a978b0d4a3)
+    
+
 ## 0.3.0 (2022-06-29)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.2.2...0.3.0)
 
