@@ -5,7 +5,7 @@ repos:
       - id: isort
         additional_dependencies: [toml]
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.6.0
     hooks:
       - id: black
         args: ["--line-length", "119", "--check"]
@@ -34,7 +34,7 @@ repos:
       - id: requirements-txt-fixer
         exclude: "^tests/fixtures/"
   - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 5.0.4
     hooks:
       - id: flake8
         exclude: (_vendor|test).*
