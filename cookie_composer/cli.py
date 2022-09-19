@@ -123,7 +123,7 @@ def create(
     is_flag=True,
     help="Do not load a config file. Use the defaults instead",
 )
-@click.argument("path_or_url", type=str, required=True, help="The template or composition path or URL")
+@click.argument("path_or_url", type=str, required=True)
 @click.argument(
     "destination", required=False, type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path)
 )
