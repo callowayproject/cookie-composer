@@ -158,3 +158,6 @@ def update():
 def link():
     """Link an existing project to a template or composition."""
     pass
+
+if __name__ == '__main__':
+    cli()
