@@ -249,7 +249,7 @@ def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
 
 def write_rendered_composition(composition: RenderedComposition):
     """
-    Write the composition file using the rendered layers to the appropriate.
+    Write the composition file using the rendered layers to the appropriate place.
 
     Args:
         composition: The rendered composition object to export
