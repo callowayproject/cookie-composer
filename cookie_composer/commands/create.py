@@ -6,11 +6,8 @@ import logging
 from pathlib import Path
 
 from cookie_composer.composition import (
-    Composition,
-    LayerConfig,
     RenderedComposition,
-    is_composition_file,
-    read_composition,
+    get_composition_from_path_or_url,
     write_rendered_composition,
 )
 from cookie_composer.layers import render_layers
@@ -45,21 +42,16 @@ def create_cmd(
         The path to the generated project.
     """
     output_dir = Path(output_dir).resolve() or Path().cwd().resolve()
-    if is_composition_file(path_or_url):
-        composition = read_composition(path_or_url)
-        logger.info(f"Rendering composition {path_or_url} to {output_dir}.")
-    else:
-        overwrite_rules = ["*"] if overwrite_if_exists else []
-        tmpl = LayerConfig(
-            template=path_or_url,
-            directory=directory,
-            checkout=checkout,
-            no_input=no_input or default_config,
-            skip_if_file_exists=skip_if_file_exists,
-            overwrite=overwrite_rules,
-        )
-        composition = Composition(layers=[tmpl])
-        logger.info(f"Rendering template {path_or_url} to {output_dir}.")
+    composition = get_composition_from_path_or_url(
+        path_or_url,
+        checkout,
+        default_config,
+        directory,
+        no_input,
+        output_dir,
+        overwrite_if_exists,
+        skip_if_file_exists,
+    )
     rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input)
     rendered_composition = RenderedComposition(
         layers=rendered_layers,
