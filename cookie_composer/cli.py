@@ -9,6 +9,7 @@ import rich_click as click
 
 from cookie_composer.commands.add import add_cmd
 from cookie_composer.commands.create import create_cmd
+from cookie_composer.commands.update import update_cmd
 from cookie_composer.exceptions import GitError
 
 logger = logging.getLogger(__name__)
@@ -74,7 +75,7 @@ def create(
     path_or_url: str,
     output_dir: Optional[Path],
 ):
-    """Create a project from a template or configuration."""
+    """Create a project from the template or configuration PATH_OR_URL in OUTPUT_DIR."""
     create_cmd(
         path_or_url,
         output_dir,
@@ -137,20 +138,40 @@ def add(
     path_or_url: str,
     destination: Optional[Path],
 ):
-    """Add a template or configuration to an existing project."""
-    destination = destination or Path(".")
+    """Add the template or configuration PATH_OR_URL to an existing project at DESTINATION."""
+    destination = destination or Path.cwd()
     try:
-        add_cmd(path_or_url, destination, no_input=no_input)
+        add_cmd(
+            path_or_url,
+            destination,
+            no_input=no_input,
+            checkout=checkout,
+            directory=directory,
+            overwrite_if_exists=overwrite_if_exists,
+            skip_if_file_exists=skip_if_file_exists,
+            default_config=default_config,
+        )
     except GitError as e:
         raise click.UsageError(str(e)) from e
 
 
 @cli.command()
-def update():
-    """
-    Update the project to the latest version of each template.
-    """
-    pass
+@click.option(
+    "--no-input",
+    is_flag=True,
+    help="Do not prompt for parameters and only use cookiecutter.json file content. "
+    "Defaults to deleting any cached resources and re-downloading them.",
+)
+@click.argument(
+    "destination", required=False, type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path)
+)
+def update(no_input: bool, destination: Optional[Path] = None):
+    """Update the project to the latest version of each template."""
+    destination = destination or Path.cwd()
+    try:
+        update_cmd(destination, no_input=no_input)
+    except GitError as e:
+        raise click.UsageError(str(e)) from e
 
 
 @cli.command()

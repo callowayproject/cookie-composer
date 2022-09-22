@@ -39,6 +39,8 @@ def update_cmd(destination_dir: Optional[Path] = None, no_input: bool = False):
     """
     destination_dir = Path(destination_dir).resolve() or Path().cwd().resolve()
     output_dir = destination_dir.parent
+    repo = get_repo(destination_dir)
+    previously_untracked_files = set(repo.untracked_files)
 
     # Read the project composition file
     proj_composition_path = destination_dir / ".composition.yaml"
@@ -61,7 +63,6 @@ def update_cmd(destination_dir: Optional[Path] = None, no_input: bool = False):
         echo("Done.")
         return
 
-    repo = get_repo(destination_dir)
     branch_name = "update_composition"
     if branch_exists(repo, branch_name) or remote_branch_exists(repo, branch_name):
         checkout_branch(repo, branch_name)
@@ -73,6 +74,17 @@ def update_cmd(destination_dir: Optional[Path] = None, no_input: bool = False):
     )
     new_composition = update_rendered_composition_layers(proj_composition, rendered_layers)
     write_rendered_composition(new_composition)
+
+    # Commit changed files and newly created files
+    changed_files = [item.a_path for item in repo.index.diff(None)]
+    untracked_files = set(repo.untracked_files)
+    new_untracked_files = untracked_files - previously_untracked_files
+    changed_files.extend(list(new_untracked_files))
+
+    if changed_files:
+        repo.index.add(changed_files)
+        repo.index.commit(message="Updating composition layers")
+
     echo("Done.")
 
 
