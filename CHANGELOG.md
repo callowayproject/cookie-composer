@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.5.0 (2022-09-22)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.4.0...0.5.0)
+
+### New
+
+- Added the update subcommand. [6696589](https://github.com/coordt/cookie-composer/commit/66965899d5c7c5d701c70d97e77f304904531bcf)
+    
+  - Made the existing implementation idempotent
+  - Connected the update_cmd to the command line
+- Add very basic cli tests. [c6482d4](https://github.com/coordt/cookie-composer/commit/c6482d46c11e70b354851a9c431634d0d4a6c51f)
+    
+### Other
+
+- [pre-commit.ci] auto fixes from pre-commit.com hooks. [e5425d5](https://github.com/coordt/cookie-composer/commit/e5425d5bebb847be59b48ad5c9ac3cfb11fa5a92)
+    
+  for more information, see https://pre-commit.ci
+- [pre-commit.ci] pre-commit autoupdate. [dbfde0a](https://github.com/coordt/cookie-composer/commit/dbfde0ae58ca2d7fb0f537388091a74607a8fcdc)
+    
+  **updates:** - [github.com/psf/black: 22.6.0 → 22.8.0](https://github.com/psf/black/compare/22.6.0...22.8.0)
+
+### Updates
+
+- Update cli.py. [5a50f14](https://github.com/coordt/cookie-composer/commit/5a50f14c0affbfee66a795d9df5bfe6ecb905e7c)
+    
+
 ## 0.4.0 (2022-09-06)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.3.0...0.4.0)
 
