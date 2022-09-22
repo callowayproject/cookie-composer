@@ -8,7 +8,7 @@ import pytest
 from git import Actor, Repo
 
 from cookie_composer.commands import update
-from cookie_composer.git_commands import get_repo
+from cookie_composer.git_commands import checkout_branch, get_repo
 
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def git_template(fixtures_path, tmp_path) -> dict:
     shutil.copytree(template_path, dest_path)
 
     template_repo = Repo.init(dest_path)
-    template_repo.index.add(".")
+    template_repo.index.add(template_repo.untracked_files)
     template_repo.index.commit(
         message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
     )
@@ -73,12 +73,6 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
         yaml.dump(rendered_comp, f)
 
     repo = Repo.init(dest_path)
-    repo.index.add(".")
-    repo.index.commit(
-        message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
-    )
-    result = {"project_path": dest_path}
-    result.update(git_template)
     rendered_items = {item.name for item in os.scandir(dest_path)}
     assert rendered_items == {
         ".composition.yaml",
@@ -89,6 +83,22 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
         "requirements.txt",
     }
 
+    repo.index.add(
+        [
+            ".composition.yaml",
+            "README.md",
+            "dontmerge.json",
+            "merge.yaml",
+            "requirements.txt",
+        ]
+    )
+    repo.index.commit(
+        message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
+    )
+    result = {"project_path": dest_path}
+    result.update(git_template)
+
+    assert not repo.untracked_files
     return result
 
 
@@ -106,9 +116,22 @@ def test_update_command(git_project: dict):
         "requirements.txt",
     }
     repo = get_repo(git_project["project_path"])
+
+    # we should be on the update_composition branch
     assert repo.active_branch.name == "update_composition"
+
+    # All the files should have been committed in the update_cmd
+    assert not repo.untracked_files
+
+    # Make sure the composition was updated to the latest commit
     comp_text = Path(git_project["project_path"] / ".composition.yaml").read_text()
     assert re.search(f"commit: {git_project['second_commit']}", comp_text)
+    previous_sha = repo.active_branch.commit.hexsha
+
+    # Check for idempotence
+    checkout_branch(repo, "master")
+    update.update_cmd(git_project["project_path"], no_input=True)
+    assert repo.active_branch.commit.hexsha == previous_sha
 
 
 def test_update_command_no_update_required(git_project: dict, capsys):
