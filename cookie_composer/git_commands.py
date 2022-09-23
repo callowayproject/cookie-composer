@@ -8,22 +8,30 @@ from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 from cookie_composer.exceptions import GitError
 
 
-def get_repo(project_dir: Union[str, Path], search_parent_directories: bool = False) -> Repo:
+def get_repo(
+    project_dir: Union[str, Path], search_parent_directories: bool = False, ensure_clean: bool = False
+) -> Repo:
     """
     Get the git Repo object for a directory.
 
     Args:
         project_dir: The directory containing the .git folder
         search_parent_directories: if ``True``, all parent directories will be searched for a valid repo as well.
+        ensure_clean: if ``True``, raise an error if the repo is dirty
 
     Raises:
         GitError: If the directory is not a git repo
+        GitError: If the directory git repository is dirty
 
     Returns:
         The GitPython Repo object
     """
     try:
-        return Repo(str(project_dir), search_parent_directories=search_parent_directories)
+        repo = Repo(str(project_dir), search_parent_directories=search_parent_directories)
+
+        if ensure_clean and repo.is_dirty():
+            raise GitError("The destination git repository is dirty. Please commit or stash the pending changes.")
+        return repo
     except (InvalidGitRepositoryError, NoSuchPathError) as e:
         raise GitError(
             "Some cookie composer commands only work on git repositories. "
