@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from pytest import param
 
 from cookie_composer import composition
 from cookie_composer.composition import LayerConfig
@@ -50,3 +51,17 @@ def test_write_composition(tmp_path):
     comp = composition.read_composition(filepath)
     assert comp.layers[0] == layers[0]
     assert comp.layers[1] == layers[1]
+
+
+def test_get_composition_from_path_or_url_composition(fixtures_path: Path):
+    """The paths should generate the correct Composition."""
+    filepath = fixtures_path / "single-template.yaml"
+    expected = composition.Composition(layers=[LayerConfig(template="tests/fixtures/template1")])
+    assert composition.get_composition_from_path_or_url(str(filepath)) == expected
+
+
+def test_get_composition_from_path_or_url_path(fixtures_path: Path):
+    """The paths should generate the correct Composition."""
+    filepath = fixtures_path / "template1"
+    expected = composition.Composition(layers=[LayerConfig(template=str(filepath), skip_if_file_exists=False)])
+    assert composition.get_composition_from_path_or_url(str(filepath)) == expected

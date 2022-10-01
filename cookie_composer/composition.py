@@ -287,3 +287,47 @@ def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
             break
 
     return strategy
+
+
+def get_composition_from_path_or_url(
+    path_or_url: str,
+    checkout: Optional[str] = None,
+    default_config: bool = False,
+    directory: Optional[str] = None,
+    no_input: bool = False,
+    output_dir: Optional[Path] = None,
+    overwrite_if_exists: bool = False,
+    skip_if_file_exists: bool = False,
+) -> Composition:
+    """
+    Generate a :class:`Composition` from a path or URL.
+
+    Args:
+        path_or_url: The path or url to the composition file or template
+        checkout: The branch, tag or commit to check out after git clone
+        default_config: Do not load a config file. Use the defaults instead
+        directory: Directory within repo that holds cookiecutter.json file
+        no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+        output_dir: Where to generate the project
+        overwrite_if_exists: Overwrite the contents of the output directory if it already exists
+        skip_if_file_exists: Skip the files in the corresponding directories if they already exist
+
+    Returns:
+        The composition object.
+    """
+    if is_composition_file(path_or_url):
+        composition = read_composition(path_or_url)
+        logger.info(f"Rendering composition {path_or_url} to {output_dir}.")
+    else:
+        overwrite_rules = ["*"] if overwrite_if_exists else []
+        tmpl = LayerConfig(
+            template=path_or_url,
+            directory=directory,
+            checkout=checkout,
+            no_input=no_input or default_config,
+            skip_if_file_exists=skip_if_file_exists,
+            overwrite=overwrite_rules,
+        )
+        composition = Composition(layers=[tmpl])
+        logger.info(f"Rendering template {path_or_url} to {output_dir}.")
+    return composition
