@@ -8,3 +8,5 @@ pytest-cov>=3.0.0
 pytest-env
 pytest-mock
 pytest>=6.0.0
+# The latest flake8 and virtualenv conflict with the importlib-metadata versions for Python 3.7
+virtualenv<20.16.3
