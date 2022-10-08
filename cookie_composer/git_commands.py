@@ -1,6 +1,7 @@
 """Functions for using git."""
 from typing import Optional, Union
 
+import subprocess
 from pathlib import Path
 
 from git import InvalidGitRepositoryError, NoSuchPathError, Repo
@@ -119,3 +120,33 @@ def get_latest_template_commit(template_path: str) -> Optional[str]:
         return repo.head.commit.hexsha
     except GitError:
         return None
+
+
+def apply_patch(repo: Repo, diff: str):
+    """
+    Apply a patch to a destination directory.
+
+    A git 3 way merge is the best bet at applying patches.
+
+    Args:
+        repo: The git repo to apply the patch to
+        diff: The previously calculated diff
+
+    Raises:
+        subprocess.CalledProcessError if there is a problem running the git-appy command
+    """
+    command = [
+        "git",
+        "apply",
+        "--3way",
+        "--whitespace=fix",
+    ]
+
+    subprocess.run(
+        command,
+        input=diff.encode(),
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        check=True,
+        cwd=repo.working_dir,
+    )

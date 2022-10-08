@@ -151,7 +151,7 @@ def test_update_command_no_update_required(git_project: dict, capsys):
 
     update.update_cmd(git_project["project_path"], no_input=True)
     captured = capsys.readouterr()
-    assert "already up-to-date" in captured.out
+    assert "All layers are up-to-date." in captured.out
     assert repo.active_branch.name == "master"
     comp_text = Path(git_project["project_path"] / ".composition.yaml").read_text()
     assert re.search(f"commit: {git_project['second_commit']}", comp_text)
