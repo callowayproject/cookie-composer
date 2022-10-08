@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import AnyHttpUrl, BaseModel, DirectoryPath, Field, root_validator
 
-from cookie_composer.exceptions import MissingCompositionFileError
+from cookie_composer.exceptions import GitError, MissingCompositionFileError
 from cookie_composer.matching import rel_fnmatch
 
 logger = logging.getLogger(__name__)
@@ -130,6 +130,37 @@ class RenderedLayer(BaseModel):
             raise ValueError("The rendered template is not a directory.")
         values["rendered_name"] = dirs[0].name
         return values
+
+    def latest_template_sha(self) -> Optional[str]:
+        """
+        Return the latest SHA of this rendered layer's template.
+
+        If the template is not a git repository, it will always return ``None``.
+
+        Returns:
+            The latest hexsha of the template or ``None`` if the template isn't a git repo
+        """
+        from cookiecutter.config import get_user_config
+        from cookiecutter.repository import determine_repo_dir
+
+        from cookie_composer.git_commands import get_repo
+
+        user_config = get_user_config(config_file=None, default_config=False)
+        repo_dir, _ = determine_repo_dir(
+            template=self.layer.template,
+            abbreviations=user_config["abbreviations"],
+            clone_to_dir=user_config["cookiecutters_dir"],
+            checkout=self.layer.commit or self.layer.checkout,
+            no_input=self.layer.no_input,
+            password=self.layer.password,
+            directory=self.layer.directory,
+        )
+        try:
+            template_repo = get_repo(repo_dir, search_parent_directories=True)
+            return template_repo.head.object.hexsha
+        except GitError:
+            # It probably isn't a git repository
+            return None
 
 
 class Composition(BaseModel):

@@ -30,3 +30,15 @@ class GitError(Exception):
     """There was a problem doing git operations."""
 
     pass
+
+
+class ChangesetUnicodeError(Exception):
+    """Raised when `cookie-composer update` is unable to generate the diff."""
+
+    def __init__(self):
+        super().__init__(
+            (
+                "Unable to interpret changes between current project and cookiecutter template as "
+                "unicode. Typically a result of hidden binary files in project folder."
+            )
+        )

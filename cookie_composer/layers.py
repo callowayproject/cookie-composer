@@ -1,6 +1,8 @@
 """Layer management."""
+
 from typing import List, Optional
 
+import contextlib
 import logging
 import os
 import shutil
@@ -24,7 +26,8 @@ from cookie_composer.data_merge import Context
 from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
 
-from .git_commands import get_latest_template_commit
+from .exceptions import GitError
+from .git_commands import get_latest_template_commit, get_repo
 
 logger = logging.getLogger(__name__)
 
@@ -112,9 +115,13 @@ def render_layer(
         password=layer_config.password,
         directory=layer_config.directory,
     )
-    context = get_layer_context(layer_config, repo_dir, user_config, full_context)
+    # If it is a local git directory (not a URL) we need to make sure the correct
+    # rev is checked out.
+    with contextlib.suppress(GitError):
+        repo = get_repo(repo_dir)
+        repo.git.checkout(layer_config.commit)
 
-    layer_config.commit = latest_commit = get_latest_template_commit(repo_dir)
+    context = get_layer_context(layer_config, repo_dir, user_config, full_context)
 
     # call cookiecutter's generate files function
     generate_files(
@@ -124,12 +131,14 @@ def render_layer(
         output_dir=str(render_dir),
         accept_hooks=accept_hooks,
     )
+    if layer_config.commit is None:
+        layer_config.commit = get_latest_template_commit(repo_dir)
 
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
         new_context=context.maps[0],
-        latest_commit=latest_commit,
+        latest_commit=layer_config.commit,
     )
 
     if cleanup:

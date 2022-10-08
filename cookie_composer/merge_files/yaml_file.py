@@ -40,7 +40,7 @@ def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str):
         new_data = yaml.load(new_file)
         existing_data = yaml.load(existing_file)
     except (YAMLError, FileNotFoundError) as e:
-        raise MergeError(str(new_file), str(existing_file), merge_strategy, str(e))
+        raise MergeError(str(new_file), str(existing_file), merge_strategy, str(e)) from e
 
     if merge_strategy == OVERWRITE:
         if isinstance(existing_data, dict) and isinstance(new_data, dict):
