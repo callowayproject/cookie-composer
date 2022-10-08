@@ -3,7 +3,7 @@
 objects = $(wildcard *.in)
 outputs := $(objects:.in=.txt)
 
-all: clean $(outputs)
+all: $(outputs)
 
 %.txt: %.in
 	pip-compile --quiet --output-file $@ $<
