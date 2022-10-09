@@ -23,9 +23,11 @@ cookie_composer/cli.py coreyoordt@gmail.com
 cookie_composer/commands/__init__.py coreyoordt@gmail.com
 cookie_composer/commands/add.py coreyoordt@gmail.com
 cookie_composer/commands/create.py coreyoordt@gmail.com
+cookie_composer/commands/link.py coreyoordt@gmail.com
 cookie_composer/commands/update.py coreyoordt@gmail.com
 cookie_composer/composition.py coreyoordt@gmail.com
 cookie_composer/data_merge.py coreyoordt@gmail.com
+cookie_composer/diff.py coreyoordt@gmail.com
 cookie_composer/exceptions.py coreyoordt@gmail.com
 cookie_composer/git_commands.py coreyoordt@gmail.com
 cookie_composer/layers.py coreyoordt@gmail.com
@@ -106,6 +108,7 @@ tests/test_cc_overrides.py coreyoordt@gmail.com
 tests/test_cli.py Brannon.Imamura@chrobinson.com
 tests/test_commands/test_add.py coreyoordt@gmail.com
 tests/test_commands/test_create.py coreyoordt@gmail.com
+tests/test_commands/test_link.py coreyoordt@gmail.com
 tests/test_commands/test_update.py coreyoordt@gmail.com
 tests/test_composition.py coreyoordt@gmail.com
 tests/test_git_commands.py coreyoordt@gmail.com

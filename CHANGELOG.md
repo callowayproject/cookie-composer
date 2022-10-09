@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.6.0 (2022-10-09)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.5.0...0.6.0)
+
+### Fixes
+
+- Fixed a typo in the docs. [986f0d8](https://github.com/coordt/cookie-composer/commit/986f0d8c229689c77f6a9814b20386c0280124bc)
+    
+- Fixed dependency conflict between flake8 and virtualenv. [6925b05](https://github.com/coordt/cookie-composer/commit/6925b059c2be253b15375319c3f6fc51518995c9)
+    
+### New
+
+- Added the link command to apply a composition to an existing project. [03f723e](https://github.com/coordt/cookie-composer/commit/03f723e20d9063f233513526ac46047f9efeb37c)
+    
+### Updates
+
+- Updated the update command to use `git diff` and `git apply`. [d4bc14f](https://github.com/coordt/cookie-composer/commit/d4bc14f2765ad4cf9ee0bd10077a61d1b4f40353)
+    
+- Updated the project requirements. [0834e0b](https://github.com/coordt/cookie-composer/commit/0834e0bcb89f6dcc45a10afe298b5b2b197f8807)
+    
+- Refactored getting a composition from an input. [2f8edfe](https://github.com/coordt/cookie-composer/commit/2f8edfecdf17f2b1440a096e4d2fd853a75d1d2f)
+    
+
+
 ## 0.5.0 (2022-09-22)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.4.0...0.5.0)
 
