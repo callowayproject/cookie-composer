@@ -7,10 +7,7 @@ from pathlib import Path
 
 def rel_fnmatch(name: str, pat: str) -> bool:
     """Force a relative match of the pattern by prefixing a ``*``."""
-    if pat.startswith("*"):
-        return fnmatch(name, pat)
-    else:
-        return fnmatch(name, f"*{pat}")
+    return fnmatch(name, pat) if pat.startswith("*") else fnmatch(name, f"*{pat}")
 
 
 def matches_any_glob(path: Union[str, Path], patterns: List[str]) -> bool:

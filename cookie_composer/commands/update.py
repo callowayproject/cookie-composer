@@ -1,8 +1,6 @@
 """The implementation of the update command."""
-from typing import List, Optional, Set
+from typing import List, Optional
 
-import os
-import stat
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -15,7 +13,12 @@ from cookie_composer.composition import (
 from cookie_composer.diff import get_diff
 from cookie_composer.git_commands import apply_patch, checkout_branch, get_repo
 from cookie_composer.layers import render_layers
-from cookie_composer.utils import echo, get_context_for_layer
+from cookie_composer.utils import (
+    echo,
+    get_context_for_layer,
+    get_deleted_files,
+    remove_paths,
+)
 
 
 def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False):
@@ -148,78 +151,3 @@ def update_rendered_composition_layers(
             new_layers.append(rendered_layer)
 
     return RenderedComposition(layers=new_layers, render_dir=base.render_dir, rendered_name=base.rendered_name)
-
-
-def get_deleted_files(template_dir: Path, project_dir: Path) -> Set[Path]:
-    """
-    Get a list of files in the rendered template that do not exist in the project.
-
-    This is to avoid introducing changes that won't apply cleanly to the current project.
-
-    Nabbed from Cruft: https://github.com/cruft/cruft/
-
-    Args:
-        template_dir: The path to the directory rendered with the same context as the project
-        project_dir: The path to the current project
-
-    Returns:
-        A set of paths that are missing
-    """
-    cwd = Path.cwd()
-    os.chdir(template_dir)
-    template_paths = set(Path(".").glob("**/*"))
-    os.chdir(cwd)
-    os.chdir(project_dir)
-    deleted_paths = set(filter(lambda path: not path.exists(), template_paths))
-    os.chdir(cwd)
-    return deleted_paths
-
-
-def remove_paths(root: Path, paths_to_remove: Set[Path]):
-    """
-    Remove all paths in ``paths_to_remove`` from ``root``.
-
-    Nabbed from Cruft: https://github.com/cruft/cruft/
-
-    Args:
-        root: The absolute path of the directory requiring path removal
-        paths_to_remove: The set of relative paths to remove from ``root``
-    """
-    # There is some redundancy here in chmod-ing dirs and/or files differently.
-    abs_paths_to_remove = [root / path_to_remove for path_to_remove in paths_to_remove]
-
-    for path in abs_paths_to_remove:
-        remove_single_path(path)
-
-
-def remove_readonly_bit(func, path, _):  # pragma: no-coverage
-    """Clear the readonly bit and reattempt the removal."""
-    os.chmod(path, stat.S_IWRITE)  # WINDOWS
-    func(path)
-
-
-def remove_single_path(path: Path):
-    """
-    Remove a path with extra error handling for Windows.
-
-    Args:
-        path: The path to remove
-
-    Raises:
-        IOError: If the file could not be removed
-    """
-    from shutil import rmtree
-
-    if path.is_dir():
-        try:
-            rmtree(path, ignore_errors=False, onerror=remove_readonly_bit)
-        except Exception as e:  # pragma: no-coverage
-            raise IOError("Failed to remove directory.") from e
-    elif path.is_file():
-        try:
-            path.unlink()
-        except PermissionError:  # pragma: no-coverage
-            path.chmod(stat.S_IWRITE)
-            path.unlink()
-        except Exception as exc:  # pragma: no-coverage
-            raise IOError("Failed to remove file.") from exc

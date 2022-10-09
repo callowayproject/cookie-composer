@@ -135,18 +135,34 @@ def apply_patch(repo: Repo, diff: str):
     Raises:
         subprocess.CalledProcessError if there is a problem running the git-appy command
     """
-    command = [
+    three_way_command = [
         "git",
         "apply",
         "--3way",
         "--whitespace=fix",
     ]
 
-    subprocess.run(
-        command,
-        input=diff.encode(),
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        check=True,
-        cwd=repo.working_dir,
-    )
+    try:
+        subprocess.run(
+            three_way_command,
+            input=diff.encode(),
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            check=True,
+            cwd=repo.working_dir,
+        )
+    except subprocess.CalledProcessError:
+        reject_command = [
+            "git",
+            "apply",
+            "--3way",
+            "--whitespace=fix",
+        ]
+        subprocess.run(
+            reject_command,
+            input=diff.encode(),
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            check=True,
+            cwd=repo.working_dir,
+        )
