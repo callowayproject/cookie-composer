@@ -37,4 +37,4 @@ If you look closely you'll see that `.composition.yaml` contains the contents of
 
 ## Template layers
 
-Composition files technically [YAML streams](https://yaml.org/spec/1.2.2/#22-structures) consisting of one or more documents describing a layer configuration.
+Composition files are technically [YAML streams](https://yaml.org/spec/1.2.2/#22-structures) consisting of one or more documents describing a layer configuration.
