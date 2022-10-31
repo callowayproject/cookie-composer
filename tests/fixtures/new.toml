@@ -1,0 +1,5 @@
+[section1]
+number = 2
+string = "def"
+list = ["a", "2"]
+dictionary.b = [3, 2]
