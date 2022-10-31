@@ -28,6 +28,7 @@ from pathlib import Path
 
 from cookie_composer.merge_files.ini_file import merge_ini_files
 from cookie_composer.merge_files.json_file import merge_json_files
+from cookie_composer.merge_files.toml_file import merge_toml_files
 from cookie_composer.merge_files.yaml_file import merge_yaml_files
 
 merge_function = Callable[[Path, Path, str], None]
@@ -38,4 +39,5 @@ MERGE_FUNCTIONS: Dict[str, merge_function] = {
     ".yml": merge_yaml_files,
     ".ini": merge_ini_files,
     ".cfg": merge_ini_files,
+    ".toml": merge_toml_files,
 }
