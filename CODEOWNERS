@@ -33,7 +33,9 @@ cookie_composer/git_commands.py coreyoordt@gmail.com
 cookie_composer/layers.py coreyoordt@gmail.com
 cookie_composer/matching.py coreyoordt@gmail.com
 cookie_composer/merge_files/__init__.py coreyoordt@gmail.com
+cookie_composer/merge_files/ini_file.py coreyoordt@gmail.com
 cookie_composer/merge_files/json_file.py coreyoordt@gmail.com
+cookie_composer/merge_files/toml_file.py coreyoordt@gmail.com
 cookie_composer/merge_files/yaml_file.py coreyoordt@gmail.com
 cookie_composer/utils.py coreyoordt@gmail.com
 docsrc/Makefile coreyoordt@gmail.com
@@ -79,11 +81,15 @@ requirements/test.txt coreyoordt@gmail.com
 setup.cfg coreyoordt@gmail.com
 setup.py coreyoordt@gmail.com
 tests/conftest.py coreyoordt@gmail.com
+tests/fixtures/existing.ini coreyoordt@gmail.com
 tests/fixtures/existing.json coreyoordt@gmail.com
+tests/fixtures/existing.toml coreyoordt@gmail.com
 tests/fixtures/existing.yaml coreyoordt@gmail.com
 tests/fixtures/gibberish.txt coreyoordt@gmail.com
 tests/fixtures/multi-template.yaml coreyoordt@gmail.com
+tests/fixtures/new.ini coreyoordt@gmail.com
 tests/fixtures/new.json coreyoordt@gmail.com
+tests/fixtures/new.toml coreyoordt@gmail.com
 tests/fixtures/new.yaml coreyoordt@gmail.com
 tests/fixtures/rendered1/context.json coreyoordt@gmail.com
 tests/fixtures/rendered1/rendered-composition.yaml coreyoordt@gmail.com
@@ -114,7 +120,9 @@ tests/test_composition.py coreyoordt@gmail.com
 tests/test_git_commands.py coreyoordt@gmail.com
 tests/test_layers.py coreyoordt@gmail.com
 tests/test_merge_files_helpers.py coreyoordt@gmail.com
+tests/test_merge_files_ini_file.py coreyoordt@gmail.com
 tests/test_merge_files_json_file.py coreyoordt@gmail.com
+tests/test_merge_files_toml_file.py coreyoordt@gmail.com
 tests/test_merge_files_yaml_file.py coreyoordt@gmail.com
 tests/test_utils.py coreyoordt@gmail.com
 tools/gen-codeowners.sh coreyoordt@gmail.com

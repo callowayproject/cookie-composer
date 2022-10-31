@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.0 (2022-10-31)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.6.0...0.7.0)
+
+### New
+
+- Added ability to merge .toml files. [2e36b40](https://github.com/coordt/cookie-composer/commit/2e36b407feadd58f6aac418504ea6e9274175afe)
+    
+- Added ability to merge .ini and .cfg files. [31ff1e0](https://github.com/coordt/cookie-composer/commit/31ff1e033f10bef3067b4811aaa61607fa6c5b14)
+    
+### Other
+
+- [pre-commit.ci] pre-commit autoupdate. [a31eeef](https://github.com/coordt/cookie-composer/commit/a31eeef0dff2d826d68d6138667b5ab971eefa7a)
+    
+  **updates:** - [github.com/psf/black: 22.8.0 → 22.10.0](https://github.com/psf/black/compare/22.8.0...22.10.0)
+
+
+
 ## 0.6.0 (2022-10-09)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.5.0...0.6.0)
 
