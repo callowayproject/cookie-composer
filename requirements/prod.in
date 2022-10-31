@@ -8,3 +8,4 @@ pydantic
 requests
 rich-click
 ruamel.yaml
+toml
