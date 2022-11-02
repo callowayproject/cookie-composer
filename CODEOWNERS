@@ -111,7 +111,7 @@ tests/fixtures/template2/cookiecutter.json coreyoordt@gmail.com
 tests/fixtures/template2/{{cookiecutter.repo_name}}/ABOUT.md coreyoordt@gmail.com
 tests/fixtures/template2/{{cookiecutter.repo_name}}/requirements.txt coreyoordt@gmail.com 66853113+pre-commit-ci[bot]@users.noreply.github.com
 tests/test_cc_overrides.py coreyoordt@gmail.com
-tests/test_cli.py Brannon.Imamura@chrobinson.com
+tests/test_cli.py coreyoordt@gmail.com
 tests/test_commands/test_add.py coreyoordt@gmail.com
 tests/test_commands/test_create.py coreyoordt@gmail.com
 tests/test_commands/test_link.py coreyoordt@gmail.com
