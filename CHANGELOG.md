@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.1 (2022-11-07)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.7.0...0.7.1)
+
+### Fixes
+
+- Fixed ability to merge a list of dicts. [21b9033](https://github.com/coordt/cookie-composer/commit/21b9033d922ac83b31ebc1c1f65d6fec7d4582aa)
+    
+- Fixed chrobinson email to me. [7f2bf8e](https://github.com/coordt/cookie-composer/commit/7f2bf8e5d84c0777f19d321b216ca437050e1559)
+    
+
+
 ## 0.7.0 (2022-10-31)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.6.0...0.7.0)
 
