@@ -5,6 +5,8 @@ import copy
 from collections import ChainMap, OrderedDict
 from functools import reduce
 
+from frozendict import frozendict
+
 
 def deep_merge(*dicts) -> dict:
     """
@@ -43,7 +45,7 @@ def merge_iterables(iter1: Iterable, iter2: Iterable) -> set:
     """
     from itertools import chain
 
-    return set(chain(iter1, iter2))
+    return set(chain(freeze_data(iter1), freeze_data(iter2)))
 
 
 def comprehensive_merge(*args) -> Any:
@@ -62,7 +64,7 @@ def comprehensive_merge(*args) -> Any:
     Returns:
         The merged data
     """
-    dict_types = (dict, OrderedDict)
+    dict_types = (dict, OrderedDict, frozendict)
     iterable_types = (list, set, tuple)
 
     def merge_into(d1, d2):
@@ -96,7 +98,7 @@ def comprehensive_merge(*args) -> Any:
 
 
 class Context(ChainMap):
-    """Provides merging and convenence functions for managing contexts."""
+    """Provides merging and convenience functions for managing contexts."""
 
     @property
     def is_empty(self) -> bool:
@@ -106,3 +108,18 @@ class Context(ChainMap):
     def flatten(self) -> dict:
         """Comprehensively merge all the maps into a single mapping."""
         return reduce(comprehensive_merge, self.maps, {})
+
+
+def freeze_data(obj):
+    """Check type and recursively return a new read-only object."""
+    if isinstance(obj, (str, int, float, bytes, type(None), bool)):
+        return obj
+    elif isinstance(obj, tuple) and type(obj) != tuple:  # assumed namedtuple
+        return type(obj)(*(freeze_data(i) for i in obj))
+    elif isinstance(obj, (tuple, list)):
+        return tuple(freeze_data(i) for i in obj)
+    elif isinstance(obj, (dict, OrderedDict, frozendict)):
+        return frozendict({k: freeze_data(v) for k, v in obj.items()})
+    elif isinstance(obj, (set, frozenset)):
+        return frozenset(freeze_data(i) for i in obj)
+    raise ValueError(obj)

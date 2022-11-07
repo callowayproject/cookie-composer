@@ -107,6 +107,8 @@ filelock==3.8.0
     #   virtualenv
 flake8==5.0.4
     # via -r test.txt
+frozendict==2.3.4
+    # via -r test.txt
 frozenlist==1.3.1
     # via
     #   -r test.txt
