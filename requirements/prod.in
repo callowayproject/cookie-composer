@@ -2,6 +2,7 @@ aiohttp
 backports.shutil-copytree
 click-log
 cookiecutter>=2.0.0
+frozendict
 fsspec
 gitpython
 pydantic
