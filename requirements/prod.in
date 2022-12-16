@@ -5,6 +5,7 @@ cookiecutter>=2.0.0
 frozendict
 fsspec
 gitpython
+orjson
 pydantic
 requests
 rich-click

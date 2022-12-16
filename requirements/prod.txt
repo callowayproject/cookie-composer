@@ -65,6 +65,8 @@ multidict==6.0.2
     # via
     #   aiohttp
     #   yarl
+orjson==3.8.3
+    # via -r prod.in
 pydantic==1.10.2
     # via -r prod.in
 pygments==2.13.0

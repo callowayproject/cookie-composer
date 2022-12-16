@@ -204,6 +204,8 @@ nodeenv==1.7.0
     # via
     #   -r test.txt
     #   pre-commit
+orjson==3.8.3
+    # via -r test.txt
 packaging==21.3
     # via
     #   -r docs.txt
