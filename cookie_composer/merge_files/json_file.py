@@ -13,6 +13,15 @@ from cookie_composer.composition import (
 from cookie_composer.exceptions import MergeError
 
 
+def default(obj):
+    """Default JSON encoder."""
+    from immutabledict import immutabledict
+
+    if isinstance(obj, immutabledict):
+        return dict(obj)
+    raise TypeError
+
+
 def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
     """
     Merge two json files into one.
@@ -48,4 +57,4 @@ def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
     else:
         raise MergeError(error_message=f"Unrecognized merge strategy {merge_strategy}")
 
-    existing_file.write_text(orjson.dumps(existing_data).decode("utf-8"))
+    existing_file.write_text(orjson.dumps(existing_data, default=default).decode("utf-8"))

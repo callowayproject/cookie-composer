@@ -4,7 +4,7 @@ from typing import Any
 from collections import OrderedDict
 
 import pytest
-from frozendict import frozendict
+from immutabledict import immutabledict
 from pytest import param
 
 from cookie_composer import data_merge
@@ -78,13 +78,13 @@ def test_comprehensive_merge(args: list, expected: Any):
 
 
 def test_comprehensive_merge_list_of_dicts():
-    """A list of dicts should resolve into a list of frozendicts in random order."""
+    """A list of dicts should resolve into a list of immutabledicts in random order."""
     result = data_merge.comprehensive_merge([{"a": 1}, {"b": 2}], [{"c": 3}, {"d": 4}])
     expected = [
-        frozendict({"d": 4}),
-        frozendict({"c": 3}),
-        frozendict({"b": 2}),
-        frozendict({"a": 1}),
+        immutabledict({"d": 4}),
+        immutabledict({"c": 3}),
+        immutabledict({"b": 2}),
+        immutabledict({"a": 1}),
     ]
     assert isinstance(result, list)
     assert set(result) == set(expected)
