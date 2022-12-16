@@ -39,6 +39,7 @@ def test_overwrite_merge(tmp_path, fixtures_path):
         "string": "def",
         "list": ["a", 2],
         "dictionary": {"b": [3, 2]},
+        "list_of_dicts": [{"e": 1}, {"f": 3}],
     }
 
 
@@ -56,6 +57,7 @@ def test_overwrite_nested_merge(tmp_path, fixtures_path):
         "string": "def",
         "list": ["a", 2],
         "dictionary": {"a": 1, "b": [3, 2]},
+        "list_of_dicts": [{"e": 1}, {"f": 3}],
     }
 
 
@@ -73,6 +75,7 @@ def test_comprehensive_merge(tmp_path, fixtures_path):
     assert set(rendered["list"]) == {"a", 1, 2, "c"}
     assert rendered["dictionary"]["a"] == 1
     assert set(rendered["dictionary"]["b"]) == {1, 2, 3}
+    assert len(rendered["list_of_dicts"]) == 4
 
 
 def test_bad_files(tmp_path, fixtures_path):

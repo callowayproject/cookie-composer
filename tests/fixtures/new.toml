@@ -3,3 +3,4 @@ number = 2
 string = "def"
 list = ["a", "2"]
 dictionary.b = [3, 2]
+list_of_dicts = [{e = 1}, {f = 3}]

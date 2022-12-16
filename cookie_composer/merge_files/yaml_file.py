@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from frozendict import frozendict
+
 from cookie_composer import data_merge
 from cookie_composer.composition import (
     COMPREHENSIVE,
@@ -24,9 +26,10 @@ def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str):
     Raises:
         MergeError: If something goes wrong
     """
-    from ruamel.yaml import YAML, YAMLError
+    from ruamel.yaml import YAML, SafeRepresenter, YAMLError
 
     yaml = YAML(typ="safe")
+    yaml.Representer.add_representer(frozendict, SafeRepresenter.represent_dict)
 
     if merge_strategy == DO_NOT_MERGE:
         raise MergeError(
