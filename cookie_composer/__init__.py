@@ -1,2 +1,2 @@
 """The Cookiecutter Composer."""
-__version__: str = "0.7.1"
+__version__: str = "0.8.0"

@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.8.0 (2022-12-16)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.7.1...0.8.0)
+
+### Fixes
+
+- Fixed ability to merge a list of dicts in YAML. [f3698ef](https://github.com/coordt/cookie-composer/commit/f3698ef7588fbac64cc14a9699ee4c2a4fca7f4d)
+    
+### Other
+
+- [pre-commit.ci] pre-commit autoupdate. [5b21a40](https://github.com/coordt/cookie-composer/commit/5b21a4070ae643adaa5be564de2e9a171abe6b3d)
+    
+  **updates:** - [github.com/psf/black: 22.10.0 → 22.12.0](https://github.com/psf/black/compare/22.10.0...22.12.0)
+
+- [pre-commit.ci] pre-commit autoupdate. [0f5c7a5](https://github.com/coordt/cookie-composer/commit/0f5c7a5fcb16b5557cf6453ad02d119b3edf8852)
+    
+  **updates:** - [github.com/pre-commit/pre-commit-hooks: v4.3.0 → v4.4.0](https://github.com/pre-commit/pre-commit-hooks/compare/v4.3.0...v4.4.0)
+
+### Updates
+
+- Change frozendict to immutabledict. [8edf699](https://github.com/coordt/cookie-composer/commit/8edf69920e37032c27ceea1545c51e11e86892e8)
+    
+- Changed JSON library to orjson. [c857a2f](https://github.com/coordt/cookie-composer/commit/c857a2f694d131a44ce863a743d8bbceb5146095)
+    
+  - has better serialization capability and performance.
+
+
 ## 0.7.1 (2022-11-07)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.7.0...0.7.1)
 
