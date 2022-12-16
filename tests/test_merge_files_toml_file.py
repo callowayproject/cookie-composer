@@ -38,6 +38,7 @@ def test_overwrite_merge(tmp_path, fixtures_path):
             "string": "def",
             "list": ["a", "2"],
             "dictionary": {"b": [3, 2]},
+            "list_of_dicts": [{"e": 1}, {"f": 3}],
         }
     }
 
@@ -57,6 +58,7 @@ def test_overwrite_nested_merge(tmp_path, fixtures_path):
             "string": "def",
             "list": ["a", "2"],
             "dictionary": {"a": 1, "b": [3, 2]},
+            "list_of_dicts": [{"e": 1}, {"f": 3}],
         }
     }
 

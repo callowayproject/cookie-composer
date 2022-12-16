@@ -5,7 +5,7 @@ import copy
 from collections import ChainMap, OrderedDict
 from functools import reduce
 
-from frozendict import frozendict
+from immutabledict import immutabledict
 
 
 def deep_merge(*dicts) -> dict:
@@ -64,7 +64,7 @@ def comprehensive_merge(*args) -> Any:
     Returns:
         The merged data
     """
-    dict_types = (dict, OrderedDict, frozendict)
+    dict_types = (dict, OrderedDict, immutabledict)
     iterable_types = (list, set, tuple)
 
     def merge_into(d1, d2):
@@ -118,8 +118,8 @@ def freeze_data(obj):
         return type(obj)(*(freeze_data(i) for i in obj))
     elif isinstance(obj, (tuple, list)):
         return tuple(freeze_data(i) for i in obj)
-    elif isinstance(obj, (dict, OrderedDict, frozendict)):
-        return frozendict({k: freeze_data(v) for k, v in obj.items()})
+    elif isinstance(obj, (dict, OrderedDict, immutabledict)):
+        return immutabledict({k: freeze_data(v) for k, v in obj.items()})
     elif isinstance(obj, (set, frozenset)):
         return frozenset(freeze_data(i) for i in obj)
     raise ValueError(obj)

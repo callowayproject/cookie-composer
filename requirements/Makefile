@@ -17,3 +17,6 @@ check:
 
 clean: check
 	- rm *.txt
+
+upgrade: check
+	pip-compile --quiet --upgrade prod.txt

@@ -1,6 +1,7 @@
 """Merge two json files into one."""
-import json
 from pathlib import Path
+
+import orjson
 
 from cookie_composer import data_merge
 from cookie_composer.composition import (
@@ -10,6 +11,15 @@ from cookie_composer.composition import (
     OVERWRITE,
 )
 from cookie_composer.exceptions import MergeError
+
+
+def default(obj):
+    """Default JSON encoder."""
+    from immutabledict import immutabledict
+
+    if isinstance(obj, immutabledict):
+        return dict(obj)
+    raise TypeError
 
 
 def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
@@ -33,9 +43,9 @@ def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
         )
 
     try:
-        new_data = json.loads(new_file.read_text())
-        existing_data = json.loads(existing_file.read_text())
-    except (json.JSONDecodeError, FileNotFoundError) as e:
+        new_data = orjson.loads(new_file.read_text())
+        existing_data = orjson.loads(existing_file.read_text())
+    except (orjson.JSONDecodeError, FileNotFoundError) as e:
         raise MergeError(str(new_file), str(existing_file), merge_strategy, str(e)) from e
 
     if merge_strategy == OVERWRITE:
@@ -47,4 +57,4 @@ def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
     else:
         raise MergeError(error_message=f"Unrecognized merge strategy {merge_strategy}")
 
-    existing_file.write_text(json.dumps(existing_data))
+    existing_file.write_text(orjson.dumps(existing_data, default=default).decode("utf-8"))

@@ -1,6 +1,26 @@
 {
   "number": 1,
   "string": "abc",
-  "list": ["a", 1, "c"],
-  "dictionary": {"a": 1, "b": [1, 2]}
+  "list": [
+    "a",
+    1,
+    "c"
+  ],
+  "dictionary": {
+    "a": 1,
+    "b": [
+      1,
+      2
+    ]
+  },
+  "list_of_dicts": [
+    {
+      "a": 1,
+      "b": 2
+    },
+    {
+      "c": 3,
+      "d": 4
+    }
+  ]
 }
