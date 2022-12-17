@@ -95,9 +95,7 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
     repo.index.commit(
         message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
     )
-    result = {"project_path": dest_path}
-    result.update(git_template)
-
+    result = {"project_path": dest_path} | git_template
     assert not repo.untracked_files
     return result
 
