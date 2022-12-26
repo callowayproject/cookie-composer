@@ -308,9 +308,7 @@ ruamel-yaml==0.17.21
     #   -r test.txt
     #   generate-changelog
 ruamel-yaml-clib==0.2.6
-    # via
-    #   -r test.txt
-    #   ruamel-yaml
+    # via -r test.txt
 six==1.16.0
     # via
     #   -r docs.txt
@@ -384,9 +382,6 @@ toml==0.10.2
 tomli==2.0.1
     # via
     #   -r test.txt
-    #   black
-    #   build
-    #   coverage
     #   pytest
 tqdm==4.64.1
     # via git-fame
@@ -411,7 +406,7 @@ virtualenv==20.16.2
     # via
     #   -r test.txt
     #   pre-commit
-wheel==0.37.1
+wheel==0.38.1
     # via pip-tools
 yarl==1.8.1
     # via
