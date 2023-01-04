@@ -29,6 +29,8 @@ def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str):
     from ruamel.yaml import YAML, SafeRepresenter, YAMLError
 
     yaml = YAML(typ="safe")
+    yaml.default_flow_style = False
+    yaml.indent(mapping=2, sequence=4, offset=2)
     yaml.Representer.add_representer(immutabledict, SafeRepresenter.represent_dict)
 
     if merge_strategy == DO_NOT_MERGE:
