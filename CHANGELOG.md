@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.8.1 (2023-01-04)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.8.0...0.8.1)
+
+### Fixes
+
+- Fixed YAML merge formatting. [7259919](https://github.com/coordt/cookie-composer/commit/7259919a851e7d5d4d1d59e7eb38b51eca7ed91a)
+    
+### Other
+
+- Bump wheel from 0.37.1 to 0.38.1 in /requirements. [cab9b8e](https://github.com/coordt/cookie-composer/commit/cab9b8e1ce86c4a3dd38182320a9e64d016f849e)
+    
+  Bumps [wheel](https://github.com/pypa/wheel) from 0.37.1 to 0.38.1.
+  - [Release notes](https://github.com/pypa/wheel/releases)
+  - [Changelog](https://github.com/pypa/wheel/blob/main/docs/news.rst)
+  - [Commits](https://github.com/pypa/wheel/compare/0.37.1...0.38.1)
+
+  ---
+  **updated-dependencies:** - dependency-name: wheel
+dependency-type: indirect
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- [pre-commit.ci] pre-commit autoupdate. [45e8596](https://github.com/coordt/cookie-composer/commit/45e859622a82cd023f7ca02bfcd9a8e79f249508)
+    
+  **updates:** - [github.com/PyCQA/isort: v5.11.3 → 5.11.4](https://github.com/PyCQA/isort/compare/v5.11.3...5.11.4)
+
+- [pre-commit.ci] pre-commit autoupdate. [550e0cb](https://github.com/coordt/cookie-composer/commit/550e0cb1e788dd0c800e502862f236f8bf3e9bfe)
+    
+  **updates:** - [github.com/PyCQA/isort: 5.10.1 → v5.11.3](https://github.com/PyCQA/isort/compare/5.10.1...v5.11.3)
+
+
+
 ## 0.8.0 (2022-12-16)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.7.1...0.8.0)
 
