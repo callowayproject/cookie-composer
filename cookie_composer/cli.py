@@ -8,6 +8,7 @@ import click_log
 import rich_click as click
 
 from cookie_composer.commands.add import add_cmd
+from cookie_composer.commands.auth import auth_cli
 from cookie_composer.commands.create import create_cmd
 from cookie_composer.commands.link import link_cmd
 from cookie_composer.commands.update import update_cmd
@@ -21,6 +22,9 @@ click_log.basic_config(logger)
 def cli():
     """Rendering templates using composition."""
     pass
+
+
+cli.add_command(auth_cli, name="auth")
 
 
 @cli.command()

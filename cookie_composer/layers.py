@@ -104,10 +104,12 @@ def render_layer(
     Returns:
         The rendered layer information
     """
+    from cookie_composer.authentication import add_auth_to_url
+
     full_context = full_context or Context()
     user_config = get_user_config(config_file=None, default_config=False)
     repo_dir, cleanup = determine_repo_dir(
-        template=layer_config.template,
+        template=add_auth_to_url(layer_config.template),
         abbreviations=user_config["abbreviations"],
         clone_to_dir=user_config["cookiecutters_dir"],
         checkout=layer_config.commit or layer_config.checkout,
