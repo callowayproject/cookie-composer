@@ -54,7 +54,7 @@ def add_cmd(
 
     # Read the project composition file
     proj_composition_path = destination_dir / ".composition.yaml"
-    if not proj_composition_path.exists():
+    if not proj_composition_path.exists():  # pragma: no cover
         raise ValueError(f"There is no .composition.yaml file in {destination_dir}")
 
     proj_composition = read_rendered_composition(proj_composition_path)
