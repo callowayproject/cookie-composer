@@ -27,6 +27,7 @@ exclude_lines = [
 addopts = [
     "--cov=cookie_composer",
     "--cov-branch",
+    "--cov-report=xml",
     "--cov-report=term",
     "--cov-report=html",
 ]
