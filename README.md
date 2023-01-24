@@ -11,8 +11,9 @@
 [pypi_]: https://pypi.org/project/cookie-composer/
 [status]: https://pypi.org/project/cookie-composer/
 [python version]: https://pypi.org/project/cookie-composer
-[license]: https://github.com/{{cookiecutter.github_user}}/cookie-composer/blob/main/LICENSE
-https://callowayproject.github.io/cookie-composer/
+[license]: https://github.com/callowayproject/cookie-composer/blob/master/LICENSE
+
+Documentation: https://callowayproject.github.io/cookie-composer/
 
 <!-- end-badges -->
 
