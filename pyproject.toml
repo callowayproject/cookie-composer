@@ -20,6 +20,7 @@ show_missing = true
 exclude_lines = [
     "raise NotImplementedError",
     "pragma: no-coverage",
+    "pragma: no cover",
 ]
 
 [tool.pytest.ini_options]

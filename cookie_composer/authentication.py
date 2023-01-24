@@ -35,22 +35,24 @@ def login_to_svc(
     hosts_file = get_hosts_file()
     hosts = json.loads(hosts_file.read_text()) if hosts_file.exists() else {}
 
-    if not service:
+    if not service:  # pragma: no cover
         title = "What account do you want to log into?"
         options = [
             "github.com",
         ]
         service = questionary.select(title, options).ask()
 
-    if not protocol:
+    protocol = protocol or hosts.get(service, {}).get("git_protocol")
+    if not protocol:  # pragma: no cover
         title = "What is your preferred protocol for Git operations?"
         options = ["ssh", "https"]
         protocol = questionary.select(title, options).ask()
 
-    if not token:
+    token = token or hosts.get(service, {}).get("oauth_token")
+    if not token:  # pragma: no cover
         token = github_auth_device() if service == "github.com" else ""
-        hosts[service] = {"git_protocol": protocol, "oauth_token": token}
 
+    hosts[service] = {"git_protocol": protocol, "oauth_token": token}
     hosts_file.write_text(json.dumps(hosts))
 
     return token
@@ -76,14 +78,15 @@ def add_auth_to_url(url: str) -> str:
     from urllib.parse import urlparse, urlunparse
 
     parsed = urlparse(url)
-    if parsed.netloc == "github.com":
-        token = get_cached_token("github.com")
-        if token:
-            parsed = parsed._replace(netloc=f"cookiecomposer:{token}@{parsed.netloc}")
+    token = get_cached_token(parsed.netloc)
+
+    if token:
+        parsed = parsed._replace(netloc=f"cookiecomposer:{token}@{parsed.netloc}")
+
     return urlunparse(parsed)
 
 
-def github_auth_device(n_polls=9999):
+def github_auth_device(n_polls=9999):  # pragma: no cover
     """
     Authenticate with GitHub, polling up to ``n_polls`` times to wait for completion.
     """
