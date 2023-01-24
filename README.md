@@ -6,7 +6,7 @@
 [![Status](https://img.shields.io/pypi/status/cookie-composer)][status]
 [![Python Version](https://img.shields.io/pypi/pyversions/cookie-composer)][python version]
 [![License](https://img.shields.io/pypi/l/cookie-composer)][license]
-[![Coverage Status](https://coveralls.io/repos/github/callowayproject/cookie-composer/badge.svg?branch=master)](https://coveralls.io/github/callowayproject/cookie-composer?branch=master)
+[![codecov](https://codecov.io/gh/callowayproject/cookie-composer/branch/master/graph/badge.svg?token=YO2JQLV1OB)](https://codecov.io/gh/callowayproject/cookie-composer)
 
 [pypi_]: https://pypi.org/project/cookie-composer/
 [status]: https://pypi.org/project/cookie-composer/
