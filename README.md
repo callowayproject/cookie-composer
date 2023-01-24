@@ -6,15 +6,15 @@
 [![Status](https://img.shields.io/pypi/status/cookie-composer)][status]
 [![Python Version](https://img.shields.io/pypi/pyversions/cookie-composer)][python version]
 [![License](https://img.shields.io/pypi/l/cookie-composer)][license]
-[![Coverage Status](https://coveralls.io/repos/github/coordt/cookie-composer/badge.svg?branch=master)][coveralls]
+[![Coverage Status](https://coveralls.io/repos/github/callowayproject/cookie-composer/badge.svg?branch=master)][coveralls]
 
-[pypi_]: https://pypi.org/project/{{cookiecutter.project_name}}/
-[status]: https://pypi.org/project/{{cookiecutter.project_name}}/
-[python version]: https://pypi.org/project/{{cookiecutter.project_name}}
-[license]: https://github.com/{{cookiecutter.github_user}}/{{cookiecutter.project_name}}/blob/main/LICENSE
+[pypi_]: https://pypi.org/project/cookie-composer/
+[status]: https://pypi.org/project/cookie-composer/
+[python version]: https://pypi.org/project/cookie-composer
+[license]: https://github.com/{{cookiecutter.github_user}}/cookie-composer/blob/main/LICENSE
 [coveralls]: https://coveralls.io/github/coordt/cookie-composer?branch=master
 
-https://coordt.github.io/cookie-composer/
+https://callowayproject.github.io/cookie-composer/
 
 <!-- end-badges -->
 
