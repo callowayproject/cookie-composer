@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.9.0 (2023-01-25)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.8.1...0.9.0)
+
+### Fixes
+
+- Fixed license and documentation badges. [37289c9](https://github.com/coordt/cookie-composer/commit/37289c96e4bebcd25b2df0f90a797f2753494d07)
+    
+- Fixed the coveralls badge in README. [a4eaf73](https://github.com/coordt/cookie-composer/commit/a4eaf7313e534e71942335a8cce18b8348658159)
+    
+### New
+
+- Added testing for authentication.py. [73c8335](https://github.com/coordt/cookie-composer/commit/73c83351529a834c219ffb4e8aa22fad84108802)
+    
+- Added authentication capability. [19b5a8d](https://github.com/coordt/cookie-composer/commit/19b5a8d60e1c12f361ff0d08d9809b310dede40d)
+    
+### Other
+
+- Switched to Codecov. [c2fb125](https://github.com/coordt/cookie-composer/commit/c2fb125712b24c98ac450f206fb31048cb06dc5f)
+    
+- [pre-commit.ci] pre-commit autoupdate. [1f5320a](https://github.com/coordt/cookie-composer/commit/1f5320a8f9d45c0c9bc68290d43dec76c5230ce3)
+    
+  **updates:** - [github.com/pycqa/pydocstyle: 6.1.1 → 6.2.3](https://github.com/pycqa/pydocstyle/compare/6.1.1...6.2.3)
+
+### Updates
+
+- Updated documentation. [1a1c1f6](https://github.com/coordt/cookie-composer/commit/1a1c1f6166328dd627fdf5a0de7d9c17da684740)
+    
+- Update README.md coveralls badge. [b105133](https://github.com/coordt/cookie-composer/commit/b105133dc5046b55d6b486eaa2715a671c1c661a)
+    
+- Update README.md. [a55a257](https://github.com/coordt/cookie-composer/commit/a55a2579edafd49541b50de994d9ddcd203dd8ea)
+    
+
+
 ## 0.8.1 (2023-01-04)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.8.0...0.8.1)
 

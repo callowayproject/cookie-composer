@@ -18,10 +18,12 @@ Makefile coreyoordt@gmail.com
 README.md coreyoordt@gmail.com
 RELEASING.md coreyoordt@gmail.com
 cookie_composer/__init__.py coreyoordt@gmail.com
+cookie_composer/authentication.py coreyoordt@gmail.com
 cookie_composer/cc_overrides.py coreyoordt@gmail.com
 cookie_composer/cli.py coreyoordt@gmail.com
 cookie_composer/commands/__init__.py coreyoordt@gmail.com
 cookie_composer/commands/add.py coreyoordt@gmail.com
+cookie_composer/commands/authn.py coreyoordt@gmail.com
 cookie_composer/commands/create.py coreyoordt@gmail.com
 cookie_composer/commands/link.py coreyoordt@gmail.com
 cookie_composer/commands/update.py coreyoordt@gmail.com
@@ -46,8 +48,11 @@ docsrc/_includes/tutorial-composition-1.yaml coreyoordt@gmail.com
 docsrc/_includes/tutorial-composition-2.yaml coreyoordt@gmail.com
 docsrc/_includes/tutorial-composition-3.yaml coreyoordt@gmail.com
 docsrc/_static/css/custom.css coreyoordt@gmail.com
+docsrc/_static/img/authorize-composer.png coreyoordt@gmail.com
+docsrc/_static/img/authorize-done.png coreyoordt@gmail.com
 docsrc/_static/img/composer-logo.svg coreyoordt@gmail.com
 docsrc/_static/img/compositions.png coreyoordt@gmail.com
+docsrc/_static/img/device-activation.png coreyoordt@gmail.com
 docsrc/_static/img/layers.png coreyoordt@gmail.com
 docsrc/_static/img/sandwiches.png coreyoordt@gmail.com
 docsrc/_templates/autosummary/base.rst coreyoordt@gmail.com
@@ -58,6 +63,8 @@ docsrc/changelog.md coreyoordt@gmail.com
 docsrc/cli.rst coreyoordt@gmail.com
 docsrc/conf.py coreyoordt@gmail.com
 docsrc/contributing.md coreyoordt@gmail.com
+docsrc/how-to/access-private-templates.md coreyoordt@gmail.com
+docsrc/how-to/index.md coreyoordt@gmail.com
 docsrc/index.md coreyoordt@gmail.com
 docsrc/installation.md coreyoordt@gmail.com
 docsrc/make.bat coreyoordt@gmail.com
@@ -110,6 +117,7 @@ tests/fixtures/template1/{{cookiecutter.repo_name}}/requirements.txt coreyoordt@
 tests/fixtures/template2/cookiecutter.json coreyoordt@gmail.com
 tests/fixtures/template2/{{cookiecutter.repo_name}}/ABOUT.md coreyoordt@gmail.com
 tests/fixtures/template2/{{cookiecutter.repo_name}}/requirements.txt coreyoordt@gmail.com 66853113+pre-commit-ci[bot]@users.noreply.github.com
+tests/test_authentication.py coreyoordt@gmail.com
 tests/test_cc_overrides.py coreyoordt@gmail.com
 tests/test_cli.py Brannon.Imamura@chrobinson.com
 tests/test_commands/test_add.py coreyoordt@gmail.com
