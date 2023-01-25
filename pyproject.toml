@@ -20,12 +20,14 @@ show_missing = true
 exclude_lines = [
     "raise NotImplementedError",
     "pragma: no-coverage",
+    "pragma: no cover",
 ]
 
 [tool.pytest.ini_options]
 addopts = [
     "--cov=cookie_composer",
     "--cov-branch",
+    "--cov-report=xml",
     "--cov-report=term",
     "--cov-report=html",
 ]

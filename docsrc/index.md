@@ -13,6 +13,7 @@ hidden:
 installation
 tutorial/index
 topic-guides/index
+how-to/index
 cli
 api
 contributing

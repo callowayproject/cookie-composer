@@ -10,8 +10,11 @@ API Reference
 
    ~commands
    ~merge_files
+   ~authentication
+   ~cc_overrides
    ~composition
    ~data_merge
+   ~diff
    ~exceptions
    ~git_commands
    ~layers

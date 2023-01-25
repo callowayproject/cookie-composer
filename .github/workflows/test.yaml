@@ -38,20 +38,8 @@ jobs:
       run: |
         pytest
         coverage lcov
-    - name: Coveralls Upload
-      uses: coverallsapp/github-action@master
+    - uses: codecov/codecov-action@v3
       with:
-        github-token: ${{ secrets.github_token }}
-        flag-name: python-${{ matrix.python-version }}
-        parallel: true
-        path-to-lcov: coverage.lcov
-
-  coveralls_finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
+        files: ./coverage.xml
+        flags: python-${{ matrix.python-version }}
+        verbose: true # optional (default = false)
