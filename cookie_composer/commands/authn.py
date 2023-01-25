@@ -7,12 +7,12 @@ from cookie_composer.authentication import get_cached_token, login_to_svc
 
 
 @click.group()
-def auth_cli():
+def auth():
     """Authenticate cookie-composer to a service."""
     pass
 
 
-@auth_cli.command()
+@auth.command()
 @click.option(
     "-p",
     "--git-protocol",
@@ -61,7 +61,7 @@ def login(git_protocol: str, service: str, scopes: str, with_token: click.File):
 #     pass
 
 
-@auth_cli.command()
+@auth.command()
 @click.option(
     "-h",
     "--service",

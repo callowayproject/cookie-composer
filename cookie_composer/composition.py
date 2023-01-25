@@ -46,7 +46,7 @@ class LayerConfig(BaseModel):
     """Directory within a git repository template that holds the cookiecutter.json file."""
 
     checkout: Optional[str]
-    """The branch, tag or commit to use if template is a git repository."""
+    """The branch, tag or commit to tell Cookie Cutter to use."""
 
     password: Optional[str]
     """The password to use if template is a password-protected Zip archive."""
