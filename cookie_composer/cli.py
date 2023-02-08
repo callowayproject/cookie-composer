@@ -7,6 +7,7 @@ from pathlib import Path
 import click_log
 import rich_click as click
 
+from cookie_composer import __version__
 from cookie_composer.commands.add import add_cmd
 from cookie_composer.commands.authn import auth
 from cookie_composer.commands.create import create_cmd
@@ -19,8 +20,9 @@ click_log.basic_config(logger)
 
 
 @click.group()
+@click.version_option(__version__)
 def cli():
-    """Rendering templates using composition."""
+    """Render templates using composition."""
     pass
 
 
