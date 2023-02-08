@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.1 (2023-02-08)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.9.0...0.9.1)
+
+### New
+
+- Added `--version` option. [4b1b9e1](https://github.com/coordt/cookie-composer/commit/4b1b9e1fd84f976f590dcc1ad803dea4808fe643)
+    
+
+
 ## 0.9.0 (2023-01-25)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.8.1...0.9.0)
 
