@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.2 (2023-02-13)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.9.1...0.9.2)
+
+### New
+
+- Added test for validate_context_params. [a52d28d](https://github.com/coordt/cookie-composer/commit/a52d28d97445c426f02cb8399883ad8a9052928c)
+    
+- Added ability to pass initial contexts. [9e3cdf3](https://github.com/coordt/cookie-composer/commit/9e3cdf34480f9bfafd5f4750d48b78cc6ac294e1)
+    
+### Updates
+
+- Modified CLI options and arguments. [02a4bf3](https://github.com/coordt/cookie-composer/commit/02a4bf3a9378f2788be53cfa769bbc5a9bb3eae3)
+    
+  - The `output_dir` argument was moved to the `--destination` option.
+  - Added `CONTEXT_PARAMS` argument for initial context
+- Removed checkout from first commit when linking. [f2725ef](https://github.com/coordt/cookie-composer/commit/f2725ef3464f932914e3393e5883792a8f93d0ca)
+    
+  - The first commit was causing confusing issues and now a normal checkout is performed.
+
+
 ## 0.9.1 (2023-02-08)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.9.0...0.9.1)
 
