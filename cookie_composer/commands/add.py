@@ -1,5 +1,5 @@
 """The implementation of the add command."""
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import logging
 from pathlib import Path
@@ -31,6 +31,7 @@ def add_cmd(
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
     default_config: bool = False,
+    initial_context: Optional[Dict[str, Any]] = None,
 ):
     """
     Add a template or configuration to an existing project.
@@ -44,6 +45,7 @@ def add_cmd(
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist
         default_config: Do not load a config file. Use the defaults instead
+        initial_context: The initial context for the composition layer
 
     Raises:
         GitError: If the destination_dir is not a git repository
@@ -69,6 +71,7 @@ def add_cmd(
         output_dir,
         overwrite_if_exists,
         skip_if_file_exists,
+        initial_context=initial_context or {},
     )
 
     # Get the merged context for all layers

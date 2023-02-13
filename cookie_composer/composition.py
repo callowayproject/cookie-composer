@@ -191,7 +191,7 @@ class RenderedComposition(BaseModel):
 
 def is_composition_file(path_or_url: Union[str, Path]) -> bool:
     """
-    Is the filename a composition file?
+    Return ``True`` if the filename a composition file.
 
     Args:
         path_or_url: The path or URL to check
@@ -329,6 +329,7 @@ def get_composition_from_path_or_url(
     output_dir: Optional[Path] = None,
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
+    initial_context: Optional[Dict[str, Any]] = None,
 ) -> Composition:
     """
     Generate a :class:`Composition` from a path or URL.
@@ -342,6 +343,7 @@ def get_composition_from_path_or_url(
         output_dir: Where to generate the project
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist
+        initial_context: The initial context for the composition
 
     Returns:
         The composition object.
@@ -358,6 +360,7 @@ def get_composition_from_path_or_url(
             no_input=no_input or default_config,
             skip_if_file_exists=skip_if_file_exists,
             overwrite=overwrite_rules,
+            context=initial_context or {},
         )
         composition = Composition(layers=[tmpl])
         logger.info(f"Rendering template {path_or_url} to {output_dir}.")

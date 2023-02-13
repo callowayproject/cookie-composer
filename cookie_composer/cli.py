@@ -2,6 +2,7 @@
 from typing import Optional
 
 import logging
+from collections import OrderedDict
 from pathlib import Path
 
 import click_log
@@ -27,6 +28,34 @@ def cli():
 
 
 cli.add_command(auth)
+
+
+def validate_context_params(ctx, param, value) -> Optional[OrderedDict]:
+    """
+    Validate context parameters.
+
+    Convert a tuple to a dict
+
+     e.g.: ``('program_name=foobar', 'startsecs=66')`` -> ``{'program_name': 'foobar', 'startsecs': '66'}``
+
+    Arguments:
+        ctx: Click context (unused)
+        param: Click parameter (unused)
+        value: Click parameter value
+
+    Returns:
+        An ordered dict of the parameter values or ``None`` if no parameters.
+
+    Raises:
+        BadParameter: If the parameters are not ``key=value``.
+    """
+    for string in value:
+        if "=" not in string:
+            raise click.BadParameter(
+                f"EXTRA_CONTEXT should contain items of the form key=value." f"'{string}' doesn't match that form."
+            )
+
+    return OrderedDict(s.split("=", 1) for s in value) or None
 
 
 @cli.command()
@@ -65,13 +94,16 @@ cli.add_command(auth)
     is_flag=True,
     help="Do not load a config file. Use the defaults instead",
 )
-@click.argument("path_or_url", type=str, required=True)
-@click.argument(
-    "output_dir",
+@click.option(
+    "-d",
+    "--destination",
     required=False,
     default=lambda: Path.cwd(),
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
+    help="The directory to render the templates to. Defaults to the current working directory.",
 )
+@click.argument("path_or_url", type=str, required=True)
+@click.argument("context_params", nargs=-1, callback=validate_context_params)
 def create(
     no_input: bool,
     checkout: str,
@@ -79,19 +111,21 @@ def create(
     overwrite_if_exists: bool,
     skip_if_file_exists: bool,
     default_config: bool,
+    destination: Path,
     path_or_url: str,
-    output_dir: Optional[Path],
+    context_params: Optional[OrderedDict] = None,
 ):
-    """Create a project from the template or configuration PATH_OR_URL in OUTPUT_DIR."""
+    """Create a project from the template or configuration PATH_OR_URL in using optional [CONTEXT_PARAMS]."""
     create_cmd(
         path_or_url,
-        output_dir,
+        destination,
         no_input,
         checkout,
         directory,
         overwrite_if_exists,
         skip_if_file_exists,
         default_config,
+        initial_context=context_params or {},
     )
 
 
@@ -131,10 +165,16 @@ def create(
     is_flag=True,
     help="Do not load a config file. Use the defaults instead",
 )
-@click.argument("path_or_url", type=str, required=True)
-@click.argument(
-    "destination", required=False, type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path)
+@click.option(
+    "-d",
+    "--destination",
+    required=False,
+    default=lambda: Path.cwd(),
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
+    help="The directory to add the templates to. Defaults to the current working directory.",
 )
+@click.argument("path_or_url", type=str, required=True)
+@click.argument("context_params", nargs=-1, callback=validate_context_params)
 def add(
     no_input: bool,
     checkout: str,
@@ -142,21 +182,23 @@ def add(
     overwrite_if_exists: bool,
     skip_if_file_exists: bool,
     default_config: bool,
+    destination: Path,
     path_or_url: str,
-    destination: Optional[Path],
+    context_params: Optional[OrderedDict],
 ):
-    """Add the template or configuration PATH_OR_URL to an existing project at DESTINATION."""
-    destination = destination or Path.cwd()
+    """Add the template or configuration PATH_OR_URL to an existing project."""
+    output_dir = destination or Path.cwd()
     try:
         add_cmd(
             path_or_url,
-            destination,
+            output_dir,
             no_input=no_input,
             checkout=checkout,
             directory=directory,
             overwrite_if_exists=overwrite_if_exists,
             skip_if_file_exists=skip_if_file_exists,
             default_config=default_config,
+            initial_context=context_params or {},
         )
     except GitError as e:
         raise click.UsageError(str(e)) from e
@@ -169,10 +211,16 @@ def add(
     help="Do not prompt for parameters and only use cookiecutter.json file content. "
     "Defaults to deleting any cached resources and re-downloading them.",
 )
-@click.argument(
-    "destination", required=False, type=click.Path(exists=True, file_okay=False, writable=True, path_type=Path)
+@click.option(
+    "-d",
+    "--destination",
+    required=False,
+    default=lambda: Path.cwd(),
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
+    help="The directory to update. Defaults to the current working directory.",
 )
-def update(no_input: bool, destination: Optional[Path] = None):
+@click.argument("context_params", nargs=-1, callback=validate_context_params)
+def update(no_input: bool, destination: Path, context_params: Optional[OrderedDict] = None):
     """Update the project to the latest version of each template."""
     destination = destination or Path.cwd()
     try:
@@ -216,13 +264,16 @@ def update(no_input: bool, destination: Optional[Path] = None):
     is_flag=True,
     help="Do not load a config file. Use the defaults instead",
 )
-@click.argument("path_or_url", type=str, required=True)
-@click.argument(
-    "destination",
+@click.option(
+    "-d",
+    "--destination",
     required=False,
     default=lambda: Path.cwd(),
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
+    help="The directory to link the template to. Defaults to the current working directory.",
 )
+@click.argument("path_or_url", type=str, required=True)
+@click.argument("context_params", nargs=-1, callback=validate_context_params)
 def link(
     no_input: bool,
     checkout: str,
@@ -230,10 +281,11 @@ def link(
     overwrite_if_exists: bool,
     skip_if_file_exists: bool,
     default_config: bool,
-    path_or_url: str,
     destination: Optional[Path],
+    path_or_url: str,
+    context_params: Optional[OrderedDict],
 ):
-    """Link an existing git repo to the template or composition PATH_OR_URL."""
+    """Link an existing git repo to the template or composition PATH_OR_URL using optional [CONTEXT_PARAMS]."""
     destination = destination or Path.cwd()
     try:
         link_cmd(
@@ -245,6 +297,7 @@ def link(
             overwrite_if_exists=overwrite_if_exists,
             skip_if_file_exists=skip_if_file_exists,
             default_config=default_config,
+            initial_context=context_params or {},
         )
     except GitError as e:
         raise click.UsageError(str(e)) from e

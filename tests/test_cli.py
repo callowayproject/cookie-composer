@@ -1,4 +1,5 @@
 import pytest
+from click import BadParameter
 from click.testing import CliRunner
 
 from cookie_composer import cli
@@ -7,6 +8,14 @@ from cookie_composer import cli
 @pytest.fixture(scope="module")
 def runner():
     return CliRunner()
+
+
+def test_validate_context_params():
+    """Make sure the context params are validated"""
+    with pytest.raises(BadParameter):
+        cli.validate_context_params(None, None, ("iaminvalid", "key=value"))
+
+    assert cli.validate_context_params(None, None, ("key1=value1", "key=value")) == {"key1": "value1", "key": "value"}
 
 
 def test_helps(runner):
