@@ -1,6 +1,6 @@
 """Methods for generating projects."""
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import logging
 from pathlib import Path
@@ -24,6 +24,7 @@ def create_cmd(
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
     default_config: bool = False,
+    initial_context: Optional[Dict[str, Any]] = None,
 ) -> Path:
     """
     Generate a new project from a composition file, local template or remote template.
@@ -37,6 +38,7 @@ def create_cmd(
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist
         default_config: Do not load a config file. Use the defaults instead
+        initial_context: The initial context for the composition
 
     Returns:
         The path to the generated project.
@@ -51,8 +53,9 @@ def create_cmd(
         output_dir,
         overwrite_if_exists,
         skip_if_file_exists,
+        initial_context or {},
     )
-    rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input)
+    rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input, accept_hooks=False)
     rendered_composition = RenderedComposition(
         layers=rendered_layers,
         render_dir=output_dir,

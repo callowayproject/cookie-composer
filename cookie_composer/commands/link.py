@@ -1,5 +1,5 @@
 """The implementation of the link command."""
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from pathlib import Path
 
@@ -16,6 +16,7 @@ def link_cmd(
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
     default_config: bool = False,
+    initial_context: Optional[Dict[str, Any]] = None,
 ):
     """
     Link a template or configuration to an existing project.
@@ -29,6 +30,7 @@ def link_cmd(
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist
         default_config: Do not load a config file. Use the defaults instead
+        initial_context: The initial context for the composition
 
     Raises:
         GitError: If the destination_dir is not a git repository
@@ -60,6 +62,7 @@ def link_cmd(
         overwrite_if_exists,
         skip_if_file_exists,
         default_config,
+        initial_context=initial_context or {},
     )
 
     changed_files = [item.a_path for item in repo.index.diff(None)]
