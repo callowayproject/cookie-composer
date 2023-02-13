@@ -4,13 +4,7 @@ from typing import Optional
 from pathlib import Path
 
 from cookie_composer.commands.create import create_cmd
-from cookie_composer.git_commands import (
-    branch_exists,
-    branch_from_first_commit,
-    checkout_branch,
-    get_repo,
-    remote_branch_exists,
-)
+from cookie_composer.git_commands import checkout_branch, get_repo
 
 
 def link_cmd(
@@ -53,10 +47,7 @@ def link_cmd(
         raise ValueError(f"There is already a .composition.yaml file in {destination_dir}")
 
     branch_name = "link_composition"
-    if branch_exists(repo, branch_name) or remote_branch_exists(repo, branch_name):
-        checkout_branch(repo, branch_name)
-    else:
-        branch_from_first_commit(repo, branch_name)
+    checkout_branch(repo, branch_name)
 
     previously_untracked_files = set(repo.untracked_files)
 

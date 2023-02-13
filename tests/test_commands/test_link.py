@@ -6,7 +6,7 @@ import pytest
 from git import Repo
 
 from cookie_composer.commands import link
-from cookie_composer.git_commands import get_repo
+from cookie_composer.git_commands import checkout_branch, get_repo
 
 
 @pytest.fixture
@@ -16,8 +16,10 @@ def linkable_repo(fixtures_path, tmp_path) -> Path:
     dest_path = tmp_path / "fake-project-template"
     shutil.copytree(rendered_layer, dest_path)
     repo = Repo.init(dest_path)
-    repo.index.add(repo.untracked_files)
-    repo.index.commit(message="Initial commit")
+    for f in repo.untracked_files:
+        repo.index.add(f)
+        repo.index.commit(f"Added untracked file: {f}")
+
     assert not repo.is_dirty()
     return dest_path
 
@@ -27,10 +29,22 @@ def test_link(linkable_repo: Path, fixtures_path: Path):
     template = fixtures_path / "template1"
 
     repo = get_repo(linkable_repo)
+    import subprocess
+
+    output = subprocess.run(
+        ["git", "log", "--graph", "--oneline", "--decorate"], text=True, cwd=linkable_repo, capture_output=True
+    )
+    print(output.stdout)
+
+    previous_master_sha = repo.heads.master.commit.hexsha
 
     link.link_cmd(str(template), linkable_repo, no_input=True)
-
+    checkout_branch(repo, "link_composition")
     assert {head.name for head in repo.heads} == {"master", "link_composition"}
+    output = subprocess.run(
+        ["git", "log", "--graph", "--oneline", "--decorate"], text=True, cwd=linkable_repo, capture_output=True
+    )
+    assert repo.commit("link_composition~1").hexsha == previous_master_sha
 
 
 def test_link_cant_install_over_composition(linkable_repo: Path, fixtures_path: Path):
