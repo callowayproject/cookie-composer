@@ -1,0 +1,7 @@
+template: .
+directory: template1
+---
+template: .
+directory: template2
+context:
+  project_slug: "{{ cookiecutter.repo_slug }}"

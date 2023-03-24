@@ -215,6 +215,8 @@ def read_composition(path_or_url: Union[str, Path]) -> Composition:
     Raises:
         MissingCompositionFileError: Raised when it can not access the configuration file.
     """
+    import urllib.parse
+
     import fsspec
     from ruamel.yaml import YAML
 
@@ -224,6 +226,9 @@ def read_composition(path_or_url: Union[str, Path]) -> Composition:
         with of as f:
             contents = list(yaml.load_all(f))
             templates = [LayerConfig(**doc) for doc in contents]
+        for tmpl in templates:
+            tmpl.template = urllib.parse.urljoin(str(path_or_url), str(tmpl.template))
+
         return Composition(layers=templates)
     except FileNotFoundError as e:
         raise MissingCompositionFileError(path_or_url) from e

@@ -20,3 +20,12 @@ def test_render_composition(fixtures_path, tmp_path):
     rendered_items = {item.name for item in os.scandir(project_path)}
 
     assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt", ".composition.yaml"}
+
+
+def test_render_relative_composition(fixtures_path, tmp_path):
+    """Test rendering a composition file."""
+    template_path = fixtures_path / "relative-multi-template.yaml"
+    project_path = create.create_cmd(str(template_path), tmp_path, no_input=True)
+    rendered_items = {item.name for item in os.scandir(project_path)}
+
+    assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt", ".composition.yaml"}
