@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.10.0 (2023-03-24)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.9.2...0.10.0)
+
+### New
+
+- Added relative directory support for compositions. [02fa5b8](https://github.com/coordt/cookie-composer/commit/02fa5b8b591c25fef7bbd6c2aec20532f16541b5)
+    
+  - Template paths or URLs are resolved using the path to the composition file.
+  - Using an absolute path or URL as a template works as before
+  - `.`, `..`, and relative paths (non-`/` prefixed) are resolved with `urllib.parse.urljoin`
+
+
 ## 0.9.2 (2023-02-13)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.9.1...0.9.2)
 

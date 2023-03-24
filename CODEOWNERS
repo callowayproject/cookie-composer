@@ -98,6 +98,7 @@ tests/fixtures/new.ini coreyoordt@gmail.com
 tests/fixtures/new.json coreyoordt@gmail.com
 tests/fixtures/new.toml coreyoordt@gmail.com
 tests/fixtures/new.yaml coreyoordt@gmail.com
+tests/fixtures/relative-multi-template.yaml coreyoordt@gmail.com
 tests/fixtures/rendered1/context.json coreyoordt@gmail.com
 tests/fixtures/rendered1/rendered-composition.yaml coreyoordt@gmail.com
 tests/fixtures/rendered1/testproject/README.md coreyoordt@gmail.com
