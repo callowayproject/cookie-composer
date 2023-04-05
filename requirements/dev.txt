@@ -171,7 +171,7 @@ jinja2-time==0.2.0
     #   cookiecutter
 linkify-it-py==2.0.0
     # via -r docs.txt
-markdown-it-py==2.1.0
+markdown-it-py==2.2.0
     # via
     #   -r docs.txt
     #   mdit-py-plugins
@@ -317,9 +317,7 @@ ruamel-yaml==0.17.21
     #   -r test.txt
     #   generate-changelog
 ruamel-yaml-clib==0.2.6
-    # via
-    #   -r test.txt
-    #   ruamel-yaml
+    # via -r test.txt
 six==1.16.0
     # via
     #   -r docs.txt
@@ -393,9 +391,6 @@ toml==0.10.2
 tomli==2.0.1
     # via
     #   -r test.txt
-    #   black
-    #   build
-    #   coverage
     #   pytest
 tqdm==4.64.1
     # via git-fame
