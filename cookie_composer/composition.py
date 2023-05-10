@@ -7,6 +7,7 @@ from pathlib import Path
 
 from pydantic import AnyHttpUrl, BaseModel, DirectoryPath, Field, root_validator
 
+from cookie_composer.data_merge import comprehensive_merge
 from cookie_composer.exceptions import GitError, MissingCompositionFileError
 from cookie_composer.matching import rel_fnmatch
 
@@ -202,12 +203,13 @@ def is_composition_file(path_or_url: Union[str, Path]) -> bool:
     return Path(path_or_url).suffix in {".yaml", ".yml"}
 
 
-def read_composition(path_or_url: Union[str, Path]) -> Composition:
+def read_composition(path_or_url: Union[str, Path], **kwargs) -> Composition:
     """
     Read a YAML file and return a :class:`~.Composition`.
 
     Args:
         path_or_url: The location of the configuration file
+        kwargs: Additional keyword arguments passed to the composition
 
     Returns:
         A composition
@@ -225,7 +227,11 @@ def read_composition(path_or_url: Union[str, Path]) -> Composition:
         of = fsspec.open(path_or_url, mode="rt")
         with of as f:
             contents = list(yaml.load_all(f))
-            templates = [LayerConfig(**doc) for doc in contents]
+            templates = []
+            for doc in contents:
+                new_doc = comprehensive_merge(doc, kwargs)
+                templates.append(LayerConfig(**new_doc))
+
         for tmpl in templates:
             tmpl.template = urllib.parse.urljoin(str(path_or_url), str(tmpl.template))
 
@@ -354,7 +360,13 @@ def get_composition_from_path_or_url(
         The composition object.
     """
     if is_composition_file(path_or_url):
-        composition = read_composition(path_or_url)
+        composition = read_composition(
+            path_or_url=path_or_url,
+            checkout=checkout,
+            no_input=no_input or default_config,
+            skip_if_file_exists=skip_if_file_exists,
+            context=initial_context or {},
+        )
         logger.info(f"Rendering composition {path_or_url} to {output_dir}.")
     else:
         overwrite_rules = ["*"] if overwrite_if_exists else []
