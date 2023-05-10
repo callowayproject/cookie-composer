@@ -64,7 +64,7 @@ def test_get_composition_from_path_or_url_composition(fixtures_path: Path):
     """The paths should generate the correct Composition."""
     filepath = fixtures_path / "single-template.yaml"
     expected = composition.Composition(layers=[LayerConfig(template=str(fixtures_path / "tests/fixtures/template1"))])
-    assert composition.get_composition_from_path_or_url(str(filepath)) == expected
+    assert composition.get_composition_from_path_or_url(str(filepath), skip_if_file_exists=True) == expected
 
 
 def test_get_composition_from_path_or_url_path(fixtures_path: Path):
