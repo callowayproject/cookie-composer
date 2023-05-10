@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.10.1 (2023-05-10)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.0...0.10.1)
+
+### Fixes
+
+- Fixed a bug where additional context wasn't passed to the composition. [bd8b571](https://github.com/coordt/cookie-composer/commit/bd8b57140ec29a7b6ec6542086660c012c43b428)
+    
+### Other
+
+- Bump markdown-it-py from 2.1.0 to 2.2.0 in /requirements. [65a4863](https://github.com/coordt/cookie-composer/commit/65a4863b1baab6c2f6062806874c2e8946b857ff)
+    
+  Bumps [markdown-it-py](https://github.com/executablebooks/markdown-it-py) from 2.1.0 to 2.2.0.
+  - [Release notes](https://github.com/executablebooks/markdown-it-py/releases)
+  - [Changelog](https://github.com/executablebooks/markdown-it-py/blob/master/CHANGELOG.md)
+  - [Commits](https://github.com/executablebooks/markdown-it-py/compare/v2.1.0...v2.2.0)
+
+  ---
+  **updated-dependencies:** - dependency-name: markdown-it-py
+dependency-type: indirect
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- [pre-commit.ci] pre-commit autoupdate. [21eca93](https://github.com/coordt/cookie-composer/commit/21eca9331691b355b322119fca002384eb827fb4)
+    
+  **updates:** - [github.com/psf/black: 23.1.0 → 23.3.0](https://github.com/psf/black/compare/23.1.0...23.3.0)
+
+
+
 ## 0.10.0 (2023-03-24)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.9.2...0.10.0)
 
