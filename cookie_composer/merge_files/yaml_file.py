@@ -48,10 +48,8 @@ def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str):
         raise MergeError(str(new_file), str(existing_file), merge_strategy, str(e)) from e
 
     if merge_strategy == OVERWRITE:
-        if isinstance(existing_data, dict) and isinstance(new_data, dict):
-            existing_data.update(new_data)
-        else:
-            existing_data = new_data
+        existing_file.write_text(new_file.read_text())
+        return
     elif merge_strategy == NESTED_OVERWRITE:
         existing_data = data_merge.deep_merge(existing_data, new_data)
     elif merge_strategy == COMPREHENSIVE:
