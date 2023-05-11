@@ -33,7 +33,6 @@ def test_overwrite_merge(tmp_path, fixtures_path):
     new_file = fixtures_path / "new.yaml"
 
     yaml_file.merge_yaml_files(new_file, existing_file, OVERWRITE)
-    print(existing_file)
     rendered = yaml.load(existing_file)
     assert rendered == {
         "number": 2,
