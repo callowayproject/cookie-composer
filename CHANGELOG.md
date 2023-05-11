@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.2 (2023-05-11)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.1...0.10.2)
+
+### Fixes
+
+- Fixed a bug that reformatted files that should be overwritten. [3f0f7b5](https://github.com/coordt/cookie-composer/commit/3f0f7b5f54ec227ade3b49b411e4324c889a0b7e)
+    
+
+
 ## 0.10.1 (2023-05-10)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.0...0.10.1)
 
