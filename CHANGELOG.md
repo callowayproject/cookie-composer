@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.3 (2023-05-15)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.2...0.10.3)
+
+### New
+
+- Added support for accepting hooks. [096dfcc](https://github.com/coordt/cookie-composer/commit/096dfcc79ce19a732b93c4f6d00b5e733dc0a597)
+    
+
+
 ## 0.10.2 (2023-05-11)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.1...0.10.2)
 
