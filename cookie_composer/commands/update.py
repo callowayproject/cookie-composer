@@ -72,7 +72,7 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False):
             current_state_dir,
             initial_context=initial_context,
             no_input=no_input,
-            accept_hooks=False,
+            accept_hooks="none",
         )
         remove_paths(current_state_dir, {Path(".git")})  # don't want the .git dir, if it exists
         current_composition = update_rendered_composition_layers(proj_composition, current_rendered_layers)
@@ -85,7 +85,7 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False):
             updated_state_dir,
             initial_context=initial_context,
             no_input=no_input,
-            accept_hooks=False,
+            accept_hooks="none",
         )
         remove_paths(updated_state_dir, deleted_paths)
         updated_composition = update_rendered_composition_layers(proj_composition, updated_rendered_layers)

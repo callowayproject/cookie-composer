@@ -31,6 +31,7 @@ def add_cmd(
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
     default_config: bool = False,
+    accept_hooks: str = "all",
     initial_context: Optional[Dict[str, Any]] = None,
 ):
     """
@@ -45,6 +46,7 @@ def add_cmd(
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist
         default_config: Do not load a config file. Use the defaults instead
+        accept_hooks: How to deal with pre/post hooks
         initial_context: The initial context for the composition layer
 
     Raises:
@@ -90,7 +92,11 @@ def add_cmd(
 
     # Render and merge the additional layers
     rendered_layers = render_layers(
-        addl_composition.layers, output_dir, initial_context=initial_context, no_input=no_input, accept_hooks=False
+        addl_composition.layers,
+        output_dir,
+        initial_context=initial_context,
+        no_input=no_input,
+        accept_hooks=accept_hooks,
     )
     proj_composition.layers.extend(rendered_layers)
     write_rendered_composition(proj_composition)

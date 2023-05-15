@@ -24,6 +24,7 @@ def create_cmd(
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
     default_config: bool = False,
+    accept_hooks: str = "all",
     initial_context: Optional[Dict[str, Any]] = None,
 ) -> Path:
     """
@@ -38,6 +39,7 @@ def create_cmd(
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist
         default_config: Do not load a config file. Use the defaults instead
+        accept_hooks: Which pre/post hooks should be applied?
         initial_context: The initial context for the composition
 
     Returns:
@@ -55,7 +57,7 @@ def create_cmd(
         skip_if_file_exists,
         initial_context or {},
     )
-    rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input, accept_hooks=False)
+    rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input, accept_hooks=accept_hooks)
     rendered_composition = RenderedComposition(
         layers=rendered_layers,
         render_dir=output_dir,
