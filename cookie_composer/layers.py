@@ -10,6 +10,7 @@ import tempfile
 from enum import Enum
 from pathlib import Path
 
+import click
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.repository import determine_repo_dir
@@ -88,7 +89,7 @@ def get_write_strategy(origin: Path, destination: Path, rendered_layer: Rendered
 
 
 def render_layer(
-    layer_config: LayerConfig, render_dir: Path, full_context: Optional[Context] = None, accept_hooks: bool = True
+    layer_config: LayerConfig, render_dir: Path, full_context: Optional[Context] = None, accept_hooks: str = "yes"
 ) -> RenderedLayer:
     """
     Process one layer of the template composition.
@@ -125,13 +126,18 @@ def render_layer(
 
     context = get_layer_context(layer_config, repo_dir, user_config, full_context)
 
+    if accept_hooks == "ask":
+        _accept_hooks = click.confirm("Do you want to execute hooks?")
+    else:
+        _accept_hooks = accept_hooks == "yes"
+
     # call cookiecutter's generate files function
     generate_files(
         repo_dir=repo_dir,
         context={"cookiecutter": context.flatten()},
         overwrite_if_exists=False,
         output_dir=str(render_dir),
-        accept_hooks=accept_hooks,
+        accept_hooks=_accept_hooks,
     )
     if layer_config.commit is None:
         layer_config.commit = get_latest_template_commit(repo_dir)
@@ -187,7 +193,7 @@ def render_layers(
     destination: Path,
     initial_context: Optional[dict] = None,
     no_input: bool = False,
-    accept_hooks: bool = True,
+    accept_hooks: str = "all",
 ) -> List[RenderedLayer]:
     """
     Render layers to a destination.
@@ -197,18 +203,20 @@ def render_layers(
         destination: The location to merge the rendered layers to
         initial_context: An initial context to pass to the rendering
         no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
-        accept_hooks: Accept pre- and post-hooks if set to ``True``
+        accept_hooks: How to process pre/post hooks.
 
     Returns:
         A list of the rendered layer information
     """
     full_context = Context(initial_context) if initial_context else Context()
     rendered_layers = []
+    num_layers = len(layers)
+    accept_hooks_layers = get_accept_hooks_per_layer(accept_hooks, num_layers)
 
-    for layer_config in layers:
+    for layer_config, accept_hook in zip(layers, accept_hooks_layers):
         layer_config.no_input = True if no_input else layer_config.no_input
         with tempfile.TemporaryDirectory() as render_dir:
-            rendered_layer = render_layer(layer_config, render_dir, full_context, accept_hooks)
+            rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
             merge_layers(destination, rendered_layer)
         rendered_layer.location = destination
         rendered_layer.layer.commit = rendered_layer.latest_commit
@@ -217,6 +225,23 @@ def render_layers(
         full_context = full_context.new_child(rendered_layer.new_context)
 
     return rendered_layers
+
+
+def get_accept_hooks_per_layer(accept_hooks: str, num_layers: int) -> list:
+    """Convert a single accept_hooks value into a value for every layer based on num_layers."""
+    if accept_hooks in {"yes", "all"}:
+        accept_hooks_layers = ["yes"] * num_layers
+    elif accept_hooks in {"no", "none"}:
+        accept_hooks_layers = ["no"] * num_layers
+    elif accept_hooks == "first":
+        accept_hooks_layers = ["no"] * num_layers
+        accept_hooks_layers[0] = "yes"
+    elif accept_hooks == "last":
+        accept_hooks_layers = ["no"] * num_layers
+        accept_hooks_layers[-1] = "yes"
+    else:
+        accept_hooks_layers = ["ask"] * num_layers
+    return accept_hooks_layers
 
 
 def merge_layers(destination: Path, rendered_layer: RenderedLayer):

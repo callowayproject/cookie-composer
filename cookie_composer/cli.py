@@ -102,6 +102,12 @@ def validate_context_params(ctx, param, value) -> Optional[OrderedDict]:
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
     help="The directory to render the templates to. Defaults to the current working directory.",
 )
+@click.option(
+    "--accept-hooks",
+    type=click.Choice(["yes", "ask", "no", "first", "last", "all", "none"], case_sensitive=False),
+    default="all",
+    help="Accept pre/host hooks",
+)
 @click.argument("path_or_url", type=str, required=True)
 @click.argument("context_params", nargs=-1, callback=validate_context_params)
 def create(
@@ -112,6 +118,7 @@ def create(
     skip_if_file_exists: bool,
     default_config: bool,
     destination: Path,
+    accept_hooks: str,
     path_or_url: str,
     context_params: Optional[OrderedDict] = None,
 ):
@@ -125,6 +132,7 @@ def create(
         overwrite_if_exists,
         skip_if_file_exists,
         default_config,
+        accept_hooks,
         initial_context=context_params or {},
     )
 
@@ -173,6 +181,12 @@ def create(
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
     help="The directory to add the templates to. Defaults to the current working directory.",
 )
+@click.option(
+    "--accept-hooks",
+    type=click.Choice(["yes", "ask", "no", "first", "last", "all", "none"], case_sensitive=False),
+    default="all",
+    help="Accept pre/host hooks",
+)
 @click.argument("path_or_url", type=str, required=True)
 @click.argument("context_params", nargs=-1, callback=validate_context_params)
 def add(
@@ -183,6 +197,7 @@ def add(
     skip_if_file_exists: bool,
     default_config: bool,
     destination: Path,
+    accept_hooks: str,
     path_or_url: str,
     context_params: Optional[OrderedDict],
 ):
@@ -198,6 +213,7 @@ def add(
             overwrite_if_exists=overwrite_if_exists,
             skip_if_file_exists=skip_if_file_exists,
             default_config=default_config,
+            accept_hooks=accept_hooks,
             initial_context=context_params or {},
         )
     except GitError as e:

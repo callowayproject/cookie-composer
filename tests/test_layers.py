@@ -6,6 +6,7 @@ from inspect import signature
 from pathlib import Path
 from shutil import copytree
 
+import pytest
 from cookiecutter.config import get_user_config
 
 from cookie_composer import layers
@@ -259,3 +260,20 @@ def test_get_layer_context_with_extra(fixtures_path):
             "_requirements": {"foo": "", "bar": ">=5.0.0"},
         },
     )
+
+
+@pytest.mark.parametrize(
+    "value, num_layers, expected",
+    [
+        ("yes", 3, ["yes", "yes", "yes"]),
+        ("all", 3, ["yes", "yes", "yes"]),
+        ("no", 3, ["no", "no", "no"]),
+        ("none", 3, ["no", "no", "no"]),
+        ("first", 3, ["yes", "no", "no"]),
+        ("last", 3, ["no", "no", "yes"]),
+        ("ask", 3, ["ask", "ask", "ask"]),
+        ("what", 3, ["ask", "ask", "ask"]),
+    ],
+)
+def test_get_accept_hooks_per_layer(value: str, num_layers: int, expected: list):
+    assert layers.get_accept_hooks_per_layer(value, num_layers) == expected
