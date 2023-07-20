@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=prod.txt prod.in
 #
-aiohttp==3.8.3
+aiohttp==3.8.5
     # via -r prod.in
 aiosignal==1.2.0
     # via aiohttp
@@ -99,8 +99,6 @@ rich-click==1.5.2
     # via -r prod.in
 ruamel-yaml==0.17.21
     # via -r prod.in
-ruamel-yaml-clib==0.2.6
-    # via ruamel-yaml
 six==1.16.0
     # via python-dateutil
 smmap==5.0.0
