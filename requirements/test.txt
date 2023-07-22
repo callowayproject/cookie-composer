@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=test.txt test.in
 #
-aiohttp==3.8.3
+aiohttp==3.8.5
     # via -r prod.txt
 aiosignal==1.2.0
     # via
@@ -198,10 +198,6 @@ rich-click==1.5.2
     # via -r prod.txt
 ruamel-yaml==0.17.21
     # via -r prod.txt
-ruamel-yaml-clib==0.2.6
-    # via
-    #   -r prod.txt
-    #   ruamel-yaml
 six==1.16.0
     # via
     #   -r prod.txt
@@ -219,10 +215,7 @@ toml==0.10.2
     #   -r prod.txt
     #   pre-commit
 tomli==2.0.1
-    # via
-    #   black
-    #   coverage
-    #   pytest
+    # via pytest
 typing-extensions==4.4.0
     # via
     #   -r prod.txt

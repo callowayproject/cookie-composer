@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=dev.txt dev.in
 #
-aiohttp==3.8.3
+aiohttp==3.8.5
     # via -r test.txt
 aiosignal==1.2.0
     # via
@@ -316,8 +316,6 @@ ruamel-yaml==0.17.21
     # via
     #   -r test.txt
     #   generate-changelog
-ruamel-yaml-clib==0.2.6
-    # via -r test.txt
 six==1.16.0
     # via
     #   -r docs.txt
