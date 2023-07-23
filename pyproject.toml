@@ -1,9 +1,91 @@
 [build-system]
-requires = [
-  "setuptools >= 40.9.0",
-  "wheel",
-]
+requires = ["setuptools >= 61.2"]
 build-backend = "setuptools.build_meta"
+
+[project]
+authors = [
+    {name = "Corey Oordt", email = "coreyoordt@gmail.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Code Generators",
+]
+dependencies = [
+    "backports.shutil-copytree",
+    "click-log",
+    "cookiecutter>=2.2.0",
+    "fsspec",
+    "ghapi",
+    "gitpython",
+    "immutabledict",
+    "orjson",
+    "pydantic<2.0.0",
+    "questionary",
+    "requests",
+    "rich-click",
+    "ruamel.yaml",
+    "toml",
+]
+description = "Create new projects from a composition of several templates"
+dynamic = ["version",]
+license = {text = "BSD-3-Clause"}
+keywords = [ "cookie-composer", "cookiecutter", "scaffold"]
+name = "cookie-composer"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "bump-my-version",
+    "git-fame>=1.12.2",
+    "generate-changelog",
+    "pip-tools",
+]
+docs = [
+    "ghp-import",
+    "linkify-it-py",
+    "myst-parser",
+    "furo",
+    "Sphinx>=4.3.0",
+    "sphinx-autodoc-typehints",
+    "sphinx-click",
+    "sphinx-copybutton",
+]
+test = [
+    "coverage>=6.1.2",
+    "pre-commit>=2.15.0",
+    "pytest-cov>=3.0.0",
+    "pytest-env",
+    "pytest-mock",
+    "pytest>=6.0.0",
+]
+
+[project.scripts]
+cookie-composer = "cookie_composer.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/callowayproject/cookie-composer"
+Documentation = "https://callowayproject.github.io/cookie-composer/"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+exclude = [ "example*", "tests*", "docs", "build",]
+namespaces = false
+
+[tool.setuptools.dynamic.version]
+attr = "cookie_composer.__version__"
 
 [tool.coverage.run]
 branch = true
@@ -62,20 +144,90 @@ quiet = false
 whitelist-regex = []
 color = true
 
-[tool.isort]
-py_version = "38"
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
-known_typing = ["typing", "types", "typing_extensions", "mypy", "mypy_extensions"]
-sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-include_trailing_comma = true
-profile = "black"
-multi_line_output = 3
-indent = 4
-color_output = true
+[tool.black]
+line-length = 119
 
-[tool.pydocstyle]
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+# "UP" "TRY" "PLR"
+select = ["E", "W", "F", "I", "N",  "B", "BLE", "C", "D", "E", "F", "I", "N", "S", "T", "W", "RUF", "NPY",  "PD", "PGH", "ANN", "C90", "PLC", "PLE", "PLW", "TCH"]
+ignore = [
+    "ANN002", "ANN003", "ANN101", "ANN102", "ANN204", "ANN401",
+    "S101", "S104",
+    "D106", "D107", "D200", "D212",
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["E", "W", "F", "I", "N",  "B", "BLE", "C", "D", "E", "F", "I", "N", "S", "T", "W", "RUF", "NPY",  "PD", "PGH", "ANN", "C90", "PL", "PLC", "PLE", "PLW", "TCH"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 119
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+typing-modules = ["typing", "types", "typing_extensions", "mypy", "mypy_extensions"]
+
+[tool.ruff.per-file-ignores]
+"tests/*"=["S101", "PLR0913", "PLR0915", "PGH003", "ANN001", "ANN202", "ANN201", "PLR0912", "TRY301", "PLW0603", "PLR2004", "ANN101", "S106", "TRY201", "ANN003", "ANN002", "S105", "TRY003"]
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.ruff.isort]
+order-by-type = true
+
+[tool.ruff.pydocstyle]
 convention = "google"
-add-ignore = ["D107", "D200", "D212", "D214"]
-match = "(?!test_).*\\.py"
+
+[tool.bumpversion]
+allow_dirty = true
+commit = true
+commit_args = "--no-verify"
+current_version = "0.10.3"
+message = "Version updated from {current_version} to {new_version}"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\+\\w+-(?P<dev>\\d+))?"
+serialize = [
+    "{major}.{minor}.{patch}+{$BRANCH_NAME}-{dev}",
+    "{major}.{minor}.{patch}"
+]
+tag = true
+tag_name = "{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "cookie_composer/__init__.py"
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.md"
+search = "Unreleased"
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.md"
+search = "{current_version}...HEAD"
+replace = "{current_version}...{new_version}"
