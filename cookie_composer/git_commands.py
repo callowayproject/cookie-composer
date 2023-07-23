@@ -1,8 +1,7 @@
 """Functions for using git."""
-from typing import Optional, Union
-
 import subprocess
 from pathlib import Path
+from typing import Optional, Union
 
 from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 
@@ -72,7 +71,7 @@ def remote_branch_exists(repo: Repo, branch_name: str, remote_name: str = "origi
     return False
 
 
-def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin"):
+def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -> None:
     """Checkout a local or remote branch."""
     if repo.is_dirty():
         raise GitError(
@@ -91,7 +90,7 @@ def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin"):
     repo.heads[branch_name].checkout()
 
 
-def branch_from_first_commit(repo: Repo, branch_name: str):
+def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
     """Create and checkout a branch from the repo's first commit."""
     if repo.is_dirty():
         raise GitError(
@@ -122,7 +121,7 @@ def get_latest_template_commit(template_path: str) -> Optional[str]:
         return None
 
 
-def apply_patch(repo: Repo, diff: str):
+def apply_patch(repo: Repo, diff: str) -> None:
     """
     Apply a patch to a destination directory.
 

@@ -1,8 +1,7 @@
 """OAuth2 authentication to access protected resources."""
-from typing import Optional
-
 import json
 from pathlib import Path
+from typing import Optional
 
 
 def get_hosts_file() -> Path:
@@ -86,7 +85,7 @@ def add_auth_to_url(url: str) -> str:
     return urlunparse(parsed)
 
 
-def github_auth_device(n_polls=9999):  # pragma: no cover
+def github_auth_device(n_polls: int = 9999) -> Optional[str]:  # pragma: no cover
     """
     Authenticate with GitHub, polling up to ``n_polls`` times to wait for completion.
     """

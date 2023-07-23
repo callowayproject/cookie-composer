@@ -1,11 +1,10 @@
 """Project configuration and options."""
-from typing import Any, Dict, List, Optional, Union
-
 import logging
 import os
 from pathlib import Path
+from typing import Any, Dict, List, MutableMapping, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseModel, DirectoryPath, Field, root_validator
+from pydantic import BaseModel, DirectoryPath, Field, root_validator
 
 from cookie_composer.data_merge import comprehensive_merge
 from cookie_composer.exceptions import GitError, MissingCompositionFileError
@@ -40,7 +39,7 @@ class LayerConfig(BaseModel):
     #
     # Template specification
     #
-    template: Union[str, AnyHttpUrl]
+    template: str
     """The path or URL to the template."""
 
     directory: Optional[str]
@@ -95,7 +94,7 @@ class LayerConfig(BaseModel):
         """The name of the template layer."""
         from cookie_composer.utils import get_template_name
 
-        return get_template_name(self.template, self.directory, self.checkout)
+        return get_template_name(str(self.template), self.directory, self.checkout)
 
 
 class RenderedLayer(BaseModel):
@@ -117,7 +116,7 @@ class RenderedLayer(BaseModel):
     """The name of the rendered template directory."""
 
     @root_validator(pre=True)
-    def set_rendered_name(cls, values):
+    def set_rendered_name(cls, values: Dict[str, Any]) -> Dict[str, Any]:  # noqa: N805
         """Set the :attr:`~.RenderedLayer.layer_name`` to the name of the rendered template directory."""
         if "rendered_name" in values:
             return values
@@ -237,7 +236,7 @@ def read_composition(path_or_url: Union[str, Path], **kwargs) -> Composition:
 
         return Composition(layers=templates)
     except FileNotFoundError as e:
-        raise MissingCompositionFileError(path_or_url) from e
+        raise MissingCompositionFileError(str(path_or_url)) from e
 
 
 def read_rendered_composition(path: Path) -> RenderedComposition:
@@ -269,7 +268,7 @@ def read_rendered_composition(path: Path) -> RenderedComposition:
     )
 
 
-def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
+def write_composition(layers: List[LayerConfig], destination: Union[str, Path]) -> None:
     """
     Write a YAML composition file.
 
@@ -289,7 +288,7 @@ def write_composition(layers: List[LayerConfig], destination: Union[str, Path]):
         yaml.dump_all(dict_layers, f)
 
 
-def write_rendered_composition(composition: RenderedComposition):
+def write_rendered_composition(composition: RenderedComposition) -> None:
     """
     Write the composition file using the rendered layers to the appropriate place.
 
@@ -340,7 +339,7 @@ def get_composition_from_path_or_url(
     output_dir: Optional[Path] = None,
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
-    initial_context: Optional[Dict[str, Any]] = None,
+    initial_context: Optional[MutableMapping[str, Any]] = None,
 ) -> Composition:
     """
     Generate a :class:`Composition` from a path or URL.
