@@ -69,6 +69,15 @@ class CustomStrictEnvironment(StrictEnvironment):
         return [str(ext) for ext in context.get("_extensions", [])]
 
 
+def update_extensions(existing_config: Context, prompts: MutableMapping[str, Any]) -> List[str]:
+    """Merge extensions from prompts into existing config."""
+    extensions = existing_config.get("_extensions", [])
+    if "_extensions" in prompts:
+        extensions.extend(prompts["_extensions"])
+
+    return extensions
+
+
 def prompt_for_config(prompts: dict, existing_config: Context, no_input: bool = False) -> Context:
     """
     Prompt user to enter a new config using an existing config as a basis.
@@ -97,6 +106,9 @@ def prompt_for_config(prompts: dict, existing_config: Context, no_input: bool = 
     else:
         context = existing_config.new_child()
 
+    extensions = update_extensions(existing_config, prompts)
+    if extensions:
+        context["_extensions"] = extensions
     env = CustomStrictEnvironment(context=existing_config)
 
     context_prompts = {}
