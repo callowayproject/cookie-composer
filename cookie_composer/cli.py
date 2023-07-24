@@ -96,6 +96,8 @@ def validate_context_params(ctx: Any, param: Any, value: list) -> Optional[Order
 @click.option(
     "-d",
     "--destination",
+    "-o",
+    "--output-dir",
     required=False,
     default=lambda: Path.cwd(),
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
