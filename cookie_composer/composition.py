@@ -106,7 +106,7 @@ class RenderedLayer(BaseModel):
     location: DirectoryPath
     """The directory where the layer was rendered."""
 
-    new_context: Dict[str, Any]
+    new_context: MutableMapping[str, Any]
     """The context based on questions asked."""
 
     latest_commit: Optional[str] = None

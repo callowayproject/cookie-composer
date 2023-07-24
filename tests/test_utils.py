@@ -34,7 +34,7 @@ def test_get_context_for_layer(fixtures_path):
         param("https://example.com/path/to/composition.yaml", "composition", id="remote composition"),
     ],
 )
-def test_get_template_name(value, expected):
+def test_get_template_name(value: str, expected: str):
     """The template name should be the base name of the path."""
     assert utils.get_template_name(value) == expected
 
@@ -47,6 +47,6 @@ def test_get_template_name(value, expected):
     ],
 )
 def test_get_template_name_errors(bad_value):
-    """It should raise errors"""
+    """It should raise errors."""
     with pytest.raises(ValueError):
         utils.get_template_name(bad_value)

@@ -11,7 +11,7 @@ def runner():
 
 
 def test_validate_context_params():
-    """Make sure the context params are validated"""
+    """Make sure the context params are validated."""
     with pytest.raises(BadParameter):
         cli.validate_context_params(None, None, ("iaminvalid", "key=value"))
 
