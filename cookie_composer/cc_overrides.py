@@ -32,7 +32,7 @@ class JsonifyContextExtension(Extension):
         """Initialize the extension with the given environment."""
         super().__init__(environment)
 
-        def jsonify(obj: Any) -> str:
+        def jsonify(obj: Any) -> str:  # pragma: no cover
             return json.dumps(obj, sort_keys=True, indent=4, default=jsonify_context)
 
         environment.filters["jsonify"] = jsonify
@@ -49,7 +49,7 @@ class CustomStrictEnvironment(StrictEnvironment):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if "cookiecutter.extensions.JsonifyExtension" in self.extensions:
+        if "cookiecutter.extensions.JsonifyExtension" in self.extensions:  # pragma: no cover
             del self.extensions["cookiecutter.extensions.JsonifyExtension"]
         self.add_extension("cookie_composer.cc_overrides.JsonifyContextExtension")
 
