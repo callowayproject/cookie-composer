@@ -229,14 +229,14 @@ def render_layers(
     num_layers = len(layers)
     accept_hooks_layers = get_accept_hooks_per_layer(accept_hooks, num_layers)
 
-    for layer_config, accept_hook in zip(layers, accept_hooks_layers, strict=True):
+    for layer_config, accept_hook in zip(layers, accept_hooks_layers):  # noqa: B905
         layer_config.no_input = True if no_input else layer_config.no_input
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
             merge_layers(destination, rendered_layer)
         rendered_layer.location = destination
         rendered_layer.layer.commit = rendered_layer.latest_commit
-        rendered_layer.layer.context = rendered_layer.new_context
+        rendered_layer.layer.context = rendered_layer.new_context  # type: ignore[assignment]
         rendered_layers.append(rendered_layer)
         full_context = full_context.new_child(rendered_layer.new_context)
 
