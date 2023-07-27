@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.update.update_rendered_composition_layers
+
+update\_rendered\_composition\_layers
+=====================================
+
+.. currentmodule:: cookie_composer.commands.update
+
+.. autofunction:: update_rendered_composition_layers

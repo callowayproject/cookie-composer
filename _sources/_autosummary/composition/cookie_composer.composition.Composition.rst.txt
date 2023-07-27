@@ -1,0 +1,12 @@
+.. rst-class:: subheading
+
+cookie_composer.composition.Composition
+
+Composition
+===========
+
+.. currentmodule:: cookie_composer.composition
+
+.. autoclass:: Composition
+   :members:
+   :undoc-members:

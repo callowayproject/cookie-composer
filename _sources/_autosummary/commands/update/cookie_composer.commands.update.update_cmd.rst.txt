@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.update.update_cmd
+
+update\_cmd
+===========
+
+.. currentmodule:: cookie_composer.commands.update
+
+.. autofunction:: update_cmd

@@ -1,0 +1,27 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.authn
+
+authn
+=====
+
+.. currentmodule:: cookie_composer.commands.authn
+
+.. automodule:: cookie_composer.commands.authn
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.link.link_cmd
+
+link\_cmd
+=========
+
+.. currentmodule:: cookie_composer.commands.link
+
+.. autofunction:: link_cmd

@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.layers.get_accept_hooks_per_layer
+
+get\_accept\_hooks\_per\_layer
+==============================
+
+.. currentmodule:: cookie_composer.layers
+
+.. autofunction:: get_accept_hooks_per_layer

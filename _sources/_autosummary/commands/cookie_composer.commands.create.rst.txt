@@ -1,0 +1,35 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.create
+
+create
+======
+
+.. currentmodule:: cookie_composer.commands.create
+
+.. automodule:: cookie_composer.commands.create
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: create
+   
+      create_cmd
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.composition.read_composition
+
+read\_composition
+=================
+
+.. currentmodule:: cookie_composer.composition
+
+.. autofunction:: read_composition

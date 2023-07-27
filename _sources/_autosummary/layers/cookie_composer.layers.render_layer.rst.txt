@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.layers.render_layer
+
+render\_layer
+=============
+
+.. currentmodule:: cookie_composer.layers
+
+.. autofunction:: render_layer

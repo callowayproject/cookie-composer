@@ -1,0 +1,36 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.update
+
+update
+======
+
+.. currentmodule:: cookie_composer.commands.update
+
+.. automodule:: cookie_composer.commands.update
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: update
+   
+      update_cmd
+      update_rendered_composition_layers
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

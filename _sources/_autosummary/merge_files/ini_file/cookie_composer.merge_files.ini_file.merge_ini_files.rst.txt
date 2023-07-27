@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.merge_files.ini_file.merge_ini_files
+
+merge\_ini\_files
+=================
+
+.. currentmodule:: cookie_composer.merge_files.ini_file
+
+.. autofunction:: merge_ini_files

@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.merge_files.json_file.merge_json_files
+
+merge\_json\_files
+==================
+
+.. currentmodule:: cookie_composer.merge_files.json_file
+
+.. autofunction:: merge_json_files

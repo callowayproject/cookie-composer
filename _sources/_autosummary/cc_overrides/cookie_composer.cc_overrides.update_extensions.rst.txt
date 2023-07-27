@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.cc_overrides.update_extensions
+
+update\_extensions
+==================
+
+.. currentmodule:: cookie_composer.cc_overrides
+
+.. autofunction:: update_extensions

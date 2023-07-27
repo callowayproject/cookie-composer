@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.authentication.get_cached_token
+
+get\_cached\_token
+==================
+
+.. currentmodule:: cookie_composer.authentication
+
+.. autofunction:: get_cached_token

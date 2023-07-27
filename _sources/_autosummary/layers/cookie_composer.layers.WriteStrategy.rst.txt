@@ -1,0 +1,12 @@
+.. rst-class:: subheading
+
+cookie_composer.layers.WriteStrategy
+
+WriteStrategy
+=============
+
+.. currentmodule:: cookie_composer.layers
+
+.. autoclass:: WriteStrategy
+   :members:
+   :undoc-members:

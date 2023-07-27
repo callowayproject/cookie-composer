@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.authentication.get_hosts_file
+
+get\_hosts\_file
+================
+
+.. currentmodule:: cookie_composer.authentication
+
+.. autofunction:: get_hosts_file

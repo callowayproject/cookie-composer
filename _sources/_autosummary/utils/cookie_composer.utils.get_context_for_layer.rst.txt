@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.utils.get_context_for_layer
+
+get\_context\_for\_layer
+========================
+
+.. currentmodule:: cookie_composer.utils
+
+.. autofunction:: get_context_for_layer

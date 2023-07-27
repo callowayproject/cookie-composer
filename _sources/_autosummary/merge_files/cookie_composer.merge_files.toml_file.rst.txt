@@ -1,0 +1,35 @@
+.. rst-class:: subheading
+
+cookie_composer.merge_files.toml_file
+
+toml\_file
+==========
+
+.. currentmodule:: cookie_composer.merge_files.toml_file
+
+.. automodule:: cookie_composer.merge_files.toml_file
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: toml_file
+   
+      merge_toml_files
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

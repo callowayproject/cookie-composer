@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.merge_files.yaml_file.merge_yaml_files
+
+merge\_yaml\_files
+==================
+
+.. currentmodule:: cookie_composer.merge_files.yaml_file
+
+.. autofunction:: merge_yaml_files

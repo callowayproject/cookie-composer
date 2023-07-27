@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.git_commands.remote_branch_exists
+
+remote\_branch\_exists
+======================
+
+.. currentmodule:: cookie_composer.git_commands
+
+.. autofunction:: remote_branch_exists

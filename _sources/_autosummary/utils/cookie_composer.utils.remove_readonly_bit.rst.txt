@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.utils.remove_readonly_bit
+
+remove\_readonly\_bit
+=====================
+
+.. currentmodule:: cookie_composer.utils
+
+.. autofunction:: remove_readonly_bit

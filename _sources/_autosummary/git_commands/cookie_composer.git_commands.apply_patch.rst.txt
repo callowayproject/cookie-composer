@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.git_commands.apply_patch
+
+apply\_patch
+============
+
+.. currentmodule:: cookie_composer.git_commands
+
+.. autofunction:: apply_patch

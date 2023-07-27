@@ -1,0 +1,62 @@
+﻿.. rst-class:: subheading
+
+cookie_composer.composition
+
+composition
+===========
+
+.. currentmodule:: cookie_composer.composition
+
+.. automodule:: cookie_composer.composition
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :nosignatures:
+   
+      DO_NOT_MERGE
+      NESTED_OVERWRITE
+      OVERWRITE
+      COMPREHENSIVE
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: composition
+   
+      get_composition_from_path_or_url
+      get_merge_strategy
+      is_composition_file
+      read_composition
+      read_rendered_composition
+      write_composition
+      write_rendered_composition
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: composition
+   
+      Composition
+      LayerConfig
+      RenderedComposition
+      RenderedLayer
+   
+   
+
+   
+   
+   
+   
+   

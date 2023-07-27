@@ -1,0 +1,41 @@
+﻿.. rst-class:: subheading
+
+cookie_composer.utils
+
+utils
+=====
+
+.. currentmodule:: cookie_composer.utils
+
+.. automodule:: cookie_composer.utils
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: utils
+   
+      echo
+      get_context_for_layer
+      get_deleted_files
+      get_template_name
+      remove_paths
+      remove_readonly_bit
+      remove_single_path
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

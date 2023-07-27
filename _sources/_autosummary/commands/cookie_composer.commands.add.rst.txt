@@ -1,0 +1,35 @@
+.. rst-class:: subheading
+
+cookie_composer.commands.add
+
+add
+===
+
+.. currentmodule:: cookie_composer.commands.add
+
+.. automodule:: cookie_composer.commands.add
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: add
+   
+      add_cmd
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

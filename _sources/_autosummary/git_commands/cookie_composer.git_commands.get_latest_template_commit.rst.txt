@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.git_commands.get_latest_template_commit
+
+get\_latest\_template\_commit
+=============================
+
+.. currentmodule:: cookie_composer.git_commands
+
+.. autofunction:: get_latest_template_commit

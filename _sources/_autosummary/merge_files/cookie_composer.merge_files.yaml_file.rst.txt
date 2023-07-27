@@ -1,0 +1,35 @@
+.. rst-class:: subheading
+
+cookie_composer.merge_files.yaml_file
+
+yaml\_file
+==========
+
+.. currentmodule:: cookie_composer.merge_files.yaml_file
+
+.. automodule:: cookie_composer.merge_files.yaml_file
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: yaml_file
+   
+      merge_yaml_files
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

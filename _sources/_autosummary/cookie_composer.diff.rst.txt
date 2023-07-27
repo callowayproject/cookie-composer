@@ -1,0 +1,37 @@
+﻿.. rst-class:: subheading
+
+cookie_composer.diff
+
+diff
+====
+
+.. currentmodule:: cookie_composer.diff
+
+.. automodule:: cookie_composer.diff
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :nosignatures:
+      :toctree: diff
+   
+      display_diff
+      get_diff
+      replace_diff_prefixes
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+   
+   

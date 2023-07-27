@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.utils.remove_paths
+
+remove\_paths
+=============
+
+.. currentmodule:: cookie_composer.utils
+
+.. autofunction:: remove_paths

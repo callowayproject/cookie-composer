@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.diff.display_diff
+
+display\_diff
+=============
+
+.. currentmodule:: cookie_composer.diff
+
+.. autofunction:: display_diff

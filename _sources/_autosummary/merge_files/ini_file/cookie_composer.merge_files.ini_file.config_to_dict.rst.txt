@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.merge_files.ini_file.config_to_dict
+
+config\_to\_dict
+================
+
+.. currentmodule:: cookie_composer.merge_files.ini_file
+
+.. autofunction:: config_to_dict

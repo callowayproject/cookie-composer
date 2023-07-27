@@ -1,0 +1,10 @@
+.. rst-class:: subheading
+
+cookie_composer.composition.get_composition_from_path_or_url
+
+get\_composition\_from\_path\_or\_url
+=====================================
+
+.. currentmodule:: cookie_composer.composition
+
+.. autofunction:: get_composition_from_path_or_url
