@@ -1,9 +1,8 @@
 """Tools for merging data."""
-from typing import Any, Iterable
-
 import copy
 from collections import ChainMap, OrderedDict
 from functools import reduce
+from typing import Any, Iterable, MutableMapping
 
 from immutabledict import immutabledict
 
@@ -19,7 +18,7 @@ def deep_merge(*dicts) -> dict:
         dict: The merged dict
     """
 
-    def merge_into(d1, d2):
+    def merge_into(d1: dict, d2: dict) -> dict:
         for key in d2:
             if key not in d1 or not isinstance(d1[key], dict):
                 d1[key] = copy.deepcopy(d2[key])
@@ -48,7 +47,7 @@ def merge_iterables(iter1: Iterable, iter2: Iterable) -> set:
     return set(chain(freeze_data(iter1), freeze_data(iter2)))
 
 
-def comprehensive_merge(*args) -> Any:
+def comprehensive_merge(*args) -> Any:  # noqa: C901
     """
     Merges data comprehensively.
 
@@ -67,15 +66,18 @@ def comprehensive_merge(*args) -> Any:
     dict_types = (dict, OrderedDict, immutabledict)
     iterable_types = (list, set, tuple)
 
-    def merge_into(d1, d2):
+    def merge_into(d1: Any, d2: Any) -> Any:
         if isinstance(d1, dict_types) and isinstance(d2, dict_types):
             if isinstance(d1, OrderedDict) or isinstance(d2, OrderedDict):
-                d1 = OrderedDict(d1)
-                d2 = OrderedDict(d2)
+                od1: MutableMapping[Any, Any] = OrderedDict(d1)
+                od2: MutableMapping[Any, Any] = OrderedDict(d2)
+            else:
+                od1 = dict(d1)
+                od2 = dict(d2)
 
-            for key in d2:
-                d1[key] = merge_into(d1[key], d2[key]) if key in d1 else copy.deepcopy(d2[key])
-            return d1
+            for key in od2:
+                od1[key] = merge_into(od1[key], od2[key]) if key in od1 else copy.deepcopy(od2[key])
+            return od1  # type: ignore[return-value]
         elif isinstance(d1, list) and isinstance(d2, iterable_types):
             return list(merge_iterables(d1, d2))
         elif isinstance(d1, set) and isinstance(d2, iterable_types):
@@ -88,7 +90,7 @@ def comprehensive_merge(*args) -> Any:
     if isinstance(args[0], list):
         return reduce(merge_into, args, [])
     elif isinstance(args[0], tuple):
-        return reduce(merge_into, args, tuple())
+        return reduce(merge_into, args, ())
     elif isinstance(args[0], set):
         return reduce(merge_into, args, set())
     elif isinstance(args[0], dict_types):
@@ -110,7 +112,7 @@ class Context(ChainMap):
         return reduce(comprehensive_merge, self.maps, {})
 
 
-def freeze_data(obj):
+def freeze_data(obj: Any) -> Any:
     """Check type and recursively return a new read-only object."""
     if isinstance(obj, (str, int, float, bytes, type(None), bool)):
         return obj

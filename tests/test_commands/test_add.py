@@ -12,7 +12,6 @@ from cookie_composer.commands import add
 @pytest.fixture
 def create_base_repo(fixtures_path, tmp_path):
     """Make the base repo for adding template."""
-
     rendered_layer = fixtures_path / "rendered1" / "testproject"
     dest_path = tmp_path / "fake-project-template"
     shutil.copytree(rendered_layer, dest_path)
@@ -31,7 +30,6 @@ def create_base_repo(fixtures_path, tmp_path):
 
 def test_render_template(fixtures_path, create_base_repo):
     """Test rendering a single template."""
-
     template_path = fixtures_path / "template2"
 
     add.add_cmd(str(template_path), create_base_repo, no_input=True)

@@ -1,4 +1,4 @@
-.PHONY: release-dev release-patch release-minor release-major help docs pubdocs do-release
+.PHONY: release-dev release-patch release-minor release-major help docs pubdocs do-release requirements
 .DEFAULT_GOAL := help
 
 RELEASE_KIND := patch
@@ -61,6 +61,14 @@ do-release:
 get-version:  # Sets the value after release-version to the VERSION
 	$(eval VERSION := $(filter-out release-version,$(MAKECMDGOALS)))
 	$(eval BUMPVERSION_OPTS := --new-version=$(VERSION))
+
+requirements: # Write all the requirements to requirements/*.txt
+	rm requirements/*.txt
+	pip-compile --quiet -o requirements/prod.txt pyproject.toml
+	pip-compile --quiet --extra=test -o requirements/test.txt pyproject.toml
+	pip-compile --quiet --extra=docs -o requirements/docs.txt pyproject.toml
+	pip-compile --quiet --extra=docs --extra=test --extra=dev -o requirements/dev.txt pyproject.toml
+
 
 %: # NO-OP for unrecognized rules
 	@:

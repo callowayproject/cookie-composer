@@ -54,7 +54,6 @@ def test_get_write_strategy_skip_generation(fixtures_path):
 
 def test_get_write_strategy_dest_not_exist(tmp_path, fixtures_path):
     """If the destination path doesn't exist, return the write strategy."""
-
     layer_config = LayerConfig(
         template=str(fixtures_path / "template1"),
         skip_if_file_exists=True,
@@ -67,7 +66,6 @@ def test_get_write_strategy_dest_not_exist(tmp_path, fixtures_path):
 
 def test_get_write_strategy_merge_strategy(fixtures_path):
     """Return the correct write strategy for mergable files."""
-
     layer_config = LayerConfig(
         template=str(fixtures_path / "template1"),
         merge_strategies={
@@ -86,7 +84,6 @@ def test_get_write_strategy_merge_strategy(fixtures_path):
 
 def test_get_write_strategy_overwrite_exclude(fixtures_path):
     """Return SKIP if the file matches an overwrite_exclude pattern."""
-
     layer_config = LayerConfig(
         template=str(fixtures_path / "template1"),
         overwrite_exclude=["*.yaml"],
@@ -99,7 +96,6 @@ def test_get_write_strategy_overwrite_exclude(fixtures_path):
 
 def test_get_write_strategy_overwrite(fixtures_path):
     """Return WRITE if the file matches an overwrite pattern."""
-
     layer_config = LayerConfig(
         template=str(fixtures_path / "template1"),
         overwrite=["*.yaml"],
@@ -112,7 +108,6 @@ def test_get_write_strategy_overwrite(fixtures_path):
 
 def test_get_write_strategy_skip_if_file_exists(fixtures_path):
     """Return SKIP or WRITE based on the skip_if_file_exists setting."""
-
     layer_config = LayerConfig(
         template=str(fixtures_path / "template1"),
         skip_if_file_exists=True,
@@ -168,7 +163,7 @@ def test_render_layers(fixtures_path, tmp_path):
     ]
     context1 = json.loads((fixtures_path / "template1" / "cookiecutter.json").read_text())
     context2 = json.loads((fixtures_path / "template2" / "cookiecutter.json").read_text())
-    full_context = comprehensive_merge(context1, context2)
+    comprehensive_merge(context1, context2)
 
     rendered_layers = layers.render_layers(tmpl_layers, tmp_path, None, no_input=True)
     rendered_project = tmp_path / rendered_layers[0].rendered_name
@@ -179,8 +174,6 @@ def test_render_layers(fixtures_path, tmp_path):
 
 def test_render_layer_git_template(fixtures_path, tmp_path):
     """Render layer of a git-based template includes the latest_commit."""
-    import shutil
-
     from git import Actor, Repo
 
     template_path = fixtures_path / "template1"
@@ -208,6 +201,7 @@ def test_render_layer_git_template(fixtures_path, tmp_path):
     assert rendered_layer == expected
     assert rendered_layer.latest_commit == latest_sha
     assert rendered_layer.layer.commit == latest_sha
+    print(os.listdir(render_dir))
     assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {"README.md", "requirements.txt"}
 
 
@@ -218,14 +212,12 @@ def test_get_layer_context(fixtures_path):
 
     context = layers.get_layer_context(layer_conf, repo_dir, user_config)
     assert context == Context(
-        dict(
-            [
-                ("project_name", "Fake Project Template"),
-                ("repo_name", "fake-project-template"),
-                ("repo_slug", "fake-project-template"),
-                ("_requirements", OrderedDict([("foo", ""), ("bar", ">=5.0.0")])),
-            ]
-        )
+        {
+            "project_name": "Fake Project Template",
+            "repo_name": "fake-project-template",
+            "repo_slug": "fake-project-template",
+            "_requirements": OrderedDict([("foo", ""), ("bar", ">=5.0.0")]),
+        }
     )
 
 

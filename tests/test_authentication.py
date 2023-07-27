@@ -1,9 +1,7 @@
 """Authentication tests."""
-from typing import Optional
-
-import functools
 import json
 import os
+from typing import Optional
 
 from cookie_composer import authentication
 

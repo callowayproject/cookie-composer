@@ -1,9 +1,8 @@
 """Utilities not easily categorized."""
-from typing import IO, Any, Optional, Set
-
 import os
 import stat
 from pathlib import Path
+from typing import IO, Any, Callable, Dict, Optional, Set
 
 from cookie_composer.composition import RenderedComposition
 from cookie_composer.data_merge import comprehensive_merge
@@ -22,7 +21,7 @@ def get_context_for_layer(composition: RenderedComposition, index: Optional[int]
     Returns:
         The comprehensively merged context
     """
-    full_context = {}
+    full_context: Dict[str, Any] = {}
     if index is None:
         layers = composition.layers
     else:
@@ -67,8 +66,8 @@ def echo(
     nl: bool = True,
     err: bool = False,
     color: Optional[bool] = None,
-    **styles
-):
+    **styles,
+) -> None:
     """
     A local abstraction for printing messages.
 
@@ -116,7 +115,7 @@ def get_deleted_files(template_dir: Path, project_dir: Path) -> Set[Path]:
     return deleted_paths
 
 
-def remove_paths(root: Path, paths_to_remove: Set[Path]):
+def remove_paths(root: Path, paths_to_remove: Set[Path]) -> None:
     """
     Remove all paths in ``paths_to_remove`` from ``root``.
 
@@ -133,13 +132,13 @@ def remove_paths(root: Path, paths_to_remove: Set[Path]):
         remove_single_path(path)
 
 
-def remove_readonly_bit(func, path, _):  # pragma: no-coverage
+def remove_readonly_bit(func: Callable[[Path], None], path: Path, _: Any) -> None:  # pragma: no-coverage
     """Clear the readonly bit and reattempt the removal."""
     os.chmod(path, stat.S_IWRITE)  # WINDOWS
     func(path)
 
 
-def remove_single_path(path: Path):
+def remove_single_path(path: Path) -> None:
     """
     Remove a path with extra error handling for Windows.
 
@@ -154,7 +153,7 @@ def remove_single_path(path: Path):
     if path.is_dir():
         try:
             rmtree(path, ignore_errors=False, onerror=remove_readonly_bit)
-        except Exception as e:  # pragma: no-coverage
+        except Exception as e:  # noqa: BLE001 pragma: no-coverage
             raise IOError("Failed to remove directory.") from e
     elif path.is_file():
         try:
@@ -162,5 +161,5 @@ def remove_single_path(path: Path):
         except PermissionError:  # pragma: no-coverage
             path.chmod(stat.S_IWRITE)
             path.unlink()
-        except Exception as exc:  # pragma: no-coverage
+        except Exception as exc:  # noqa: BLE001 pragma: no-coverage
             raise IOError("Failed to remove file.") from exc
