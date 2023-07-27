@@ -1,8 +1,7 @@
 """The implementation of the update command."""
-from typing import List, Optional
-
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import List, Optional
 
 from cookie_composer.composition import (
     RenderedComposition,
@@ -21,7 +20,7 @@ from cookie_composer.utils import (
 )
 
 
-def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False):
+def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> None:
     """
     Update the project with the latest versions of each layer.
 

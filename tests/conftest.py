@@ -8,7 +8,6 @@ from git import Actor, Repo
 @pytest.fixture
 def fixtures_path() -> Path:
     """Return the path to the testing fixtures."""
-
     return Path(__file__).parent / "fixtures"
 
 

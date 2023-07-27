@@ -1,7 +1,6 @@
 """The implementation of the link command."""
-from typing import Any, Dict, Optional
-
 from pathlib import Path
+from typing import Any, MutableMapping, Optional
 
 from cookie_composer.commands.create import create_cmd
 from cookie_composer.git_commands import checkout_branch, get_repo
@@ -16,7 +15,7 @@ def link_cmd(
     overwrite_if_exists: bool = False,
     skip_if_file_exists: bool = False,
     default_config: bool = False,
-    initial_context: Optional[Dict[str, Any]] = None,
+    initial_context: Optional[MutableMapping[str, Any]] = None,
 ):
     """
     Link a template or configuration to an existing project.

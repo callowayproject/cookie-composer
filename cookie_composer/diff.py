@@ -3,11 +3,10 @@ Generating the difference between two directories.
 
 Nabbed from Cruft: https://github.com/cruft/cruft/
 """
-from typing import List
-
 from pathlib import Path
 from re import sub
 from subprocess import PIPE, run  # nosec
+from typing import List
 
 from cookie_composer.exceptions import ChangesetUnicodeError
 
@@ -82,7 +81,8 @@ def replace_diff_prefixes(diff: str, repo0_path: str, repo1_path: str) -> str:
         The modified diff string
     """
     for repo in [repo0_path, repo1_path]:
-        repo = sub("/[a-z]:", "", repo)  # Make repo look like a NIX absolute path.
+        # Make repo look like a NIX absolute path.
+        repo = sub("/[a-z]:", "", repo)  # noqa: PLW2901
 
         diff = diff.replace(f"{DIFF_SRC_PREFIX}{repo}", DIFF_SRC_PREFIX).replace(
             f"{DIFF_DST_PREFIX}{repo}", DIFF_DST_PREFIX
@@ -101,6 +101,6 @@ def replace_diff_prefixes(diff: str, repo0_path: str, repo1_path: str) -> str:
     return diff
 
 
-def display_diff(repo0: Path, repo1: Path):
+def display_diff(repo0: Path, repo1: Path) -> None:
     """Displays the diff between two repositories."""
     run(_git_diff_command(repo0.as_posix(), repo1.as_posix()))

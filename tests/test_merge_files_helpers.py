@@ -1,7 +1,6 @@
 """Test the merge_files.helpers functions."""
-from typing import Any
-
 from collections import OrderedDict
+from typing import Any
 
 import pytest
 from immutabledict import immutabledict
@@ -29,7 +28,7 @@ from cookie_composer import data_merge
 )
 def test_deepmerge(dict_list: list, expected: dict):
     """
-    Make sure the deep merge is doing the right thing
+    Make sure the deep merge is doing the right thing.
     """
     assert data_merge.deep_merge(*dict_list) == expected
 
@@ -72,7 +71,7 @@ def test_deepmerge(dict_list: list, expected: dict):
 )
 def test_comprehensive_merge(args: list, expected: Any):
     """
-    Make sure the deep merge is doing the right thing
+    Make sure the deep merge is doing the right thing.
     """
     assert data_merge.comprehensive_merge(*args) == expected
 

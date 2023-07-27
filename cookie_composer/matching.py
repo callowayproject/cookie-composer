@@ -1,8 +1,7 @@
 """Matching files and patterns."""
-from typing import List, Union
-
 from fnmatch import fnmatch
 from pathlib import Path
+from typing import List, Union
 
 
 def rel_fnmatch(name: str, pat: str) -> bool:

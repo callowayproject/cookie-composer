@@ -1,16 +1,14 @@
 repos:
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    # Ruff version.
+    rev: 'v0.0.254'
     hooks:
-      - id: isort
-        additional_dependencies: [toml]
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+  - repo: https://github.com/python/black
+    rev: 23.1.0
     hooks:
       - id: black
-        args: ["--line-length", "119", "--check"]
-      - id: black
-        args: ["--line-length", "119"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -18,37 +16,36 @@ repos:
       - id: check-case-conflict
       - id: check-executables-have-shebangs
       - id: check-json
+        exclude: test.*
       - id: check-merge-conflict
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-toml
       - id: check-yaml
-        exclude: test.*
-        args: ["--multi"]
+        exclude: |
+          (?x)^(
+            test.*|
+            mkdocs.yml
+          )$
+        args: [--allow-multiple-documents]
       - id: debug-statements
       - id: end-of-file-fixer
-        exclude: "^tests/fixtures/"
+        exclude: "^tests/resources/"
       - id: fix-byte-order-marker
       - id: fix-encoding-pragma
         args: ["--remove"]
       - id: requirements-txt-fixer
-        exclude: "^tests/fixtures/"
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.0.0
     hooks:
-      - id: flake8
-        exclude: (_vendor|test).*
-  - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.3.0
-    hooks:
-      - id: pydocstyle
-        exclude: (_vendor|test).*
-        additional_dependencies: [toml]
+      - id: mypy
+        args: [--no-strict-optional, --ignore-missing-imports]
+        additional_dependencies: ["pydantic", "toml", "types-all"]
   - repo: https://github.com/terrencepreilly/darglint
     rev: v1.8.1
     hooks:
       - id: darglint
-        exclude: (_vendor|test).*
+        exclude: test.*
         args:
           - -v 2
           - "--message-template={path}:{line} in `{obj}`:\n        {msg_id}: {msg}"
@@ -57,14 +54,6 @@ repos:
     rev: 1.5.0  # or master if you're bold
     hooks:
       - id: interrogate
-        exclude: (_vendor|test).*
-  - repo: local
-    hooks:
-      - id: check-dependencies
-        name: check-dependencies
-        language: python
-        entry: make -C requirements all
-        files: ^requirements.*?\.(in|txt)$
-        pass_filenames: false
-        additional_dependencies:
-          - pip-tools
+        exclude: test.*
+ci:
+  autofix_prs: false

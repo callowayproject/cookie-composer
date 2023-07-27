@@ -9,10 +9,10 @@ The merging functions should look similar to the following:
         '''
         Merge two ??? files into one.
 
-        Raises:
+Raises:
             MergeError: If something goes wrong
 
-        Args:
+Args:
             origin: The path to the data file to merge
             destination: The path to the data file to merge into and write out.
             merge_strategy: How to do the merge
@@ -22,9 +22,8 @@ The function must write the file to destination.
 
 The function must wrap any errors into a :py:exc:`~cookie_composer.exceptions.MergeError` and raise it.
 """
-from typing import Callable, Dict
-
 from pathlib import Path
+from typing import Callable, Dict
 
 from cookie_composer.merge_files.ini_file import merge_ini_files
 from cookie_composer.merge_files.json_file import merge_json_files

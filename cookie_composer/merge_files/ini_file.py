@@ -2,6 +2,7 @@
 import configparser
 from collections import defaultdict
 from pathlib import Path
+from typing import Dict
 
 from cookie_composer import data_merge
 from cookie_composer.composition import (
@@ -13,7 +14,7 @@ from cookie_composer.composition import (
 from cookie_composer.exceptions import MergeError
 
 
-def merge_ini_files(new_file: Path, existing_file: Path, merge_strategy: str):
+def merge_ini_files(new_file: Path, existing_file: Path, merge_strategy: str) -> None:
     """
     Merge two INI files into one.
 
@@ -59,13 +60,11 @@ def merge_ini_files(new_file: Path, existing_file: Path, merge_strategy: str):
 
 def config_to_dict(config: configparser.ConfigParser) -> dict:
     """Convert a configparser object to a dictionary."""
-    result = defaultdict(dict)
+    result: Dict[str, dict] = defaultdict(dict)
 
     for section in config.sections():
         for k, v in config.items(section):
-            if "\n" in v:
-                v = v.strip().split("\n")
-            result[section][k] = v
+            result[section][k] = v.strip().split("\n") if "\n" in v else v
 
     return result
 
@@ -77,8 +76,6 @@ def dict_to_config(dictionary: dict) -> configparser.ConfigParser:
     for section, items in dictionary.items():
         result.add_section(section)
         for k, v in items.items():
-            if isinstance(v, list):
-                v = "\n" + "\n".join(v)
-            result.set(section, k, v)
+            result.set(section, k, "\n" + "\n".join(v) if isinstance(v, list) else v)
 
     return result

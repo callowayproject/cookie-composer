@@ -1,7 +1,5 @@
 """Layer management."""
 
-from typing import List, Optional
-
 import contextlib
 import logging
 import os
@@ -9,10 +7,12 @@ import shutil
 import tempfile
 from enum import Enum
 from pathlib import Path
+from typing import List, Optional
 
 import click
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context, generate_files
+from cookiecutter.main import _patch_import_path_for_repo
 from cookiecutter.repository import determine_repo_dir
 from cookiecutter.utils import rmtree
 
@@ -124,8 +124,11 @@ def render_layer(
         repo = get_repo(repo_dir)
         repo.git.checkout(layer_config.commit)
 
-    context = get_layer_context(layer_config, repo_dir, user_config, full_context)
+    _patch_import_path_for_repo(repo_dir)
+    os.path.basename(os.path.abspath(repo_dir))
+    Path(repo_dir) / "cookiecutter.json"
 
+    context = get_layer_context(layer_config, Path(repo_dir), user_config, full_context)
     if accept_hooks == "ask":
         _accept_hooks = click.confirm("Do you want to execute hooks?")
     else:
@@ -156,7 +159,7 @@ def render_layer(
 
 
 def get_layer_context(
-    layer_config: LayerConfig, repo_dir: str, user_config: dict, full_context: Optional[Context] = None
+    layer_config: LayerConfig, repo_dir: Path, user_config: dict, full_context: Optional[Context] = None
 ) -> Context:
     """
     Get the context for a layer pre-rendering values using previous layers contexts as defaults.
@@ -171,21 +174,34 @@ def get_layer_context(
         The context for rendering the layer
     """
     full_context = full_context or Context()
+    import_patch = _patch_import_path_for_repo(str(repo_dir))
+    # template_name = repo_dir.stem
+    context_file = Path(repo_dir) / "cookiecutter.json"
 
-    # _copy_without_render is template-specific and fails if overridden
+    # _copy_without_render is template-specific and fails if overridden,
     # So we are going to remove it from the "defaults" when generating the context
     user_config["default_context"].pop("_copy_without_render", None)
-    # if full_context and "_copy_without_render" in full_context:
-    #     del full_context["_copy_without_render"]
 
     # This pulls in the template context and overrides the values with the user config defaults
     #   and the defaults specified in the layer.
-    prompts = generate_context(
-        context_file=Path(repo_dir) / "cookiecutter.json",
+    context = generate_context(
+        context_file=context_file,
         default_context=user_config["default_context"],
         extra_context=layer_config.context or {},
     )
-    return prompt_for_config(prompts["cookiecutter"], full_context, layer_config.no_input)
+    context_for_prompting = context
+
+    with import_patch:
+        if context_for_prompting["cookiecutter"]:
+            context["cookiecutter"].update(
+                prompt_for_config(context_for_prompting, full_context, layer_config.no_input)
+            )
+        if "template" in context["cookiecutter"]:
+            # TODO: decide how to deal with nested configuration files.
+            #  For now, we are just going to ignore them.
+            pass
+    full_context.update(context["cookiecutter"])
+    return full_context
 
 
 def render_layers(
@@ -213,14 +229,14 @@ def render_layers(
     num_layers = len(layers)
     accept_hooks_layers = get_accept_hooks_per_layer(accept_hooks, num_layers)
 
-    for layer_config, accept_hook in zip(layers, accept_hooks_layers):
+    for layer_config, accept_hook in zip(layers, accept_hooks_layers):  # noqa: B905
         layer_config.no_input = True if no_input else layer_config.no_input
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
             merge_layers(destination, rendered_layer)
         rendered_layer.location = destination
         rendered_layer.layer.commit = rendered_layer.latest_commit
-        rendered_layer.layer.context = rendered_layer.new_context
+        rendered_layer.layer.context = rendered_layer.new_context  # type: ignore[assignment]
         rendered_layers.append(rendered_layer)
         full_context = full_context.new_child(rendered_layer.new_context)
 
@@ -244,7 +260,7 @@ def get_accept_hooks_per_layer(accept_hooks: str, num_layers: int) -> list:
     return accept_hooks_layers
 
 
-def merge_layers(destination: Path, rendered_layer: RenderedLayer):
+def merge_layers(destination: Path, rendered_layer: RenderedLayer) -> None:
     """
     Merge a layer into another layer using the rules specified in the layer_config.
 

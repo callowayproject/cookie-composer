@@ -1,8 +1,7 @@
 """The implementation of the add command."""
-from typing import Any, Dict, Optional
-
 import logging
 from pathlib import Path
+from typing import Any, MutableMapping, Optional
 
 from cookie_composer.composition import (
     get_composition_from_path_or_url,
@@ -32,7 +31,7 @@ def add_cmd(
     skip_if_file_exists: bool = False,
     default_config: bool = False,
     accept_hooks: str = "all",
-    initial_context: Optional[Dict[str, Any]] = None,
+    initial_context: Optional[MutableMapping[str, Any]] = None,
 ):
     """
     Add a template or configuration to an existing project.

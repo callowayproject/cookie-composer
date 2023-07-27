@@ -1,9 +1,8 @@
 """Command line setup."""
-from typing import Optional
-
 import logging
 from collections import OrderedDict
 from pathlib import Path
+from typing import Any, MutableMapping, Optional
 
 import click_log
 import rich_click as click
@@ -22,7 +21,7 @@ click_log.basic_config(logger)
 
 @click.group()
 @click.version_option(__version__)
-def cli():
+def cli() -> None:
     """Render templates using composition."""
     pass
 
@@ -30,7 +29,7 @@ def cli():
 cli.add_command(auth)
 
 
-def validate_context_params(ctx, param, value) -> Optional[OrderedDict]:
+def validate_context_params(ctx: Any, param: Any, value: list) -> Optional[OrderedDict]:
     """
     Validate context parameters.
 
@@ -97,6 +96,8 @@ def validate_context_params(ctx, param, value) -> Optional[OrderedDict]:
 @click.option(
     "-d",
     "--destination",
+    "-o",
+    "--output-dir",
     required=False,
     default=lambda: Path.cwd(),
     type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
@@ -120,8 +121,8 @@ def create(
     destination: Path,
     accept_hooks: str,
     path_or_url: str,
-    context_params: Optional[OrderedDict] = None,
-):
+    context_params: Optional[MutableMapping[str, Any]] = None,
+) -> None:
     """Create a project from the template or configuration PATH_OR_URL in using optional [CONTEXT_PARAMS]."""
     create_cmd(
         path_or_url,
@@ -199,8 +200,8 @@ def add(
     destination: Path,
     accept_hooks: str,
     path_or_url: str,
-    context_params: Optional[OrderedDict],
-):
+    context_params: Optional[MutableMapping[str, Any]] = None,
+) -> None:
     """Add the template or configuration PATH_OR_URL to an existing project."""
     output_dir = destination or Path.cwd()
     try:
@@ -236,7 +237,7 @@ def add(
     help="The directory to update. Defaults to the current working directory.",
 )
 @click.argument("context_params", nargs=-1, callback=validate_context_params)
-def update(no_input: bool, destination: Path, context_params: Optional[OrderedDict] = None):
+def update(no_input: bool, destination: Path, context_params: Optional[OrderedDict] = None) -> None:
     """Update the project to the latest version of each template."""
     destination = destination or Path.cwd()
     try:
@@ -299,8 +300,8 @@ def link(
     default_config: bool,
     destination: Optional[Path],
     path_or_url: str,
-    context_params: Optional[OrderedDict],
-):
+    context_params: Optional[MutableMapping[str, Any]] = None,
+) -> None:
     """Link an existing git repo to the template or composition PATH_OR_URL using optional [CONTEXT_PARAMS]."""
     destination = destination or Path.cwd()
     try:
