@@ -13,7 +13,8 @@ CHANGELOG.md coreyoordt@gmail.com
 CODEOWNERS coreyoordt@gmail.com
 CODE_OF_CONDUCT.md coreyoordt@gmail.com
 CONTRIBUTING.md coreyoordt@gmail.com
-LICENSE MANIFEST.in coreyoordt@gmail.com
+LICENSE coreyoordt@gmail.com
+MANIFEST.in coreyoordt@gmail.com
 Makefile coreyoordt@gmail.com
 README.md coreyoordt@gmail.com
 RELEASING.md coreyoordt@gmail.com
@@ -76,14 +77,9 @@ docsrc/tutorial/incrementally-layering.md coreyoordt@gmail.com
 docsrc/tutorial/index.md coreyoordt@gmail.com
 pyproject.toml coreyoordt@gmail.com
 requirements.txt coreyoordt@gmail.com
-requirements/Makefile coreyoordt@gmail.com
-requirements/dev.in coreyoordt@gmail.com
 requirements/dev.txt coreyoordt@gmail.com
-requirements/docs.in coreyoordt@gmail.com
 requirements/docs.txt coreyoordt@gmail.com
-requirements/prod.in coreyoordt@gmail.com
 requirements/prod.txt coreyoordt@gmail.com
-requirements/test.in coreyoordt@gmail.com
 requirements/test.txt coreyoordt@gmail.com
 setup.cfg coreyoordt@gmail.com
 setup.py coreyoordt@gmail.com
@@ -93,6 +89,10 @@ tests/fixtures/existing.json coreyoordt@gmail.com
 tests/fixtures/existing.toml coreyoordt@gmail.com
 tests/fixtures/existing.yaml coreyoordt@gmail.com
 tests/fixtures/gibberish.txt coreyoordt@gmail.com
+tests/fixtures/local_extension_template/cookiecutter.json coreyoordt@gmail.com
+tests/fixtures/local_extension_template/local_extensions/__init__.py coreyoordt@gmail.com
+tests/fixtures/local_extension_template/local_extensions/main.py coreyoordt@gmail.com
+tests/fixtures/local_extension_template/{{cookiecutter.project_slug}}/HISTORY.rst coreyoordt@gmail.com
 tests/fixtures/multi-template.yaml coreyoordt@gmail.com
 tests/fixtures/new.ini coreyoordt@gmail.com
 tests/fixtures/new.json coreyoordt@gmail.com
@@ -120,7 +120,7 @@ tests/fixtures/template2/{{cookiecutter.repo_name}}/ABOUT.md coreyoordt@gmail.co
 tests/fixtures/template2/{{cookiecutter.repo_name}}/requirements.txt coreyoordt@gmail.com 66853113+pre-commit-ci[bot]@users.noreply.github.com
 tests/test_authentication.py coreyoordt@gmail.com
 tests/test_cc_overrides.py coreyoordt@gmail.com
-tests/test_cli.py Brannon.Imamura@chrobinson.com coreyoordt@gmail.com
+tests/test_cli.py coreyoordt@gmail.com Brannon.Imamura@chrobinson.com
 tests/test_commands/test_add.py coreyoordt@gmail.com
 tests/test_commands/test_create.py coreyoordt@gmail.com
 tests/test_commands/test_link.py coreyoordt@gmail.com

@@ -1,5 +1,55 @@
 # Changelog
 
+## 0.11.0 (2023-07-27)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.3...0.11.0)
+
+### Fixes
+
+- Fix test coverage matrix. [5ef8815](https://github.com/coordt/cookie-composer/commit/5ef8815aac62f874b5d130e82d7b8ba4320ec49b)
+    
+- Fix pre-commit from autofixing templates. [99e7dfb](https://github.com/coordt/cookie-composer/commit/99e7dfb6d71ece01d1c74d6d61b9cc135b124b31)
+    
+- Fixed typing hints. [ff695e3](https://github.com/coordt/cookie-composer/commit/ff695e38e864cf052bb15dc3a4278e782ce7a784)
+    
+### New
+
+- Added support for local extensions. [838f25c](https://github.com/coordt/cookie-composer/commit/838f25c67c91b39be137b93bd64191bd78ae8d08)
+    
+- Added `-o` and `--output-dir` as an alias. [04f063d](https://github.com/coordt/cookie-composer/commit/04f063d702279731e54a578fd5c82f7f59426798)
+    
+  It is now an alias for `-d` and `--destination`
+### Other
+
+- Revert "[pre-commit.ci] auto fixes from pre-commit.com hooks". [42d8704](https://github.com/coordt/cookie-composer/commit/42d8704565d1927647e1692b29bd3e62e149a37a)
+    
+  This reverts commit 52772f1352d6130b2d6189bf632b26fb9732c13f.
+- [pre-commit.ci] auto fixes from pre-commit.com hooks. [52772f1](https://github.com/coordt/cookie-composer/commit/52772f1352d6130b2d6189bf632b26fb9732c13f)
+    
+  for more information, see https://pre-commit.ci
+- Migrated from setup.cfg to pyproject.toml. [b3a39f0](https://github.com/coordt/cookie-composer/commit/b3a39f0845a0dcd66177b3fbfaf5cac0369c18e1)
+    
+- Bump aiohttp from 3.8.3 to 3.8.5 in /requirements. [0392ef7](https://github.com/coordt/cookie-composer/commit/0392ef74feda8f0e2080967fa4ced8a62b1b9166)
+    
+  Bumps [aiohttp](https://github.com/aio-libs/aiohttp) from 3.8.3 to 3.8.5.
+  - [Release notes](https://github.com/aio-libs/aiohttp/releases)
+  - [Changelog](https://github.com/aio-libs/aiohttp/blob/v3.8.5/CHANGES.rst)
+  - [Commits](https://github.com/aio-libs/aiohttp/compare/v3.8.3...v3.8.5)
+
+  ---
+  **updated-dependencies:** - dependency-name: aiohttp
+dependency-type: direct:production
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- [pre-commit.ci] pre-commit autoupdate. [83d1217](https://github.com/coordt/cookie-composer/commit/83d121798ff502a6aa95caff731b5f39d698485b)
+    
+  **updates:** - [github.com/psf/black: 23.3.0 → 23.7.0](https://github.com/psf/black/compare/23.3.0...23.7.0)
+
+- [pre-commit.ci] pre-commit autoupdate. [c58fe42](https://github.com/coordt/cookie-composer/commit/c58fe42786a5c73e82a57ae8aab7f9fef5e94c14)
+    
+  **updates:** - [github.com/psf/black: 23.3.0 → 23.7.0](https://github.com/psf/black/compare/23.3.0...23.7.0)
+
+
 ## 0.10.3 (2023-05-15)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.2...0.10.3)
 
