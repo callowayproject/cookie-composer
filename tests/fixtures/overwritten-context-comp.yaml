@@ -1,0 +1,7 @@
+template: template1
+context:
+  service_name: "frontend"
+---
+template: template2
+context:
+  service_name: "backend"

@@ -216,6 +216,7 @@ def test_get_layer_context(fixtures_path):
             "project_name": "Fake Project Template",
             "repo_name": "fake-project-template",
             "repo_slug": "fake-project-template",
+            "service_name": "foo",
             "_requirements": OrderedDict([("foo", ""), ("bar", ">=5.0.0")]),
         }
     )
@@ -232,6 +233,7 @@ def test_get_layer_context_with_extra(fixtures_path):
             "project_name": "Fake Project Template2",
             "repo_name": "fake-project-template2",
             "repo_slug": "fake-project-template-two",
+            "service_name": "foo",
             "_requirements": {"foo": "", "bar": ">=5.0.0"},
         }
     )
@@ -249,6 +251,7 @@ def test_get_layer_context_with_extra(fixtures_path):
             "project_name": "Fake Project Template2",
             "repo_name": "fake-project-template2",
             "repo_slug": "fake-project-template-two",
+            "service_name": "foo",
             "_requirements": {"foo": "", "bar": ">=5.0.0"},
         },
     )

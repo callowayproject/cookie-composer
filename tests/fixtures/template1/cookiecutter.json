@@ -2,5 +2,6 @@
   "project_name": "Fake Project Template",
   "repo_name": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
   "repo_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
+  "service_name": "foo",
   "_requirements": {"foo": "", "bar": ">=5.0.0"}
 }
