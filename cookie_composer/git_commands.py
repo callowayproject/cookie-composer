@@ -97,7 +97,7 @@ def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
             "Cookie composer cannot apply updates on an unclean git project."
             " Please make sure your git working tree is clean before proceeding."
         )
-    first_commit = list(repo.iter_commits("HEAD", max_parents=0, max_count=1))[0]
+    first_commit = next(iter(repo.iter_commits("HEAD", max_parents=0, max_count=1)))
     repo.create_head(branch_name, first_commit.hexsha)
     repo.heads[branch_name].checkout()
 

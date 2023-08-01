@@ -229,7 +229,7 @@ def render_layers(
     num_layers = len(layers)
     accept_hooks_layers = get_accept_hooks_per_layer(accept_hooks, num_layers)
 
-    for layer_config, accept_hook in zip(layers, accept_hooks_layers):  # noqa: B905
+    for layer_config, accept_hook in zip(layers, accept_hooks_layers):
         layer_config.no_input = True if no_input else layer_config.no_input
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)

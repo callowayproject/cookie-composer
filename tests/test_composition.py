@@ -19,8 +19,8 @@ def test_relative_templates(fixtures_path):
     filepath = fixtures_path / "relative-multi-template.yaml"
     comp = composition.read_composition(filepath)
     assert len(comp.layers) == 2
-    assert comp.layers[0].template == f"{str(fixtures_path)}/"
-    assert comp.layers[1].template == f"{str(fixtures_path)}/"
+    assert comp.layers[0].template == f"{fixtures_path!s}/"
+    assert comp.layers[1].template == f"{fixtures_path!s}/"
 
 
 def test_single_template(fixtures_path):

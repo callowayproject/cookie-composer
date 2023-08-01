@@ -25,7 +25,7 @@ def test_do_not_merge(fixtures_path):
 
 
 def test_overwrite_merge(tmp_path, fixtures_path):
-    """the new overwrites the old."""
+    """The new overwrites the old."""
     initial_file = fixtures_path / "existing.yaml"
     existing_file = tmp_path / "existing.yaml"
     shutil.copy(initial_file, existing_file)
