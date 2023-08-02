@@ -222,9 +222,9 @@ def test_get_layer_context(fixtures_path):
 
 
 def test_get_layer_context_with_extra(fixtures_path):
-    repo_dir = str(fixtures_path / "template2")
+    repo_dir = fixtures_path / "template2"
     layer_conf = LayerConfig(
-        template=repo_dir, context={"project_slug": "{{ cookiecutter.repo_slug }}"}, no_input=True
+        template=str(repo_dir), context={"project_slug": "{{ cookiecutter.repo_slug }}"}, no_input=True
     )
     user_config = get_user_config(config_file=None, default_config=False)
     full_context = Context(
@@ -245,6 +245,8 @@ def test_get_layer_context_with_extra(fixtures_path):
             "project_slug": "fake-project-template-two",
             "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
             "lower_project_name": "fake project template2",
+            "repo_slug": "fake-project-template-two",
+            "service_name": "foo",
         },
         {
             "project_name": "Fake Project Template2",

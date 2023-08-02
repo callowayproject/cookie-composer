@@ -1,6 +1,7 @@
 """Layer management."""
 
 import contextlib
+import copy
 import logging
 import os
 import shutil
@@ -148,7 +149,7 @@ def render_layer(
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
-        new_context=context.maps[0],
+        new_context=copy.deepcopy(context.maps[0]),
         latest_commit=layer_config.commit,
     )
 
@@ -184,24 +185,23 @@ def get_layer_context(
 
     # This pulls in the template context and overrides the values with the user config defaults
     #   and the defaults specified in the layer.
-    context = generate_context(
+    context_for_prompting = generate_context(
         context_file=context_file,
         default_context=user_config["default_context"],
-        extra_context=layer_config.context or {},
+        extra_context={},
     )
-    context_for_prompting = context
 
     with import_patch:
         if context_for_prompting["cookiecutter"]:
-            context["cookiecutter"].update(
-                prompt_for_config(context_for_prompting, full_context, layer_config.no_input)
+            prompted_context = prompt_for_config(
+                context_for_prompting, full_context, layer_config.context, layer_config.no_input
             )
-        if "template" in context["cookiecutter"]:
+            context_for_prompting["cookiecutter"].update(prompted_context)
+        if "template" in context_for_prompting["cookiecutter"]:
             # TODO: decide how to deal with nested configuration files.
             #  For now, we are just going to ignore them.
             pass
-    full_context.update(context["cookiecutter"])
-    return full_context
+    return full_context.new_child(dict(context_for_prompting["cookiecutter"]))
 
 
 def render_layers(
@@ -229,16 +229,17 @@ def render_layers(
     num_layers = len(layers)
     accept_hooks_layers = get_accept_hooks_per_layer(accept_hooks, num_layers)
 
-    for layer_config, accept_hook in zip(layers, accept_hooks_layers):  # noqa: B905
+    for layer_config, accept_hook in zip(layers, accept_hooks_layers):
         layer_config.no_input = True if no_input else layer_config.no_input
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
             merge_layers(destination, rendered_layer)
         rendered_layer.location = destination
         rendered_layer.layer.commit = rendered_layer.latest_commit
-        rendered_layer.layer.context = rendered_layer.new_context  # type: ignore[assignment]
+        context_copy = copy.deepcopy(rendered_layer.new_context)
+        rendered_layer.layer.context = context_copy  # type: ignore[assignment]
         rendered_layers.append(rendered_layer)
-        full_context = full_context.new_child(rendered_layer.new_context)
+        full_context = full_context.new_child(context_copy)
 
     return rendered_layers
 
