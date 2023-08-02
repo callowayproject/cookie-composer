@@ -201,7 +201,6 @@ def test_render_layer_git_template(fixtures_path, tmp_path):
     assert rendered_layer == expected
     assert rendered_layer.latest_commit == latest_sha
     assert rendered_layer.layer.commit == latest_sha
-    print(os.listdir(render_dir))
     assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {"README.md", "requirements.txt"}
 
 

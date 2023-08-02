@@ -42,16 +42,16 @@ class LayerConfig(BaseModel):
     template: str
     """The path or URL to the template."""
 
-    directory: Optional[str]
+    directory: Optional[str] = None
     """Directory within a git repository template that holds the cookiecutter.json file."""
 
-    checkout: Optional[str]
+    checkout: Optional[str] = None
     """The branch, tag or commit to tell Cookie Cutter to use."""
 
-    password: Optional[str]
+    password: Optional[str] = None
     """The password to use if template is a password-protected Zip archive."""
 
-    commit: Optional[str]
+    commit: Optional[str] = None
     """What git hash was applied if the template is a git repository."""
 
     #
@@ -63,7 +63,7 @@ class LayerConfig(BaseModel):
     This is only used for initial generation. After initial generation, the results
     are stored in the context."""
 
-    context: Dict[str, Any] = Field(default_factory=dict)
+    context: MutableMapping[str, Any] = Field(default_factory=dict)
     """Dictionary that will provide values for input.
 
     Also stores the answers for missing context parameters after initial generation."""

@@ -92,14 +92,15 @@ def github_auth_device(n_polls: int = 9999) -> Optional[str]:  # pragma: no cove
     from ghapi.auth import GhDeviceAuth
 
     auth = GhDeviceAuth(client_id="de4e3ca9028661a80b50")
-    print(f"First copy your one-time code: \x1b[33m{auth.user_code}\x1b[m")
-    print(f"Then visit {auth.verification_uri} in your browser, and paste the code when prompted.")
+    print(f"First copy your one-time code: \x1b[33m{auth.user_code}\x1b[m")  # noqa: T201
+    print(f"Then visit {auth.verification_uri} in your browser, and paste the code when prompted.")  # noqa: T201
     input("Press Enter to open github.com in your browser...")
     auth.open_browser()
 
-    print("Waiting for authorization...", end="")
-    token = auth.wait(lambda: print(".", end=""), n_polls=n_polls)
+    print("Waiting for authorization...", end="")  # noqa: T201
+    token = auth.wait(lambda: print(".", end=""), n_polls=n_polls)  # noqa: T201
     if not token:
-        return print("Authentication not complete!")
-    print("Authenticated to GitHub")
+        print("Authentication not complete!")  # noqa: T201
+        return None
+    print("Authenticated to GitHub")  # noqa: T201
     return token

@@ -32,7 +32,7 @@ def add_cmd(
     default_config: bool = False,
     accept_hooks: str = "all",
     initial_context: Optional[MutableMapping[str, Any]] = None,
-):
+) -> None:
     """
     Add a template or configuration to an existing project.
 

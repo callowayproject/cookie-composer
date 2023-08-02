@@ -14,7 +14,7 @@ from cookie_composer.composition import (
 from cookie_composer.exceptions import MergeError
 
 
-def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str):
+def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str) -> None:
     """
     Merge two json files into one.
 
