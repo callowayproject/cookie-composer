@@ -1,4 +1,6 @@
 """Tests for the utils module."""
+from pathlib import Path
+
 import pytest
 from pytest import param
 
@@ -50,3 +52,23 @@ def test_get_template_name_errors(bad_value):
     """It should raise errors."""
     with pytest.raises(ValueError):
         utils.get_template_name(bad_value)
+
+
+def test_remove_single_path(tmp_path: Path):
+    """It should remove a single path."""
+    path = tmp_path / "file.txt"
+    path.touch()
+    utils.remove_single_path(path)
+    assert not path.exists()
+
+    path = tmp_path / "dir"
+    path.mkdir()
+    utils.remove_single_path(path)
+    assert not path.exists()
+
+    dir_path = tmp_path / "dir"
+    dir_path.mkdir()
+    file_path = dir_path / "file.txt"
+    file_path.touch()
+    utils.remove_single_path(dir_path)
+    assert not dir_path.exists()
