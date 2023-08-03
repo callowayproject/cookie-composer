@@ -87,3 +87,4 @@ def test_layer_contexts_are_not_overwritten(fixtures_path: Path, tmp_path: Path)
     )
     assert rendered_composition.layers[0].new_context["service_name"] == "frontend"
     assert rendered_composition.layers[1].new_context["service_name"] == "backend"
+    assert rendered_composition.layer_names == ["template1", "template2"]
