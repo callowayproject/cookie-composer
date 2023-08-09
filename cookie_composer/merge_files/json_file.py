@@ -1,5 +1,6 @@
 """Merge two json files into one."""
 from pathlib import Path
+from typing import Any
 
 import orjson
 
@@ -13,7 +14,7 @@ from cookie_composer.composition import (
 from cookie_composer.exceptions import MergeError
 
 
-def default(obj):
+def default(obj: Any) -> dict:
     """Default JSON encoder."""
     from immutabledict import immutabledict
 
@@ -22,7 +23,7 @@ def default(obj):
     raise TypeError
 
 
-def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str):
+def merge_json_files(new_file: Path, existing_file: Path, merge_strategy: str) -> None:
     """
     Merge two json files into one.
 

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from cookie_composer import composition
+from cookie_composer import composition, layers
 from cookie_composer.composition import LayerConfig
 from cookie_composer.exceptions import MissingCompositionFileError
 
@@ -19,8 +19,8 @@ def test_relative_templates(fixtures_path):
     filepath = fixtures_path / "relative-multi-template.yaml"
     comp = composition.read_composition(filepath)
     assert len(comp.layers) == 2
-    assert comp.layers[0].template == f"{str(fixtures_path)}/"
-    assert comp.layers[1].template == f"{str(fixtures_path)}/"
+    assert comp.layers[0].template == f"{fixtures_path!s}/"
+    assert comp.layers[1].template == f"{fixtures_path!s}/"
 
 
 def test_single_template(fixtures_path):
@@ -72,3 +72,19 @@ def test_get_composition_from_path_or_url_path(fixtures_path: Path):
     filepath = fixtures_path / "template1"
     expected = composition.Composition(layers=[LayerConfig(template=str(filepath), skip_if_file_exists=False)])
     assert composition.get_composition_from_path_or_url(str(filepath)) == expected
+
+
+def test_layer_contexts_are_not_overwritten(fixtures_path: Path, tmp_path: Path):
+    """Test that layer contexts are not overwritten when reading a composition."""
+    filepath = fixtures_path / "overwritten-context-comp.yaml"
+    comp = composition.read_composition(filepath)
+    rendered_layers = layers.render_layers(comp.layers, tmp_path, None, no_input=True)
+    # rendered_project = tmp_path / rendered_layers[0].rendered_name
+    rendered_composition = composition.RenderedComposition(
+        layers=rendered_layers,
+        render_dir=tmp_path,
+        rendered_name=rendered_layers[0].rendered_name,
+    )
+    assert rendered_composition.layers[0].new_context["service_name"] == "frontend"
+    assert rendered_composition.layers[1].new_context["service_name"] == "backend"
+    assert rendered_composition.layer_names == ["template1", "template2"]

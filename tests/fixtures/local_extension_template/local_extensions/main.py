@@ -1,4 +1,4 @@
-"""Provides custom extension, exposing a ``foobar`` filter."""
+"""Provides a custom extension, exposing a ``foobar`` filter."""
 
 from cookiecutter.utils import simple_filter
 from jinja2.ext import Extension

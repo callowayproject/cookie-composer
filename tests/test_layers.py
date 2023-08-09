@@ -201,7 +201,6 @@ def test_render_layer_git_template(fixtures_path, tmp_path):
     assert rendered_layer == expected
     assert rendered_layer.latest_commit == latest_sha
     assert rendered_layer.layer.commit == latest_sha
-    print(os.listdir(render_dir))
     assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {"README.md", "requirements.txt"}
 
 
@@ -216,15 +215,16 @@ def test_get_layer_context(fixtures_path):
             "project_name": "Fake Project Template",
             "repo_name": "fake-project-template",
             "repo_slug": "fake-project-template",
+            "service_name": "foo",
             "_requirements": OrderedDict([("foo", ""), ("bar", ">=5.0.0")]),
         }
     )
 
 
 def test_get_layer_context_with_extra(fixtures_path):
-    repo_dir = str(fixtures_path / "template2")
+    repo_dir = fixtures_path / "template2"
     layer_conf = LayerConfig(
-        template=repo_dir, context={"project_slug": "{{ cookiecutter.repo_slug }}"}, no_input=True
+        template=str(repo_dir), context={"project_slug": "{{ cookiecutter.repo_slug }}"}, no_input=True
     )
     user_config = get_user_config(config_file=None, default_config=False)
     full_context = Context(
@@ -232,6 +232,7 @@ def test_get_layer_context_with_extra(fixtures_path):
             "project_name": "Fake Project Template2",
             "repo_name": "fake-project-template2",
             "repo_slug": "fake-project-template-two",
+            "service_name": "foo",
             "_requirements": {"foo": "", "bar": ">=5.0.0"},
         }
     )
@@ -244,11 +245,14 @@ def test_get_layer_context_with_extra(fixtures_path):
             "project_slug": "fake-project-template-two",
             "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
             "lower_project_name": "fake project template2",
+            "repo_slug": "fake-project-template-two",
+            "service_name": "foo",
         },
         {
             "project_name": "Fake Project Template2",
             "repo_name": "fake-project-template2",
             "repo_slug": "fake-project-template-two",
+            "service_name": "foo",
             "_requirements": {"foo": "", "bar": ">=5.0.0"},
         },
     )

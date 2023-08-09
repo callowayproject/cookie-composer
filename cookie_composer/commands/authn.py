@@ -7,7 +7,7 @@ from cookie_composer.authentication import get_cached_token, login_to_svc
 
 
 @click.group()
-def auth():
+def auth() -> None:
     """Authenticate cookie-composer to a service."""
     pass
 
@@ -31,7 +31,7 @@ def auth():
 @click.option(
     "--with-token", type=click.File("r"), is_flag=False, flag_value=sys.stdin, help="Read token from standard input"
 )
-def login(git_protocol: str, service: str, scopes: str, with_token: click.File):
+def login(git_protocol: str, service: str, scopes: str, with_token: click.File) -> None:
     """Authenticate to a service."""
     w_token = with_token.read() if with_token else None
     if not w_token and get_cached_token(service):
@@ -69,7 +69,7 @@ def login(git_protocol: str, service: str, scopes: str, with_token: click.File):
     help="The host name of the service to authenticate with",
     default="github.com",
 )
-def token(service: str):
+def token(service: str) -> None:
     """Print the auth token cookie-composer is configured to use."""
     oauth_token = get_cached_token(service)
     if oauth_token:

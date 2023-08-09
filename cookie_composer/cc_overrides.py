@@ -1,6 +1,6 @@
 """This overrides the default cookie cutter environment."""
 import json
-from typing import Any, List, MutableMapping
+from typing import Any, List, MutableMapping, Optional
 
 from cookiecutter.environment import StrictEnvironment
 from cookiecutter.exceptions import UndefinedVariableInTemplate
@@ -69,7 +69,7 @@ class CustomStrictEnvironment(StrictEnvironment):
         return [str(ext) for ext in context.get("_extensions", [])]
 
 
-def update_extensions(existing_config: Context, prompts: MutableMapping[str, Any]) -> List[str]:
+def update_extensions(existing_config: MutableMapping[str, Any], prompts: MutableMapping[str, Any]) -> List[str]:
     """Merge extensions from prompts into existing config."""
     extensions = existing_config.get("_extensions", [])
     if "_extensions" in prompts:
@@ -78,7 +78,12 @@ def update_extensions(existing_config: Context, prompts: MutableMapping[str, Any
     return extensions
 
 
-def prompt_for_config(prompts: dict, existing_config: Context, no_input: bool = False) -> Context:
+def prompt_for_config(
+    prompts: dict,
+    aggregated_context: Context,
+    layer_context: Optional[MutableMapping[str, Any]] = None,
+    no_input: bool = False,
+) -> MutableMapping[str, Any]:
     """
     Prompt user to enter a new config using an existing config as a basis.
 
@@ -88,7 +93,8 @@ def prompt_for_config(prompts: dict, existing_config: Context, no_input: bool = 
 
     Args:
         prompts: A dictionary of configuration prompts and default values
-        existing_config: An existing configuration to use as a basis
+        aggregated_context: An existing configuration to use as a basis
+        layer_context: A dictionary of defaults defined in the layer
         no_input: If ``True`` Don't prompt the user at command line for manual configuration
 
     Raises:
@@ -100,16 +106,14 @@ def prompt_for_config(prompts: dict, existing_config: Context, no_input: bool = 
     if "cookiecutter" in prompts:
         prompts = prompts["cookiecutter"]
 
-    # Make sure we have a fresh layer to populate
-    if existing_config.is_empty:
-        context = existing_config
-    else:
-        context = existing_config.new_child()
+    layer_context = layer_context or {}
+    context = aggregated_context.flatten()
+    context.update(layer_context)
 
-    extensions = update_extensions(existing_config, prompts)
+    extensions = update_extensions(context, prompts)
     if extensions:
         context["_extensions"] = extensions
-    env = CustomStrictEnvironment(context=existing_config)
+    env = CustomStrictEnvironment(context=context)
 
     context_prompts = {}
     if "__prompts__" in prompts:
@@ -123,7 +127,7 @@ def prompt_for_config(prompts: dict, existing_config: Context, no_input: bool = 
     return context
 
 
-def _render_dicts(context: Context, env: Environment, no_input: bool, prompts: dict) -> None:
+def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict) -> None:
     """
     Render dictionaries.
 
@@ -150,7 +154,7 @@ def _render_dicts(context: Context, env: Environment, no_input: bool, prompts: d
         try:
             if isinstance(raw, dict):
                 # We are dealing with a dict variable
-                val = render_variable(env, raw, context.flatten())
+                val = render_variable(env, raw, context)
 
                 if not no_input and not key.startswith("__"):
                     val = read_user_dict(key, val, prompts)
@@ -161,7 +165,7 @@ def _render_dicts(context: Context, env: Environment, no_input: bool, prompts: d
             raise UndefinedVariableInTemplate(msg, err, context) from err
 
 
-def _render_simple(context: Context, context_prompts: dict, env: Environment, no_input: bool, prompts: dict) -> None:
+def _render_simple(context: dict, context_prompts: dict, env: Environment, no_input: bool, prompts: dict) -> None:
     """
     Render simple variables, raw variables, and choices.
 
@@ -190,8 +194,7 @@ def _render_simple(context: Context, context_prompts: dict, env: Environment, no
             context[key] = render_variable(env, raw, context)
             continue
         elif key in context:
-            context[key] = copy.deepcopy(context.parents[key])
-            continue
+            raw = copy.deepcopy(context[key])  # noqa: PLW2901
 
         try:
             if isinstance(raw, list):

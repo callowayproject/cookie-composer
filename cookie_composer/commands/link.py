@@ -16,7 +16,7 @@ def link_cmd(
     skip_if_file_exists: bool = False,
     default_config: bool = False,
     initial_context: Optional[MutableMapping[str, Any]] = None,
-):
+) -> None:
     """
     Link a template or configuration to an existing project.
 

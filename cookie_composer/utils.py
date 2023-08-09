@@ -132,7 +132,7 @@ def remove_paths(root: Path, paths_to_remove: Set[Path]) -> None:
         remove_single_path(path)
 
 
-def remove_readonly_bit(func: Callable[[Path], None], path: Path, _: Any) -> None:  # pragma: no-coverage
+def remove_readonly_bit(func: Callable[[str], None], path: str, _: Any) -> None:  # pragma: no-coverage
     """Clear the readonly bit and reattempt the removal."""
     os.chmod(path, stat.S_IWRITE)  # WINDOWS
     func(path)

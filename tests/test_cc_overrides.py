@@ -69,7 +69,7 @@ def test_prompt_for_config(mocker, context):
     m = mocker.patch("cookie_composer.cc_overrides.read_user_variable")
     m.return_value = context["full_name"]
 
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
     assert cookiecutter_dict == context
 
 
@@ -105,8 +105,8 @@ def test_prompt_for_config_with_human_prompts(monkeypatch, context):
         lambda var, default, prompts: default,
     )
 
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context())
-    assert cookiecutter_dict.flatten() == context["cookiecutter"]
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context(), None)
+    assert cookiecutter_dict == context["cookiecutter"]
 
 
 @pytest.mark.parametrize(
@@ -147,7 +147,7 @@ def test_prompt_for_config_with_human_choices(monkeypatch, context):
     """Test prompts when human-readable labels for user choices."""
     runner = CliRunner()
     with runner.isolation(input="\n\n\n"):
-        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
 
     assert dict(cookiecutter_dict) == {"full_name": "Your Name", "check": "yes"}
 
@@ -160,7 +160,7 @@ def test_prompt_for_config_dict(monkeypatch):
     )
     context = {"details": {}}
 
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
     assert cookiecutter_dict == {"details": {"key": "value", "integer": 37}}
 
 
@@ -171,7 +171,7 @@ def test_should_render_dict():
         "details": {"{{cookiecutter.project_name}}": "{{cookiecutter.project_name}}"},
     }
 
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), no_input=True)
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None, no_input=True)
     assert cookiecutter_dict == {
         "project_name": "Slartibartfast",
         "details": {"Slartibartfast": "Slartibartfast"},
@@ -204,7 +204,7 @@ def test_should_render_deep_dict():
         },
     }
 
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), no_input=True)
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None, no_input=True)
     assert cookiecutter_dict == {
         "project_name": "Slartibartfast",
         "details": {
@@ -239,7 +239,7 @@ def test_prompt_for_templated_config(monkeypatch):
         "project_name": "A New Project",
         "pkg_name": "anewproject",
     }
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
     assert cookiecutter_dict == exp_cookiecutter_dict
 
 
@@ -250,7 +250,7 @@ def test_dont_prompt_for_private_context_var(monkeypatch):
         lambda var, default: pytest.fail("Should not try to read a response for private context var"),
     )
     context = {"_copy_without_render": ["*.html"]}
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
     assert cookiecutter_dict == {"_copy_without_render": ["*.html"]}
 
 
@@ -276,7 +276,7 @@ def test_should_render_private_variables_with_two_underscores():
         ]
     )
 
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), no_input=True)
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None, no_input=True)
     assert cookiecutter_dict == OrderedDict(
         [
             ("foo", "Hello world"),
@@ -304,7 +304,7 @@ def test_should_not_render_private_variables():
         "_skip_boolean": True,
         "_skip_nested": True,
     }
-    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), no_input=True)
+    cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None, no_input=True)
     assert cookiecutter_dict == context
 
 
@@ -314,7 +314,7 @@ def test_raises_exception_on_missing_variable():
 
     context = {"project_name": "{{ cookiecutter.i_dont_exist }}"}
     with pytest.raises(UndefinedVariableInTemplate):
-        cc_overrides.prompt_for_config(context, Context({}), no_input=True)
+        cc_overrides.prompt_for_config(context, Context({}), None, no_input=True)
 
 
 def test_raises_exception_on_missing_variable_dict():
@@ -323,7 +323,7 @@ def test_raises_exception_on_missing_variable_dict():
 
     context = {"key_a": {"key_b": "{{ cookiecutter.i_dont_exist }}"}}
     with pytest.raises(UndefinedVariableInTemplate):
-        cc_overrides.prompt_for_config(context, Context({}), no_input=True)
+        cc_overrides.prompt_for_config(context, Context({}), None, no_input=True)
 
 
 class TestReadUserChoice:
@@ -344,7 +344,7 @@ class TestReadUserChoice:
         choices = ["landscape", "portrait", "all"]
         context = {"orientation": choices}
 
-        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
 
         assert not read_user_variable.called
         assert prompt_choice.called
@@ -362,7 +362,7 @@ class TestReadUserChoice:
 
         context = {"full_name": "Your Name"}
 
-        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
 
         assert not prompt_choice.called
         assert not read_user_choice.called
@@ -397,7 +397,7 @@ class TestReadUserChoice:
             "project_name": "A New Project",
             "pkg_name": "anewproject",
         }
-        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}))
+        cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
 
         read_user_variable.assert_called_once_with("project_name", "A New Project", {})
         read_user_choice.assert_called_once_with("pkg_name", rendered_choices, {})
