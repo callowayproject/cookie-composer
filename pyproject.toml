@@ -155,6 +155,7 @@ ignore = [
     "ANN002", "ANN003", "ANN101", "ANN102", "ANN204", "ANN401",
     "S101", "S104", "S603",
     "D106", "D107", "D200", "D212",
+    "PLW1510",
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
@@ -258,7 +259,7 @@ replace = "{current_version}...{new_version}"
 [tool.pydoclint]
 style = "google"
 exclude = '\.git|tests'
-require-return-section-when-returning-none = false
+require-return-section-when-returning-nothing = false
 arg-type-hints-in-docstring = false
 check-return-types = false
 quiet = true

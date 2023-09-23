@@ -7,12 +7,12 @@ from typing import Any, Iterable, MutableMapping
 from immutabledict import immutabledict
 
 
-def deep_merge(*dicts) -> dict:
+def deep_merge(*dicts: dict) -> dict:
     """
     Merges dicts deeply.
 
     Args:
-        dicts: List of dicts to merge with the first one as the base
+        *dicts: List of dicts to merge with the first one as the base
 
     Returns:
         dict: The merged dict
@@ -47,7 +47,7 @@ def merge_iterables(iter1: Iterable, iter2: Iterable) -> set:
     return set(chain(freeze_data(iter1), freeze_data(iter2)))
 
 
-def comprehensive_merge(*args) -> Any:  # noqa: C901
+def comprehensive_merge(*args: MutableMapping) -> Any:  # noqa: C901
     """
     Merges data comprehensively.
 
@@ -58,7 +58,7 @@ def comprehensive_merge(*args) -> Any:  # noqa: C901
     - dicts are recursively merged
 
     Args:
-        args: List of dicts to merge with the first one the base
+        *args: List of dicts to merge with the first one the base
 
     Returns:
         The merged data

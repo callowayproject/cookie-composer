@@ -79,8 +79,8 @@ def echo(
     Args:
         message: The string or bytes to output. Other objects are converted to strings.
         file: The file to write to. Defaults to stdout.
-        err: Write to stderr instead of stdout.
         nl: Print a newline after the message. Enabled by default.
+        err: Write to stderr instead of stdout.
         color: Force showing or hiding colors and other styles. By default Click will remove color if the output
             does not look like an interactive terminal.
         **styles: Style keyword arguments

@@ -130,9 +130,6 @@ def apply_patch(repo: Repo, diff: str) -> None:
     Args:
         repo: The git repo to apply the patch to
         diff: The previously calculated diff
-
-    Raises:
-        subprocess.CalledProcessError if there is a problem running the git-appy command
     """
     three_way_command = [
         "git",

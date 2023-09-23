@@ -29,7 +29,6 @@ class JsonifyContextExtension(Extension):
     """Jinja2 extension to convert a Python object to JSON."""
 
     def __init__(self, environment: Environment):
-        """Initialize the extension with the given environment."""
         super().__init__(environment)
 
         def jsonify(obj: Any) -> str:  # pragma: no cover
@@ -96,9 +95,6 @@ def prompt_for_config(
         aggregated_context: An existing configuration to use as a basis
         layer_context: A dictionary of defaults defined in the layer
         no_input: If ``True`` Don't prompt the user at command line for manual configuration
-
-    Raises:
-        UndefinedVariableInTemplate: If a variable in a prompt defaults is not in the context
 
     Returns:
         A new configuration context

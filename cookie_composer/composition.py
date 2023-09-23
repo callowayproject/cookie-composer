@@ -208,7 +208,7 @@ def read_composition(path_or_url: Union[str, Path], **kwargs) -> Composition:
 
     Args:
         path_or_url: The location of the configuration file
-        kwargs: Additional keyword arguments passed to the composition
+        **kwargs: Additional keyword arguments passed to the composition
 
     Returns:
         A composition
