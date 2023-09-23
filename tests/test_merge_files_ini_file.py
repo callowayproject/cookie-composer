@@ -5,12 +5,7 @@ from io import StringIO
 
 import pytest
 
-from cookie_composer.composition import (
-    COMPREHENSIVE,
-    DO_NOT_MERGE,
-    NESTED_OVERWRITE,
-    OVERWRITE,
-)
+from cookie_composer.data_merge import DO_NOT_MERGE, NESTED_OVERWRITE, OVERWRITE, COMPREHENSIVE
 from cookie_composer.exceptions import MergeError
 from cookie_composer.merge_files import ini_file
 

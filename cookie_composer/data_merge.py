@@ -1,10 +1,16 @@
 """Tools for merging data."""
 import copy
+import logging
 from collections import ChainMap, OrderedDict
 from functools import reduce
-from typing import Any, Iterable, MutableMapping
+from pathlib import Path
+from typing import Any, Dict, Iterable, MutableMapping
 
 from immutabledict import immutabledict
+
+from cookie_composer.matching import rel_fnmatch
+
+logger = logging.getLogger(__name__)
 
 
 def deep_merge(*dicts: dict) -> dict:
@@ -107,7 +113,7 @@ class Context(ChainMap):
         """The context has only one mapping and it is empty."""
         return len(self.maps) == 1 and len(self.maps[0]) == 0
 
-    def flatten(self) -> dict:
+    def flatten(self) -> MutableMapping:
         """Comprehensively merge all the maps into a single mapping."""
         return reduce(comprehensive_merge, self.maps, {})
 
@@ -125,3 +131,51 @@ def freeze_data(obj: Any) -> Any:
     elif isinstance(obj, (set, frozenset)):
         return frozenset(freeze_data(i) for i in obj)
     raise ValueError(obj)
+
+
+# Strategies merging files and data.
+DO_NOT_MERGE = "do-not-merge"
+"""Do not merge the data, use the file path to determine what to do."""
+
+NESTED_OVERWRITE = "nested-overwrite"
+"""Merge deeply nested structures and overwrite at the lowest level; A deep ``dict.update()``."""
+
+OVERWRITE = "overwrite"
+"""Overwrite at the top level like ``dict.update()``."""
+
+COMPREHENSIVE = "comprehensive"
+"""Comprehensively merge the two data structures.
+
+- Scalars are overwritten by the new values
+- lists are merged and de-duplicated
+- dicts are recursively merged
+"""
+
+
+def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
+    """
+    Return the merge strategy of the path based on the layer configured rules.
+
+    Files that are not mergable return :attr:`~cookie_composer.composition.DO_NOT_MERGE`
+
+    Args:
+        path: The file path to evaluate.
+        merge_strategies: The glob pattern->strategy mapping
+
+    Returns:
+        The appropriate merge strategy.
+    """
+    from cookie_composer.merge_files import MERGE_FUNCTIONS
+
+    strategy = DO_NOT_MERGE  # The default
+
+    if path.suffix not in MERGE_FUNCTIONS:
+        return DO_NOT_MERGE
+
+    for pattern, strat in merge_strategies.items():
+        if rel_fnmatch(str(path), pattern):
+            logger.debug(f"{path} matches merge strategy pattern {pattern} for {strat}")
+            strategy = strat
+            break
+
+    return strategy

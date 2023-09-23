@@ -20,7 +20,6 @@ classifiers = [
     "Topic :: Software Development :: Code Generators",
 ]
 dependencies = [
-    "backports.shutil-copytree",
     "click-log",
     "cookiecutter>=2.2.0",
     "fsspec",

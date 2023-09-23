@@ -17,7 +17,7 @@ from jinja2.ext import Extension
 from cookie_composer.data_merge import Context
 
 
-def jsonify_context(value: Any) -> dict:
+def jsonify_context(value: Any) -> MutableMapping:
     """Convert a ``Context`` to a dict."""
     if isinstance(value, Context):
         return value.flatten()
@@ -123,7 +123,7 @@ def prompt_for_config(
     return context
 
 
-def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict) -> None:
+def _render_dicts(context: MutableMapping, env: Environment, no_input: bool, prompts: dict) -> None:
     """
     Render dictionaries.
 
@@ -161,7 +161,9 @@ def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict
             raise UndefinedVariableInTemplate(msg, err, context) from err
 
 
-def _render_simple(context: dict, context_prompts: dict, env: Environment, no_input: bool, prompts: dict) -> None:
+def _render_simple(
+    context: MutableMapping, context_prompts: dict, env: Environment, no_input: bool, prompts: dict
+) -> None:
     """
     Render simple variables, raw variables, and choices.
 

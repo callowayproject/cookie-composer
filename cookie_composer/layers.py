@@ -19,12 +19,10 @@ from cookiecutter.utils import rmtree
 
 from cookie_composer.cc_overrides import prompt_for_config
 from cookie_composer.composition import (
-    DO_NOT_MERGE,
     LayerConfig,
     RenderedLayer,
-    get_merge_strategy,
 )
-from cookie_composer.data_merge import Context
+from cookie_composer.data_merge import DO_NOT_MERGE, Context, get_merge_strategy
 from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
 

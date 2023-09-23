@@ -6,31 +6,10 @@ from typing import Any, Dict, List, MutableMapping, Optional, Union
 
 from pydantic import BaseModel, DirectoryPath, Field, root_validator
 
-from cookie_composer.data_merge import comprehensive_merge
+from cookie_composer.data_merge import DO_NOT_MERGE, comprehensive_merge
 from cookie_composer.exceptions import GitError, MissingCompositionFileError
-from cookie_composer.matching import rel_fnmatch
 
 logger = logging.getLogger(__name__)
-
-
-# Strategies merging files and data.
-
-DO_NOT_MERGE = "do-not-merge"
-"""Do not merge the data, use the file path to determine what to do."""
-
-NESTED_OVERWRITE = "nested-overwrite"
-"""Merge deeply nested structures and overwrite at the lowest level; A deep ``dict.update()``."""
-
-OVERWRITE = "overwrite"
-"""Overwrite at the top level like ``dict.update()``."""
-
-COMPREHENSIVE = "comprehensive"
-"""Comprehensively merge the two data structures.
-
-- Scalars are overwritten by the new values
-- lists are merged and de-duplicated
-- dicts are recursively merged
-"""
 
 
 class LayerConfig(BaseModel):
@@ -299,35 +278,6 @@ def write_rendered_composition(composition: RenderedComposition) -> None:
     composition_file = composition.render_dir / composition.rendered_name / ".composition.yaml"
     logger.debug(f"Writing rendered composition to {composition_file}")
     write_composition(layers, composition_file)
-
-
-def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
-    """
-    Return the merge strategy of the path based on the layer configured rules.
-
-    Files that are not mergable return :attr:`~cookie_composer.composition.DO_NOT_MERGE`
-
-    Args:
-        path: The file path to evaluate.
-        merge_strategies: The glob pattern->strategy mapping
-
-    Returns:
-        The appropriate merge strategy.
-    """
-    from cookie_composer.merge_files import MERGE_FUNCTIONS
-
-    strategy = DO_NOT_MERGE  # The default
-
-    if path.suffix not in MERGE_FUNCTIONS:
-        return DO_NOT_MERGE
-
-    for pattern, strat in merge_strategies.items():
-        if rel_fnmatch(str(path), pattern):
-            logger.debug(f"{path} matches merge strategy pattern {pattern} for {strat}")
-            strategy = strat
-            break
-
-    return strategy
 
 
 def get_composition_from_path_or_url(
