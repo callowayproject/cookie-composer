@@ -1,4 +1,5 @@
 """Functions for using git."""
+import logging
 import subprocess
 from pathlib import Path
 from typing import Optional, Union
@@ -6,6 +7,8 @@ from typing import Optional, Union
 from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
+
+logger = logging.getLogger(__name__)
 
 
 def get_repo(
@@ -39,6 +42,27 @@ def get_repo(
         ) from e
 
 
+def clone(repo_url: str, dest_path: Optional[Path] = None) -> Repo:
+    """
+    Clone a repo.
+
+    Args:
+        repo_url: Repo URL or local path.
+        dest_path: The path to clone to.
+
+    Returns:
+        The repository.
+    """
+    dest_path = dest_path or Path.cwd()
+
+    if dest_path.exists():
+        logger.debug(f"Found {dest_path}, attempting to update")
+        return get_repo(dest_path, ensure_clean=True)
+    else:
+        logger.debug(f"Cloning {repo_url} into {dest_path}")
+        return Repo.clone_from(repo_url, dest_path)
+
+
 def branch_exists(repo: Repo, branch_name: str) -> bool:
     """
     Does the branch exist in the repo?
@@ -69,6 +93,17 @@ def remote_branch_exists(repo: Repo, branch_name: str, remote_name: str = "origi
         return branch_name in repo.remotes[remote_name].refs
 
     return False
+
+
+def checkout_ref(repo: Repo, ref: str) -> None:
+    """
+    Checkout a ref.
+
+    Args:
+        repo: The repository to check out
+        ref: The ref to check out
+    """
+    repo.git.checkout(ref)
 
 
 def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -> None:

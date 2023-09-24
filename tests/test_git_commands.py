@@ -46,7 +46,7 @@ def test_remote_branch_exists(default_repo):
 
 
 def test_remote_branch_exists_missing(default_repo):
-    """Should return False if there is no remotes."""
+    """Should return False if there are no remotes."""
     assert not git_commands.remote_branch_exists(default_repo, "missingbranch", "missingremote")
 
 
@@ -113,3 +113,10 @@ def test_get_latest_template_commit(default_repo):
         message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 11:00:00"
     )
     assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == third_commit.hexsha
+
+
+def test_clone_existing_repo(default_repo):
+    """Should return the same repo if the repo already exists."""
+    repo_path = Path(default_repo.working_tree_dir)
+    repo = git_commands.clone("git://someplace/else.git", repo_path)
+    assert repo.working_tree_dir == str(repo_path)
