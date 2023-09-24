@@ -10,7 +10,7 @@ import pytest
 from cookiecutter.config import get_user_config
 
 from cookie_composer import layers
-from cookie_composer.composition import LayerConfig, RenderedLayer
+from cookie_composer.layers import LayerConfig, RenderedLayer
 from cookie_composer.data_merge import Context, comprehensive_merge, DO_NOT_MERGE, OVERWRITE
 from cookie_composer.git_commands import get_latest_template_commit
 

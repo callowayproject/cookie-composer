@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from cookie_composer import composition, layers
-from cookie_composer.composition import LayerConfig
+from cookie_composer.layers import LayerConfig
 from cookie_composer.exceptions import MissingCompositionFileError
 
 

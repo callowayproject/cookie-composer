@@ -8,7 +8,7 @@ import shutil
 import tempfile
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, MutableMapping, Optional
 
 import click
 from cookiecutter.config import get_user_config
@@ -16,12 +16,9 @@ from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.main import _patch_import_path_for_repo
 from cookiecutter.repository import determine_repo_dir
 from cookiecutter.utils import rmtree
+from pydantic import BaseModel, DirectoryPath, Field, root_validator
 
 from cookie_composer.cc_overrides import prompt_for_config
-from cookie_composer.composition import (
-    LayerConfig,
-    RenderedLayer,
-)
 from cookie_composer.data_merge import DO_NOT_MERGE, Context, get_merge_strategy
 from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
@@ -43,6 +40,136 @@ class WriteStrategy(Enum):
 
     MERGE = 3
     """Merge the file with an existing file, or write a new file."""
+
+
+class LayerConfig(BaseModel):
+    """Configuration for a layer of a composition."""
+
+    #
+    # Template specification
+    #
+    template: str
+    """The path or URL to the template."""
+
+    directory: Optional[str] = None
+    """Directory within a git repository template that holds the cookiecutter.json file."""
+
+    checkout: Optional[str] = None
+    """The branch, tag or commit to tell Cookie Cutter to use."""
+
+    password: Optional[str] = None
+    """The password to use if template is a password-protected Zip archive."""
+
+    commit: Optional[str] = None
+    """What git hash was applied if the template is a git repository."""
+
+    #
+    # Input specification
+    #
+    no_input: bool = False
+    """Do not prompt for parameters and only use cookiecutter.json file content.
+
+    This is only used for initial generation. After initial generation, the results
+    are stored in the context."""
+
+    context: MutableMapping[str, Any] = Field(default_factory=dict)
+    """Dictionary that will provide values for input.
+
+    Also stores the answers for missing context parameters after initial generation."""
+
+    #
+    # File generation
+    #
+    skip_hooks: bool = False
+    """Skip the template hooks."""
+
+    skip_if_file_exists: bool = True
+    """Skip the files in the corresponding directories if they already exist."""
+
+    skip_generation: List[str] = Field(default_factory=list)
+    """Paths or glob patterns to skip attempting to generate."""
+
+    overwrite: List[str] = Field(default_factory=list)
+    """Paths or glob patterns to always overwrite."""
+
+    overwrite_exclude: List[str] = Field(default_factory=list)
+    """Paths or glob patterns to exclude from overwriting."""
+
+    merge_strategies: Dict[str, str] = Field(default_factory=lambda: {"*": DO_NOT_MERGE})
+    """The method to merge specific paths or glob patterns."""
+
+    @property
+    def layer_name(self) -> str:
+        """The name of the template layer."""
+        from cookie_composer.utils import get_template_name
+
+        return get_template_name(str(self.template), self.directory, self.checkout)
+
+
+class RenderedLayer(BaseModel):
+    """Information about a rendered layer."""
+
+    layer: LayerConfig
+    """The original layer configuration that was rendered."""
+
+    location: DirectoryPath
+    """The directory where the layer was rendered."""
+
+    new_context: MutableMapping[str, Any]
+    """The context based on questions asked."""
+
+    latest_commit: Optional[str] = None
+    """The latest commit checked out if the layer source was a git repo."""
+
+    rendered_name: Optional[str] = None
+    """The name of the rendered template directory."""
+
+    @root_validator(pre=True)
+    def set_rendered_name(cls, values: Dict[str, Any]) -> Dict[str, Any]:  # noqa: N805
+        """Set the :attr:`~.RenderedLayer.layer_name`` to the name of the rendered template directory."""
+        if "rendered_name" in values:
+            return values
+
+        dirs = list(os.scandir(values["location"]))
+        if len(dirs) > 1:
+            raise ValueError("More than one item in render location.")
+        elif not dirs:
+            raise ValueError("There are no items in render location.")
+        if not dirs[0].is_dir():
+            raise ValueError("The rendered template is not a directory.")
+        values["rendered_name"] = dirs[0].name
+        return values
+
+    def latest_template_sha(self) -> Optional[str]:
+        """
+        Return the latest SHA of this rendered layer's template.
+
+        If the template is not a git repository, it will always return ``None``.
+
+        Returns:
+            The latest hexsha of the template or ``None`` if the template isn't a git repo
+        """
+        from cookiecutter.config import get_user_config
+        from cookiecutter.repository import determine_repo_dir
+
+        from cookie_composer.git_commands import get_repo
+
+        user_config = get_user_config(config_file=None, default_config=False)
+        repo_dir, _ = determine_repo_dir(
+            template=self.layer.template,
+            abbreviations=user_config["abbreviations"],
+            clone_to_dir=user_config["cookiecutters_dir"],
+            checkout=self.layer.commit or self.layer.checkout,
+            no_input=self.layer.no_input,
+            password=self.layer.password,
+            directory=self.layer.directory,
+        )
+        try:
+            template_repo = get_repo(repo_dir, search_parent_directories=True)
+            return template_repo.head.object.hexsha
+        except GitError:
+            # It probably isn't a git repository
+            return None
 
 
 def get_write_strategy(origin: Path, destination: Path, rendered_layer: RenderedLayer) -> WriteStrategy:
