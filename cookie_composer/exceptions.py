@@ -42,3 +42,32 @@ class ChangesetUnicodeError(Exception):
                 "unicode. Typically a result of hidden binary files in project folder."
             )
         )
+
+
+class InvalidZipRepositoryError(Exception):
+    """Raised when a zip repository is invalid."""
+
+    def __init__(self, message: str = ""):
+        message = message or "Invalid zip repository."
+        super().__init__(message)
+
+
+class EmptyZipRepositoryError(InvalidZipRepositoryError):
+    """Raised when a zip repository is empty."""
+
+    def __init__(self, url: str):
+        super().__init__(f"Zip repository at {url} is empty.")
+
+
+class NoZipDirectoryError(InvalidZipRepositoryError):
+    """Raised when a zip repository does not contain a directory."""
+
+    def __init__(self, url: str):
+        super().__init__(f"Zip repository at {url} does not contain a top-level directory.")
+
+
+class InvalidZipPasswordError(InvalidZipRepositoryError):
+    """Raised when a zip repository is password-protected."""
+
+    def __init__(self):
+        super().__init__("Zip repository is password-protected and the password is missing or wrong.")
