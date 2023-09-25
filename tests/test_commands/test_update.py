@@ -12,27 +12,38 @@ from cookie_composer.git_commands import checkout_branch, get_repo
 
 
 @pytest.fixture
-def git_template(fixtures_path, tmp_path) -> dict:
+def git_template(fixtures_path: Path, tmp_path: Path) -> dict:
     """Set up the template in a git repo."""
     template_path = fixtures_path / "template1"
-    dest_path = tmp_path / "template1"
-    shutil.copytree(template_path, dest_path)
+    tmp_repo_path = tmp_path / "template1"
+    shutil.copytree(template_path, tmp_repo_path)
 
-    template_repo = Repo.init(dest_path)
-    template_repo.index.add(template_repo.untracked_files)
-    template_repo.index.commit(
+    tmp_repo = Repo.init(tmp_repo_path, b="master")
+    tmp_repo.index.add(tmp_repo.untracked_files)
+    tmp_repo.index.commit(
         message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
     )
-    template_initial_sha = template_repo.head.object.hexsha
-    new_file = dest_path / "{{cookiecutter.repo_name}}" / "newfile.txt"
+    new_file = tmp_repo_path / "{{cookiecutter.repo_name}}" / "newfile.txt"
     new_file.write_text("")
-    template_repo.index.add(str(new_file))
-    template_repo.index.commit(
+    tmp_repo.index.add(str(new_file))
+    tmp_repo.index.commit(
         message="second commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 11:00:00"
     )
-    template_updated_sha = template_repo.head.object.hexsha
-    assert template_initial_sha != template_updated_sha
-    return {"first_commit": template_initial_sha, "second_commit": template_updated_sha, "template_path": dest_path}
+
+    origin_path = tmp_path / "origin"
+    origin = Repo.init(origin_path, bare=True)
+
+    tmp_repo.create_remote("origin", str(origin_path))
+    tmp_repo.remotes.origin.push("master")
+    shutil.rmtree(tmp_repo_path)
+
+    template_updated_sha = origin.heads.master.commit.hexsha
+    template_initial_sha = origin.heads.master.commit.parents[0].hexsha
+    return {
+        "first_commit": template_initial_sha,
+        "second_commit": template_updated_sha,
+        "template_path": origin.working_dir,
+    }
 
 
 @pytest.fixture
@@ -67,7 +78,7 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
         "skip_generation": [],
         "skip_hooks": False,
         "skip_if_file_exists": True,
-        "template": str(git_template["template_path"]),
+        "template": f'git+file://{git_template["template_path"]}',
     }
     with open(rendered_comp_path, "w") as f:
         yaml.dump(rendered_comp, f)
@@ -104,7 +115,20 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
 
 def test_update_command(git_project: dict):
     """Basic test of the update command."""
+    repo = get_repo(git_project["project_path"])
+    assert repo.active_branch.name == "master"
+    current_items = {item.name for item in os.scandir(git_project["project_path"])}
+    assert current_items == {
+        ".composition.yaml",
+        ".git",
+        "README.md",
+        "dontmerge.json",
+        "merge.yaml",
+        "requirements.txt",
+    }
+
     update.update_cmd(git_project["project_path"], no_input=True)
+
     rendered_items = {item.name for item in os.scandir(git_project["project_path"])}
     assert rendered_items == {
         ".composition.yaml",
@@ -115,7 +139,6 @@ def test_update_command(git_project: dict):
         "newfile.txt",
         "requirements.txt",
     }
-    repo = get_repo(git_project["project_path"])
 
     # we should be on the update_composition branch
     assert repo.active_branch.name == "update_composition"
