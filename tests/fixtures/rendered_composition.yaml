@@ -1,5 +1,5 @@
 checkout: null
-commit: 3391f60471939dd412e93e9853e3328e7a5a8c44
+commit: null
 context:
   _copy_without_render:
   - .github/**/*.jinja
@@ -36,10 +36,11 @@ password: null
 skip_generation: []
 skip_hooks: false
 skip_if_file_exists: true
-template: https://github.com/coordt/cookiecomposer-templates
+template: ../cookiecomposer-templates
+rendered_name: my-test-project
 ---
 checkout: null
-commit: 3391f60471939dd412e93e9853e3328e7a5a8c44
+commit: null
 context:
   friendly_name: My Test Project
   project_name: my-test-project
@@ -58,10 +59,11 @@ password: null
 skip_generation: []
 skip_hooks: false
 skip_if_file_exists: true
-template: https://github.com/coordt/cookiecomposer-templates
+template: ../cookiecomposer-templates
+rendered_name: my-test-project
 ---
 checkout: null
-commit: 3391f60471939dd412e93e9853e3328e7a5a8c44
+commit: null
 context:
   _copy_without_render:
   - docsrc/**/*.rst
@@ -92,4 +94,5 @@ password: null
 skip_generation: []
 skip_hooks: false
 skip_if_file_exists: true
-template: https://github.com/coordt/cookiecomposer-templates
+template: ../cookiecomposer-templates
+rendered_name: my-test-project

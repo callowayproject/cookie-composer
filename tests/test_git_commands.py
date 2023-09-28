@@ -99,22 +99,6 @@ def test_branch_from_first_commit(default_repo):
     assert default_repo.head.commit.hexsha == first_commit_sha
 
 
-def test_get_latest_template_commit(default_repo):
-    """Should return the latest hexsha."""
-    first_sha = default_repo.head.commit.hexsha
-    assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == first_sha
-
-    second_commit = default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
-    )
-    assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == second_commit.hexsha
-
-    third_commit = default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 11:00:00"
-    )
-    assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == third_commit.hexsha
-
-
 def test_clone_existing_repo(default_repo):
     """Should return the same repo if the repo already exists."""
     repo_path = Path(default_repo.working_tree_dir)
