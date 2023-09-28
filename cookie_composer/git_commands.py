@@ -137,25 +137,6 @@ def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
     repo.heads[branch_name].checkout()
 
 
-def get_latest_template_commit(template_path: str) -> Optional[str]:
-    """
-    Get the hexsha of the latest commit on the template path.
-
-    If the path is not a git repository, it returns ``None``.
-
-    Args:
-        template_path: The path to the potentially-cloned template
-
-    Returns:
-        The hexsha of the latest commit or ``None``
-    """
-    try:
-        repo = get_repo(template_path, search_parent_directories=True)
-        return repo.head.commit.hexsha
-    except GitError:
-        return None
-
-
 def apply_patch(repo: Repo, diff: str) -> None:
     """
     Apply a patch to a destination directory.
