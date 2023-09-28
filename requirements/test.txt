@@ -4,6 +4,8 @@
 #
 #    pip-compile --extra=test --output-file=requirements/test.txt pyproject.toml
 #
+annotated-types==0.5.0
+    # via pydantic
 arrow==1.2.3
     # via cookiecutter
 binaryornot==0.4.4
@@ -78,8 +80,10 @@ pre-commit==3.3.3
     # via cookie-composer (pyproject.toml)
 prompt-toolkit==3.0.39
     # via questionary
-pydantic==1.10.11
+pydantic==2.4.0
     # via cookie-composer (pyproject.toml)
+pydantic-core==2.10.0
+    # via pydantic
 pygments==2.15.1
     # via rich
 pytest==7.4.0
@@ -129,7 +133,9 @@ tomli==2.0.1
     #   coverage
     #   pytest
 typing-extensions==4.7.1
-    # via pydantic
+    # via
+    #   pydantic
+    #   pydantic-core
 urllib3==2.0.4
     # via requests
 virtualenv==20.24.1

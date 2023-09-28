@@ -6,6 +6,8 @@
 #
 alabaster==0.7.13
     # via sphinx
+annotated-types==0.5.0
+    # via pydantic
 argopt==0.8.2
     # via git-fame
 arrow==1.2.3
@@ -18,7 +20,7 @@ binaryornot==0.4.4
     # via cookiecutter
 build==0.10.0
     # via pip-tools
-bump-my-version==0.8.0
+bump-my-version==0.11.0
     # via cookie-composer (pyproject.toml)
 certifi==2023.7.22
     # via requests
@@ -130,10 +132,15 @@ pre-commit==3.3.3
     # via cookie-composer (pyproject.toml)
 prompt-toolkit==3.0.39
     # via questionary
-pydantic==1.10.11
+pydantic==2.4.0
     # via
     #   bump-my-version
     #   cookie-composer (pyproject.toml)
+    #   pydantic-settings
+pydantic-core==2.10.0
+    # via pydantic
+pydantic-settings==2.0.3
+    # via bump-my-version
 pygments==2.15.1
     # via
     #   furo
@@ -157,6 +164,8 @@ python-dateutil==2.8.2
     # via
     #   arrow
     #   ghp-import
+python-dotenv==1.0.0
+    # via pydantic-settings
 python-slugify==8.0.1
     # via cookiecutter
 pyyaml==6.0.1
@@ -244,6 +253,7 @@ typer==0.9.0
 typing-extensions==4.7.1
     # via
     #   pydantic
+    #   pydantic-core
     #   typer
 uc-micro-py==1.0.2
     # via linkify-it-py

@@ -27,7 +27,7 @@ dependencies = [
     "gitpython>=3.1.35",
     "immutabledict",
     "orjson",
-    "pydantic<2.0.0",
+    "pydantic>2.0.0",
     "questionary",
     "requests",
     "rich-click",
@@ -44,7 +44,7 @@ requires-python = ">=3.8"
 
 [project.optional-dependencies]
 dev = [
-    "bump-my-version",
+    "bump-my-version>=0.11.0",
     "git-fame>=1.12.2",
     "generate-changelog",
     "pip-tools",
