@@ -33,33 +33,6 @@ def get_context_for_layer(composition: RenderedComposition, index: Optional[int]
     return full_context
 
 
-def get_template_name(path_or_url: str, directory: Optional[str] = None, checkout: Optional[str] = None) -> str:
-    """
-    Get the name of the template using the path or URL.
-
-    Args:
-        path_or_url: The URL or path to the template
-        directory: Directory within a git repository template that holds the cookiecutter.json file.
-        checkout: The branch, tag or commit to use if template is a git repository.
-
-    Raises:
-        ValueError: If the path_or_url is not parsable
-
-    Returns:
-        The name of the template without extensions
-    """
-    from urllib.parse import urlparse
-
-    path = urlparse(path_or_url).path
-    if not path:
-        raise ValueError("There is no path.")
-
-    base_path = Path(path).stem
-    dir_name = Path(directory).name if directory else None
-    parts = [base_path, dir_name, checkout]
-    return "-".join([x for x in parts if x])
-
-
 def echo(
     message: Optional[Any] = None,
     file: Optional[IO] = None,

@@ -40,7 +40,8 @@ def template_repo_from_git(
         repo_dir = cache_dir.joinpath(repo_name)
         repo = clone(git_uri, repo_dir)
 
-    repo.remotes.origin.pull()
+    if len(repo.remotes) > 0:
+        repo.remotes[0].pull()
 
     if checkout:
         checkout_ref(repo, checkout)

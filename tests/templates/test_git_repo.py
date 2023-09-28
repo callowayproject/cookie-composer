@@ -55,13 +55,15 @@ def test_get_repo_name(repo_url: str, checkout: str, expected: str):
     assert get_repo_name(repo_url, checkout) == expected
 
 
-def test_template_repo_from_git_local_no_checkout(default_repo: Repo, tmp_path: Path):
+def test_template_repo_from_git_local_no_checkout(default_repo: Repo):
     """
     Test template_repo_from_git.
 
     - local repo no checkout
     """
-    template_repo = template_repo_from_git(default_repo.working_tree_dir, Locality.LOCAL, tmp_path, checkout=None)
+    template_repo = template_repo_from_git(
+        default_repo.working_tree_dir, Locality.LOCAL, Path(default_repo.working_tree_dir), checkout=None
+    )
     assert template_repo.source == default_repo.working_tree_dir
     assert template_repo.cached_source == Path(default_repo.working_tree_dir)
     assert template_repo.format == TemplateFormat.GIT
@@ -69,14 +71,14 @@ def test_template_repo_from_git_local_no_checkout(default_repo: Repo, tmp_path: 
     assert template_repo.checkout is None
 
 
-def test_template_repo_from_git_local_with_checkout(default_repo: Repo, tmp_path: Path):
+def test_template_repo_from_git_local_with_checkout(default_repo: Repo):
     """
     Test template_repo_from_git.
 
     - local repo with checkout
     """
     template_repo = template_repo_from_git(
-        default_repo.working_tree_dir, Locality.LOCAL, tmp_path, checkout="remote-branch"
+        default_repo.working_tree_dir, Locality.LOCAL, Path(default_repo.working_tree_dir), checkout="remote-branch"
     )
     assert template_repo.source == default_repo.working_tree_dir
     assert template_repo.cached_source == Path(default_repo.working_tree_dir)
@@ -155,3 +157,22 @@ def test_template_repo_from_git_existing_remote_with_checkout(default_origin: Re
     assert template_repo.format == TemplateFormat.GIT
     assert template_repo.locality == Locality.REMOTE
     assert template_repo.checkout == "remote-branch"
+
+
+def test_get_latest_template_commit(default_repo, tmp_path: Path):
+    """Should return the latest hexsha."""
+    from git import Actor
+
+    first_sha = default_repo.head.commit.hexsha
+    template_repo = template_repo_from_git(default_repo.working_tree_dir, Locality.LOCAL, tmp_path, checkout=None)
+    assert template_repo.latest_sha == first_sha
+
+    second_commit = default_repo.index.commit(
+        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
+    )
+    assert template_repo.latest_sha == second_commit.hexsha
+
+    third_commit = default_repo.index.commit(
+        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 11:00:00"
+    )
+    assert template_repo.latest_sha == third_commit.hexsha
