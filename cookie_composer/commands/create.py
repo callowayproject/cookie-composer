@@ -4,11 +4,8 @@ import logging
 from pathlib import Path
 from typing import Any, MutableMapping, Optional
 
-from cookie_composer.composition import (
-    RenderedComposition,
-    get_composition_from_path_or_url,
-    write_rendered_composition,
-)
+from cookie_composer.composition import RenderedComposition
+from cookie_composer.io import get_composition_from_path_or_url, write_rendered_composition
 from cookie_composer.layers import render_layers
 
 logger = logging.getLogger(__name__)

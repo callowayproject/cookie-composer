@@ -32,7 +32,6 @@ def git_template(fixtures_path: Path, tmp_path: Path) -> dict:
 
     origin_path = tmp_path / "origin"
     origin = Repo.init(origin_path, bare=True)
-
     tmp_repo.create_remote("origin", str(origin_path))
     tmp_repo.remotes.origin.push("master")
     shutil.rmtree(tmp_repo_path)

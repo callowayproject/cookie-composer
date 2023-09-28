@@ -3,13 +3,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional
 
-from cookie_composer.composition import (
-    RenderedComposition,
-    read_rendered_composition,
-    write_rendered_composition,
-)
+from cookie_composer.composition import RenderedComposition
 from cookie_composer.diff import get_diff
 from cookie_composer.git_commands import apply_patch, checkout_branch, get_repo
+from cookie_composer.io import read_rendered_composition, write_rendered_composition
 from cookie_composer.layers import RenderedLayer, render_layers
 from cookie_composer.utils import (
     echo,
@@ -48,10 +45,10 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
     update_layers = []
     requires_updating = False
     for rendered_layer in proj_composition.layers:
-        latest_template_sha = rendered_layer.latest_template_sha()
-        if latest_template_sha is None or latest_template_sha != rendered_layer.layer.commit:
+        latest_template_sha = rendered_layer.layer.template.repo.latest_sha
+        if latest_template_sha is None or latest_template_sha != rendered_layer.rendered_commit:
             requires_updating = True
-        new_layer = rendered_layer.layer.copy(deep=True, update={"commit": latest_template_sha})
+        new_layer = rendered_layer.layer.model_copy(deep=True, update={"commit": latest_template_sha})
         update_layers.append(new_layer)
 
     if not requires_updating:

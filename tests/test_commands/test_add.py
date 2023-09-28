@@ -17,6 +17,9 @@ def create_base_repo(fixtures_path, tmp_path):
     shutil.copytree(rendered_layer, dest_path)
 
     rendered_comp = Path(rendered_layer.parent / "rendered-composition.yaml").read_text()
+    rendered_comp = rendered_comp.replace(
+        "template: /tests/fixtures/template1", f"template: {fixtures_path.joinpath('template1')}"
+    )
     Path(dest_path / ".composition.yaml").write_text(rendered_comp)
 
     repo = Repo.init(dest_path)
@@ -24,11 +27,13 @@ def create_base_repo(fixtures_path, tmp_path):
     repo.index.commit(
         message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
     )
-
+    expected_files = {"README.md", "requirements.txt", ".composition.yaml", "merge.yaml", "dontmerge.json", ".git"}
+    dest_files = {item.name for item in os.scandir(dest_path)}
+    assert dest_files == expected_files
     return dest_path
 
 
-def test_render_template(fixtures_path, create_base_repo):
+def test_render_template(fixtures_path: Path, create_base_repo: Path):
     """Test rendering a single template."""
     template_path = fixtures_path / "template2"
 

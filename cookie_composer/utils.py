@@ -28,7 +28,7 @@ def get_context_for_layer(composition: RenderedComposition, index: Optional[int]
         layers = composition.layers[: index + 1]
 
     for layer in layers:
-        full_context = comprehensive_merge(full_context, layer.new_context)
+        full_context = comprehensive_merge(full_context, layer.rendered_context)
 
     return full_context
 

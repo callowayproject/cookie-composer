@@ -3,11 +3,6 @@ import logging
 from pathlib import Path
 from typing import Any, MutableMapping, Optional
 
-from cookie_composer.composition import (
-    get_composition_from_path_or_url,
-    read_rendered_composition,
-    write_rendered_composition,
-)
 from cookie_composer.git_commands import (
     branch_exists,
     branch_from_first_commit,
@@ -15,8 +10,10 @@ from cookie_composer.git_commands import (
     get_repo,
     remote_branch_exists,
 )
+from cookie_composer.io import get_composition_from_path_or_url, read_rendered_composition, write_rendered_composition
 from cookie_composer.layers import render_layers
-from cookie_composer.utils import get_context_for_layer, get_template_name
+from cookie_composer.templates.types import get_template_name
+from cookie_composer.utils import get_context_for_layer
 
 logger = logging.getLogger(__name__)
 
