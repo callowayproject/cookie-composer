@@ -1,6 +1,5 @@
 """Layer management."""
 
-import contextlib
 import copy
 import logging
 import os
@@ -14,17 +13,14 @@ import click
 from cookiecutter.config import get_user_config
 from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.main import _patch_import_path_for_repo
-from cookiecutter.repository import determine_repo_dir
-from cookiecutter.utils import rmtree
-from pydantic import BaseModel, DirectoryPath, Field, root_validator
+from pydantic import BaseModel, DirectoryPath, Field, model_validator
 
 from cookie_composer.cc_overrides import prompt_for_config
-from cookie_composer.data_merge import DO_NOT_MERGE, Context, get_merge_strategy
+from cookie_composer.data_merge import DO_NOT_MERGE, Context, comprehensive_merge, get_merge_strategy
 from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
 
-from .exceptions import GitError
-from .git_commands import get_latest_template_commit, get_repo
+from .templates.types import Template
 
 logger = logging.getLogger(__name__)
 
@@ -48,20 +44,8 @@ class LayerConfig(BaseModel):
     #
     # Template specification
     #
-    template: str
-    """The path or URL to the template."""
-
-    directory: Optional[str] = None
-    """Directory within a git repository template that holds the cookiecutter.json file."""
-
-    checkout: Optional[str] = None
-    """The branch, tag or commit to tell Cookie Cutter to use."""
-
-    password: Optional[str] = None
-    """The password to use if template is a password-protected Zip archive."""
-
-    commit: Optional[str] = None
-    """What git hash was applied if the template is a git repository."""
+    template: Template
+    """Information about the template."""
 
     #
     # Input specification
@@ -72,10 +56,8 @@ class LayerConfig(BaseModel):
     This is only used for initial generation. After initial generation, the results
     are stored in the context."""
 
-    context: MutableMapping[str, Any] = Field(default_factory=dict)
-    """Dictionary that will provide values for input.
-
-    Also stores the answers for missing context parameters after initial generation."""
+    initial_context: MutableMapping[str, Any] = Field(default_factory=dict)
+    """Dictionary that will provide values for input."""
 
     #
     # File generation
@@ -101,9 +83,7 @@ class LayerConfig(BaseModel):
     @property
     def layer_name(self) -> str:
         """The name of the template layer."""
-        from cookie_composer.utils import get_template_name
-
-        return get_template_name(str(self.template), self.directory, self.checkout)
+        return self.template.name
 
 
 class RenderedLayer(BaseModel):
@@ -115,17 +95,23 @@ class RenderedLayer(BaseModel):
     location: DirectoryPath
     """The directory where the layer was rendered."""
 
-    new_context: MutableMapping[str, Any]
+    rendered_context: MutableMapping[str, Any]
     """The context based on questions asked."""
 
-    latest_commit: Optional[str] = None
-    """The latest commit checked out if the layer source was a git repo."""
+    rendered_commit: Optional[str] = None
+    """If a git template, this is the commit of the template that was rendered."""
 
     rendered_name: Optional[str] = None
     """The name of the rendered template directory."""
 
-    @root_validator(pre=True)
-    def set_rendered_name(cls, values: Dict[str, Any]) -> Dict[str, Any]:  # noqa: N805
+    @property
+    def latest_commit(self) -> Optional[str]:
+        """The latest commit checked out if the layer source was a git repo."""
+        return self.layer.template.repo.latest_sha
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_rendered_name(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         """Set the :attr:`~.RenderedLayer.layer_name`` to the name of the rendered template directory."""
         if "rendered_name" in values:
             return values
@@ -200,30 +186,13 @@ def render_layer(
     Returns:
         The rendered layer information
     """
-    from cookie_composer.authentication import add_auth_to_url
-
     full_context = full_context or Context()
     user_config = get_user_config(config_file=None, default_config=False)
-    repo_dir, cleanup = determine_repo_dir(
-        template=add_auth_to_url(layer_config.template),
-        abbreviations=user_config["abbreviations"],
-        clone_to_dir=user_config["cookiecutters_dir"],
-        checkout=layer_config.commit or layer_config.checkout,
-        no_input=layer_config.no_input,
-        password=layer_config.password,
-        directory=layer_config.directory,
-    )
-    # If it is a local git directory (not a URL) we need to make sure the correct
-    # rev is checked out.
-    with contextlib.suppress(GitError):
-        repo = get_repo(repo_dir)
-        repo.git.checkout(layer_config.commit)
+    repo_dir = layer_config.template.cached_path
 
     _patch_import_path_for_repo(repo_dir)
-    os.path.basename(os.path.abspath(repo_dir))
-    Path(repo_dir) / "cookiecutter.json"
 
-    context = get_layer_context(layer_config, Path(repo_dir), user_config, full_context)
+    context = get_layer_context(layer_config, user_config, full_context)
     if accept_hooks == "ask":
         _accept_hooks = click.confirm("Do you want to execute hooks?")
     else:
@@ -237,31 +206,24 @@ def render_layer(
         output_dir=str(render_dir),
         accept_hooks=_accept_hooks,
     )
-    if layer_config.commit is None:
-        layer_config.commit = get_latest_template_commit(repo_dir)
 
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
-        new_context=copy.deepcopy(context.maps[0]),
-        latest_commit=layer_config.commit,
+        rendered_context=copy.deepcopy(context.maps[0]),
     )
 
-    if cleanup:
-        rmtree(repo_dir)
+    layer_config.template.cleanup()
 
     return rendered_layer
 
 
-def get_layer_context(
-    layer_config: LayerConfig, repo_dir: Path, user_config: dict, full_context: Optional[Context] = None
-) -> Context:
+def get_layer_context(layer_config: LayerConfig, user_config: dict, full_context: Optional[Context] = None) -> Context:
     """
     Get the context for a layer pre-rendering values using previous layers contexts as defaults.
 
     Args:
         layer_config: The configuration for this layer
-        repo_dir: The directory containing the template's ``cookiecutter.json`` file
         user_config: The user's cookiecutter configuration
         full_context: A full context from previous layers.
 
@@ -269,9 +231,9 @@ def get_layer_context(
         The context for rendering the layer
     """
     full_context = full_context or Context()
+    repo_dir = layer_config.template.repo.cached_source
     import_patch = _patch_import_path_for_repo(str(repo_dir))
-    # template_name = repo_dir.stem
-    context_file = Path(repo_dir) / "cookiecutter.json"
+    context_file = layer_config.template.context_file_path
 
     # _copy_without_render is template-specific and fails if overridden,
     # So we are going to remove it from the "defaults" when generating the context
@@ -288,7 +250,7 @@ def get_layer_context(
     with import_patch:
         if context_for_prompting["cookiecutter"]:
             prompted_context = prompt_for_config(
-                context_for_prompting, full_context, layer_config.context, layer_config.no_input
+                context_for_prompting, full_context, layer_config.initial_context, layer_config.no_input
             )
             context_for_prompting["cookiecutter"].update(prompted_context)
         if "template" in context_for_prompting["cookiecutter"]:
@@ -329,11 +291,10 @@ def render_layers(
             rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
             merge_layers(destination, rendered_layer)
         rendered_layer.location = destination
-        rendered_layer.layer.commit = rendered_layer.latest_commit
-        context_copy = copy.deepcopy(rendered_layer.new_context)
-        rendered_layer.layer.context = context_copy  # type: ignore[assignment]
+        merged_context = comprehensive_merge(rendered_layer.rendered_context, rendered_layer.layer.initial_context)
+        rendered_layer.layer.initial_context = merged_context  # type: ignore[assignment]
         rendered_layers.append(rendered_layer)
-        full_context = full_context.new_child(context_copy)
+        full_context = full_context.new_child(merged_context)
 
     return rendered_layers
 
