@@ -157,22 +157,3 @@ def test_template_repo_from_git_existing_remote_with_checkout(default_origin: Re
     assert template_repo.format == TemplateFormat.GIT
     assert template_repo.locality == Locality.REMOTE
     assert template_repo.checkout == "remote-branch"
-
-
-def test_get_latest_template_commit(default_repo, tmp_path: Path):
-    """Should return the latest hexsha."""
-    from git import Actor
-
-    first_sha = default_repo.head.commit.hexsha
-    template_repo = template_repo_from_git(default_repo.working_tree_dir, Locality.LOCAL, tmp_path, checkout=None)
-    assert template_repo.latest_sha == first_sha
-
-    second_commit = default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
-    )
-    assert template_repo.latest_sha == second_commit.hexsha
-
-    third_commit = default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 11:00:00"
-    )
-    assert template_repo.latest_sha == third_commit.hexsha

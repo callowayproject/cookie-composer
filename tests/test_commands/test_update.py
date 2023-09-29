@@ -9,13 +9,14 @@ from git import Actor, Repo
 
 from cookie_composer.commands import update
 from cookie_composer.git_commands import checkout_branch, get_repo
+from cookie_composer.templates.types import TemplateFormat, Locality
 
 
-@pytest.fixture
-def git_template(fixtures_path: Path, tmp_path: Path) -> dict:
+@pytest.fixture(scope="module")
+def git_template(fixtures_path: Path, tmp_path_factory) -> dict:
     """Set up the template in a git repo."""
     template_path = fixtures_path / "template1"
-    tmp_repo_path = tmp_path / "template1"
+    tmp_repo_path = tmp_path_factory.mktemp("tmp_repo_path") / "template1"
     shutil.copytree(template_path, tmp_repo_path)
 
     tmp_repo = Repo.init(tmp_repo_path, b="master")
@@ -30,7 +31,7 @@ def git_template(fixtures_path: Path, tmp_path: Path) -> dict:
         message="second commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 11:00:00"
     )
 
-    origin_path = tmp_path / "origin"
+    origin_path = tmp_path_factory.mktemp("template1.git")
     origin = Repo.init(origin_path, bare=True)
     tmp_repo.create_remote("origin", str(origin_path))
     tmp_repo.remotes.origin.push("master")
@@ -77,7 +78,8 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
         "skip_generation": [],
         "skip_hooks": False,
         "skip_if_file_exists": True,
-        "template": f'git+file://{git_template["template_path"]}',
+        "rendered_name": "fake-project-template",
+        "template": git_template["template_path"],
     }
     with open(rendered_comp_path, "w") as f:
         yaml.dump(rendered_comp, f)
@@ -112,8 +114,9 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
     return result
 
 
-def test_update_command(git_project: dict):
+def test_update_command(git_project: dict, mocker):
     """Basic test of the update command."""
+    mocker.patch("cookie_composer.templates.source.identify_repo", return_value=(TemplateFormat.GIT, Locality.REMOTE))
     repo = get_repo(git_project["project_path"])
     assert repo.active_branch.name == "master"
     current_items = {item.name for item in os.scandir(git_project["project_path"])}

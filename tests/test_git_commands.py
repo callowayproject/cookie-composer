@@ -79,26 +79,6 @@ def test_checkout_branch_missing_branch(default_repo):
     assert default_repo.active_branch.name == "local-branch"
 
 
-def test_branch_from_first_commit_dirty(default_repo):
-    """Should raise an error if the repo is dirty."""
-    new_file_path = Path(default_repo.working_tree_dir) / "new-file.txt"
-    new_file_path.write_text("hello")
-    default_repo.index.add(str(new_file_path))
-
-    with pytest.raises(GitError):
-        git_commands.branch_from_first_commit(default_repo, "mybranch")
-
-
-def test_branch_from_first_commit(default_repo):
-    """Should raise an error if the repo is dirty."""
-    first_commit_sha = next(default_repo.iter_commits()).hexsha
-    default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
-    )
-    git_commands.branch_from_first_commit(default_repo, "newbranch")
-    assert default_repo.head.commit.hexsha == first_commit_sha
-
-
 def test_clone_existing_repo(default_repo):
     """Should return the same repo if the repo already exists."""
     repo_path = Path(default_repo.working_tree_dir)

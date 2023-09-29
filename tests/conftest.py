@@ -6,7 +6,23 @@ import pytest
 from git import Actor, Repo
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
+def isolated_filesystem(monkeypatch, tmp_path):
+    """Ensure filesystem isolation, set the user home to a tmp_path."""
+    from cookiecutter.config import DEFAULT_CONFIG
+
+    root_path = tmp_path.joinpath("home")
+    root_path.mkdir()
+    cookiecutters_dir = root_path.joinpath(".cookiecutters/")
+    replay_dir = root_path.joinpath(".cookiecutter_replay/")
+    monkeypatch.setitem(DEFAULT_CONFIG, "cookiecutters_dir", str(cookiecutters_dir))
+    monkeypatch.setitem(DEFAULT_CONFIG, "replay_dir", str(replay_dir))
+
+    monkeypatch.setenv("HOME", str(root_path))
+    monkeypatch.setenv("USERPROFILE", str(root_path))
+
+
+@pytest.fixture(scope="session")
 def fixtures_path() -> Path:
     """Return the path to the testing fixtures."""
     return Path(__file__).parent / "fixtures"

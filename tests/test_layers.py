@@ -32,6 +32,7 @@ def template_two(fixtures_path: Path, tmp_path: Path) -> Template:
 def test_render_layer(fixtures_path: Path, tmp_path: Path, template_one: Template):
     """Test rendering a layer."""
     layer_conf = LayerConfig(template=template_one, no_input=True)
+    initial_dir_items = len(list(tmp_path.iterdir()))
     rendered_layer = layers.render_layer(layer_conf, tmp_path)
     expected_context = json.loads(Path(fixtures_path / "template1/cookiecutter.json").read_text())
     expected_context["repo_name"] = "fake-project-template"
@@ -40,9 +41,10 @@ def test_render_layer(fixtures_path: Path, tmp_path: Path, template_one: Templat
         layer=layer_conf,
         location=tmp_path,
         rendered_context=expected_context,
+        rendered_name="fake-project-template",
     )
     assert rendered_layer == expected
-    assert len(list(tmp_path.iterdir())) == 1
+    assert len(list(tmp_path.iterdir())) == initial_dir_items + 1
 
 
 def test_get_write_strategy_skip_generation(fixtures_path: Path, template_one: Template):
@@ -296,3 +298,8 @@ def test_get_layer_context_with_extra(fixtures_path: Path, template_two: Templat
 )
 def test_get_accept_hooks_per_layer(value: str, num_layers: int, expected: list):
     assert layers.get_accept_hooks_per_layer(value, num_layers) == expected
+
+
+def test_get_template_rendered_name(template_one: Template):
+    context = Context({"cookiecutter": {"repo_name": "fake-project-template"}})
+    assert layers.get_template_rendered_name(template_one, context) == "fake-project-template"

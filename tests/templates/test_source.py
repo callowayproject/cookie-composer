@@ -9,8 +9,6 @@ from cookie_composer.templates.source import identify_repo, get_template_repo
 import pytest
 from pathlib import Path
 
-CACHE_DIR = Path(get_user_config()["cookiecutters_dir"])
-
 
 @pytest.mark.parametrize(
     "url, local_path, expected",
@@ -55,7 +53,7 @@ def test_local_plain_repo(mocker):
         (
             "https://example.com/repo.zip",
             None,
-            CACHE_DIR,
+            None,
             TemplateFormat.ZIP,
             Locality.REMOTE,
             {"password": None},
@@ -90,6 +88,7 @@ def test_get_template_repo(mocker, url, local_path, cache_dir, tmpl_format, loca
     result = get_template_repo(url, local_path=local_path)
 
     # Check which function was called and with which arguments
+    cache_dir = cache_dir or Path(get_user_config()["cookiecutters_dir"])
     mocked_func.assert_called_once_with(url, locality, cache_dir, **expected_args)
 
 
@@ -99,7 +98,7 @@ def test_get_template_repo(mocker, url, local_path, cache_dir, tmpl_format, loca
         (
             "https://github.com/user/repo.git",
             None,
-            CACHE_DIR,
+            None,
             TemplateFormat.GIT,
             Locality.REMOTE,
             {"checkout": None},
@@ -133,6 +132,7 @@ def test_get_template_repo_git(mocker, url, local_path, cache_dir, tmpl_format, 
 
     # Call the function
     result = get_template_repo(url, local_path=local_path)
+    cache_dir = cache_dir or Path(get_user_config()["cookiecutters_dir"])
     mocked_func.assert_called_once_with(url, locality, cache_dir, **expected_args)
 
 
