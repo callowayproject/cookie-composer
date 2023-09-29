@@ -115,26 +115,27 @@ def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -
         )
     if len(repo.remotes) > 0:
         repo.remotes[0].fetch()
+
     if branch_exists(repo, branch_name):
         repo.heads[branch_name].checkout()
     elif remote_branch_exists(repo, branch_name, remote_name):
         repo.create_head(branch_name, f"origin/{branch_name}")
         repo.heads[branch_name].checkout()
+    else:
+        repo.create_head(branch_name)
+        repo.heads[branch_name].checkout()
 
-    repo.create_head(branch_name)
-    repo.heads[branch_name].checkout()
 
-
-def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
-    """Create and checkout a branch from the repo's first commit."""
-    if repo.is_dirty():
-        raise GitError(
-            "Cookie composer cannot apply updates on an unclean git project."
-            " Please make sure your git working tree is clean before proceeding."
-        )
-    first_commit = next(iter(repo.iter_commits("HEAD", max_parents=0, max_count=1)))
-    repo.create_head(branch_name, first_commit.hexsha)
-    repo.heads[branch_name].checkout()
+# def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
+#     """Create and checkout a branch from the repo's first commit."""
+#     if repo.is_dirty():
+#         raise GitError(
+#             "Cookie composer cannot apply updates on an unclean git project."
+#             " Please make sure your git working tree is clean before proceeding."
+#         )
+#     first_commit = next(iter(repo.iter_commits("HEAD", max_parents=0, max_count=1)))
+#     repo.create_head(branch_name, first_commit.hexsha)
+#     repo.heads[branch_name].checkout()
 
 
 def apply_patch(repo: Repo, diff: str) -> None:

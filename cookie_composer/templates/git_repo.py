@@ -1,11 +1,16 @@
 """Utility functions for handling and fetching repo archives in git format."""
+import logging
+import shutil
 from pathlib import Path
 from typing import Optional
 
 from cookiecutter.utils import make_sure_path_exists
+from git import Repo
 
 from cookie_composer.git_commands import checkout_ref, clone, get_repo
 from cookie_composer.templates.types import Locality, TemplateFormat, TemplateRepo
+
+logger = logging.getLogger(__name__)
 
 
 def get_repo_name(repo_url: str, checkout: Optional[str] = None) -> str:
@@ -32,16 +37,10 @@ def template_repo_from_git(
     """
     if locality == Locality.LOCAL:
         ensure_clean = checkout is not None
+        logger.debug("Getting local repo %s", git_uri)
         repo = get_repo(git_uri, search_parent_directories=True, ensure_clean=ensure_clean)
     else:
-        cache_dir = Path(cache_dir).expanduser().resolve()
-        make_sure_path_exists(cache_dir)
-        repo_name = get_repo_name(git_uri, checkout)
-        repo_dir = cache_dir.joinpath(repo_name)
-        repo = clone(git_uri, repo_dir)
-
-    if len(repo.remotes) > 0:
-        repo.remotes[0].pull()
+        repo = get_cached_remote(git_uri, cache_dir, checkout)
 
     if checkout:
         checkout_ref(repo, checkout)
@@ -54,3 +53,31 @@ def template_repo_from_git(
         checkout=checkout,
         password=None,
     )
+
+
+def get_cached_remote(git_uri: str, cache_dir: Path, checkout: Optional[str] = None) -> Repo:
+    """
+    Return a cached remote repo.
+
+    This provides some error-checking for the cached repo, and will re-clone if the
+    cached repo is in a detached head state.
+
+    Args:
+        git_uri: The remote git URI
+        cache_dir: The directory to cache the repo in
+        checkout: The optional checkout ref to use
+
+    Returns:
+        The cached repo
+    """
+    logger.debug("Getting cached remote repo %s", git_uri)
+    cache_dir = cache_dir.expanduser().resolve()
+    make_sure_path_exists(cache_dir)
+    repo_name = get_repo_name(git_uri, checkout)
+    repo_dir = cache_dir.joinpath(repo_name)
+    repo = clone(git_uri, repo_dir)
+    if repo.head.is_detached and repo.head.object.hexsha != checkout:
+        logger.info("The cached repo is not on the expected checkout, deleting and re-cloning.")
+        shutil.rmtree(repo_dir)
+        repo = clone(git_uri, repo_dir)
+    return repo
