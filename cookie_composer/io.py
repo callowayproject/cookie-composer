@@ -105,10 +105,11 @@ def serialize_rendered_composition(composition: RenderedComposition) -> List[dic
 
 def deserialize_rendered_composition(composition_info: List[dict], location: Path) -> RenderedComposition:
     """Deserialize a rendered composition from output."""
+    rendered_name = composition_info[0]["rendered_name"]
     return RenderedComposition(
         layers=[deserialize_rendered_layer(layer_info, location) for layer_info in composition_info],
-        render_dir=location,
-        rendered_name=location.name,
+        render_dir=location.parent,
+        rendered_name=rendered_name,
     )
 
 
@@ -182,7 +183,7 @@ def read_rendered_composition(path: Path) -> RenderedComposition:
     """
     path = path.expanduser().resolve()
     contents = read_yaml(path)
-    return deserialize_rendered_composition(contents, path.parent.parent)
+    return deserialize_rendered_composition(contents, path.parent)
 
 
 def write_rendered_composition(composition: RenderedComposition) -> None:

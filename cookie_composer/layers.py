@@ -15,7 +15,7 @@ from cookiecutter.generate import generate_context, generate_files
 from cookiecutter.main import _patch_import_path_for_repo
 from pydantic import BaseModel, DirectoryPath, Field, model_validator
 
-from cookie_composer.cc_overrides import prompt_for_config
+from cookie_composer.cc_overrides import CustomStrictEnvironment, prompt_for_config
 from cookie_composer.data_merge import DO_NOT_MERGE, Context, comprehensive_merge, get_merge_strategy
 from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
@@ -169,6 +169,17 @@ def get_write_strategy(origin: Path, destination: Path, rendered_layer: Rendered
         return WriteStrategy.WRITE
 
 
+def get_template_rendered_name(template: Template, context: MutableMapping) -> str:
+    """Find and render the template's root directory's name."""
+    from cookiecutter.find import find_template
+
+    template_dir = find_template(template.cached_path)
+    envvars = context.get("cookiecutter", {}).get("_jinja2_env_vars", {})
+    env = CustomStrictEnvironment(context=context, keep_trailing_newline=True, **envvars)
+    name_tmpl = env.from_string(template_dir.name)
+    return name_tmpl.render(**context)
+
+
 def render_layer(
     layer_config: LayerConfig, render_dir: Path, full_context: Optional[Context] = None, accept_hooks: str = "yes"
 ) -> RenderedLayer:
@@ -192,16 +203,20 @@ def render_layer(
 
     _patch_import_path_for_repo(repo_dir)
 
-    context = get_layer_context(layer_config, user_config, full_context)
+    layer_context = get_layer_context(layer_config, user_config, full_context)
+    cookiecutter_context = {"cookiecutter": layer_context.flatten()}
+
     if accept_hooks == "ask":
         _accept_hooks = click.confirm("Do you want to execute hooks?")
     else:
         _accept_hooks = accept_hooks == "yes"
 
+    rendered_name = get_template_rendered_name(layer_config.template, cookiecutter_context)
+
     # call cookiecutter's generate files function
     generate_files(
         repo_dir=repo_dir,
-        context={"cookiecutter": context.flatten()},
+        context=cookiecutter_context,
         overwrite_if_exists=False,
         output_dir=str(render_dir),
         accept_hooks=_accept_hooks,
@@ -210,7 +225,8 @@ def render_layer(
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
-        rendered_context=copy.deepcopy(context.maps[0]),
+        rendered_context=copy.deepcopy(layer_context.maps[0]),
+        rendered_name=rendered_name,
     )
 
     layer_config.template.cleanup()
@@ -290,6 +306,7 @@ def render_layers(
         with tempfile.TemporaryDirectory() as render_dir:
             rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
             merge_layers(destination, rendered_layer)
+            full_context.update(rendered_layer.rendered_context)
         rendered_layer.location = destination
         merged_context = comprehensive_merge(rendered_layer.rendered_context, rendered_layer.layer.initial_context)
         rendered_layer.layer.initial_context = merged_context  # type: ignore[assignment]
