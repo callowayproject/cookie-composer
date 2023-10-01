@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from immutabledict import immutabledict
+from immutabledict import ImmutableOrderedDict, immutabledict
 
 from cookie_composer import data_merge
 from cookie_composer.data_merge import COMPREHENSIVE, DO_NOT_MERGE, NESTED_OVERWRITE, OVERWRITE
@@ -27,6 +27,7 @@ def merge_yaml_files(new_file: Path, existing_file: Path, merge_strategy: str) -
     yaml.default_flow_style = False
     yaml.indent(mapping=2, sequence=4, offset=2)
     yaml.Representer.add_representer(immutabledict, SafeRepresenter.represent_dict)
+    yaml.Representer.add_representer(ImmutableOrderedDict, SafeRepresenter.represent_dict)
 
     if merge_strategy == DO_NOT_MERGE:
         raise MergeError(

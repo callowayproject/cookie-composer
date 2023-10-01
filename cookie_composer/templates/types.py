@@ -5,6 +5,7 @@ Templates are a representation of source templates used to generate projects.
 """
 import json
 import shutil
+from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -95,7 +96,7 @@ class Template:
     directory: str = ""
     """The directory within the repository that contains the cookiecutter.json file."""
 
-    _context: Optional[dict] = None
+    _context: Optional[OrderedDict] = None
 
     def cleanup(self) -> None:
         """Remove the cached template if it is a Zipfile."""
@@ -131,7 +132,7 @@ class Template:
     def context(self) -> dict:
         """The context of the template."""
         if self._context is None:
-            self._context = json.loads(self.context_file_path.read_text())
+            self._context = json.loads(self.context_file_path.read_text(), object_pairs_hook=OrderedDict)
         return self._context
 
 

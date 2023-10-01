@@ -1,6 +1,8 @@
 """Functions for using git."""
 import logging
+import shutil
 import subprocess
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional, Union
 
@@ -126,18 +128,6 @@ def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -
         repo.heads[branch_name].checkout()
 
 
-# def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
-#     """Create and checkout a branch from the repo's first commit."""
-#     if repo.is_dirty():
-#         raise GitError(
-#             "Cookie composer cannot apply updates on an unclean git project."
-#             " Please make sure your git working tree is clean before proceeding."
-#         )
-#     first_commit = next(iter(repo.iter_commits("HEAD", max_parents=0, max_count=1)))
-#     repo.create_head(branch_name, first_commit.hexsha)
-#     repo.heads[branch_name].checkout()
-
-
 def apply_patch(repo: Repo, diff: str) -> None:
     """
     Apply a patch to a destination directory.
@@ -179,3 +169,40 @@ def apply_patch(repo: Repo, diff: str) -> None:
             check=True,
             cwd=repo.working_dir,
         )
+
+
+@contextmanager
+def temp_git_worktree_dir(worktree_path: Path, repo_path: Path, branch: str = "master"):
+    """
+    Context Manager for a temporary working directory of a branch in a git repo.
+
+    Inspired by https://github.com/thomasjahoda/cookiecutter_project_upgrader/blob/master/
+    cookiecutter_project_upgrader/logic.py
+
+    Args:
+        worktree_path: The path to the temporary directory
+        repo_path: The path to the template git repo
+        branch: The branch to check out
+
+    Yields:
+        Nothing, but the worktree_path is available.
+    """
+    # Create a temporary working directory of a branch in a git repo.
+    repo = get_repo(repo_path)
+
+    if worktree_path.exists():
+        raise GitError(f"Temporary directory already exists: {worktree_path}")
+
+    worktree_path.mkdir(parents=True)
+    repo.git.worktree(
+        "add",
+        "--no-checkout",
+        worktree_path,
+        branch,
+    )
+    try:
+        yield
+    finally:
+        # Clean up the temporary working directory.
+        shutil.rmtree(worktree_path)
+        repo.git.worktree("prune")

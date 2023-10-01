@@ -4,6 +4,9 @@ import logging
 from pathlib import Path
 from typing import Any, MutableMapping, Optional
 
+import click
+from git import GitError
+
 from cookie_composer.composition import RenderedComposition
 from cookie_composer.io import get_composition_from_path_or_url, write_rendered_composition
 from cookie_composer.layers import render_layers
@@ -38,21 +41,28 @@ def create_cmd(
         accept_hooks: Which pre/post hooks should be applied?
         initial_context: The initial context for the composition
 
+    Raises:
+        ClickException: If there is a problem cloning the repository
+
     Returns:
         The path to the generated project.
     """
     output_dir = Path(output_dir).resolve() or Path().cwd().resolve()
-    composition = get_composition_from_path_or_url(
-        path_or_url,
-        checkout,
-        default_config,
-        directory,
-        no_input,
-        output_dir,
-        overwrite_if_exists,
-        skip_if_file_exists,
-        initial_context or {},
-    )
+    try:
+        composition = get_composition_from_path_or_url(
+            path_or_url,
+            checkout,
+            default_config,
+            directory,
+            no_input,
+            output_dir,
+            overwrite_if_exists,
+            skip_if_file_exists,
+            initial_context or {},
+        )
+    except GitError as e:
+        raise click.ClickException(f"Error cloning repository: {e}") from e
+
     rendered_layers = render_layers(composition.layers, output_dir, no_input=no_input, accept_hooks=accept_hooks)
     rendered_composition = RenderedComposition(
         layers=rendered_layers,

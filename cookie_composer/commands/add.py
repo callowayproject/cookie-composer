@@ -3,13 +3,7 @@ import logging
 from pathlib import Path
 from typing import Any, MutableMapping, Optional
 
-from cookie_composer.git_commands import (
-    branch_exists,
-    branch_from_first_commit,
-    checkout_branch,
-    get_repo,
-    remote_branch_exists,
-)
+from cookie_composer.git_commands import checkout_branch, get_repo
 from cookie_composer.io import get_composition_from_path_or_url, read_rendered_composition, write_rendered_composition
 from cookie_composer.layers import render_layers
 from cookie_composer.templates.types import get_template_name
@@ -81,10 +75,7 @@ def add_cmd(
     # Create and check out a new branch
     tmpl_name = get_template_name(path_or_url)
     branch_name = f"add_layer_{tmpl_name}"
-    if branch_exists(repo, branch_name) or remote_branch_exists(repo, branch_name):
-        checkout_branch(repo, branch_name)
-    else:
-        branch_from_first_commit(repo, branch_name)
+    checkout_branch(repo, branch_name)
 
     # Render and merge the additional layers
     rendered_layers = render_layers(

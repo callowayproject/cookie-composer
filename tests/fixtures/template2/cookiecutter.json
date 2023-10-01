@@ -3,6 +3,6 @@
   "repo_name": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
   "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
   "service_name": "foo",
-  "_requirements": {"bar": ">=5.0.0", "baz": ""},
-  "lower_project_name": "{{ cookiecutter.project_name|lower }}"
+  "lower_project_name": "{{ cookiecutter.project_name|lower }}",
+  "_requirements": {"bar": ">=5.0.0", "baz": ""}
 }

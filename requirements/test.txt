@@ -25,7 +25,7 @@ click==8.1.6
     #   rich-click
 click-log==0.4.0
     # via cookie-composer (pyproject.toml)
-cookiecutter==2.2.3
+cookiecutter==2.4.0
     # via cookie-composer (pyproject.toml)
 coverage[toml]==7.2.7
     # via
@@ -113,7 +113,9 @@ requests==2.31.0
     #   cookie-composer (pyproject.toml)
     #   cookiecutter
 rich==13.4.2
-    # via rich-click
+    # via
+    #   cookiecutter
+    #   rich-click
 rich-click==1.6.1
     # via cookie-composer (pyproject.toml)
 ruamel-yaml==0.17.32

@@ -5,13 +5,15 @@ import logging
 import os
 import shutil
 import tempfile
+from collections import OrderedDict
 from enum import Enum
+from functools import reduce
 from pathlib import Path
 from typing import Any, Dict, List, MutableMapping, Optional
 
 import click
 from cookiecutter.config import get_user_config
-from cookiecutter.generate import generate_context, generate_files
+from cookiecutter.generate import generate_files
 from cookiecutter.main import _patch_import_path_for_repo
 from pydantic import BaseModel, DirectoryPath, Field, model_validator
 
@@ -84,6 +86,43 @@ class LayerConfig(BaseModel):
     def layer_name(self) -> str:
         """The name of the template layer."""
         return self.template.name
+
+    def generate_prompt_context(
+        self,
+        default_context: MutableMapping[str, Any],
+    ) -> OrderedDict:
+        """
+        Get the context for prompting the user for values.
+
+        The order of precedence is:
+        1.` initial_context` from the composition or command-line
+        2. `default_context` from the user_config
+        3. `raw context` from the template
+
+        Equivalent to `cookiecutter.generate.generate_context` but with the following differences:
+        1. Reading the raw context file is handled by the layer's template
+        2. The layer's initial context is treated as the `extra_context`
+        3. Does not namespace the context with `{"cookiecutter": ...}`
+
+        Args:
+            default_context: The default context from the user_config
+
+        Returns:
+            A dict containing the context for prompting the user
+        """
+        raw_context = self.template.context or {}
+        user_context = copy.deepcopy(default_context)
+        layer_initial_context = copy.deepcopy(self.initial_context)
+
+        # _copy_without_render is template-specific and fails if overridden,
+        # So we are going to remove it from the "defaults" when generating the context
+        user_context.pop("_copy_without_render", None)
+        layer_initial_context.pop("_copy_without_render", None)
+        raw_context.pop("_copy_without_render", None)
+
+        # This pulls in the template context and overrides the values with the user config defaults
+        #   and the defaults specified in the layer.
+        return OrderedDict(reduce(comprehensive_merge, [raw_context, user_context, layer_initial_context], {}))
 
 
 class RenderedLayer(BaseModel):
@@ -200,11 +239,18 @@ def render_layer(
     full_context = full_context or Context()
     user_config = get_user_config(config_file=None, default_config=False)
     repo_dir = layer_config.template.cached_path
-
-    _patch_import_path_for_repo(repo_dir)
-
-    layer_context = get_layer_context(layer_config, user_config, full_context)
-    cookiecutter_context = {"cookiecutter": layer_context.flatten()}
+    default_context = user_config.get("default_context", {})
+    context_for_prompting = layer_config.generate_prompt_context(
+        default_context=default_context,
+    )
+    layer_context = get_layer_context(
+        template_repo_dir=repo_dir,
+        context_for_prompting=context_for_prompting,
+        initial_context=layer_config.initial_context or {},
+        full_context=full_context,
+        no_input=layer_config.no_input,
+    )
+    cookiecutter_context = {"cookiecutter": layer_context}
 
     if accept_hooks == "ask":
         _accept_hooks = click.confirm("Do you want to execute hooks?")
@@ -225,7 +271,7 @@ def render_layer(
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
-        rendered_context=copy.deepcopy(layer_context.maps[0]),
+        rendered_context=copy.deepcopy(layer_context),
         rendered_name=rendered_name,
     )
 
@@ -234,46 +280,42 @@ def render_layer(
     return rendered_layer
 
 
-def get_layer_context(layer_config: LayerConfig, user_config: dict, full_context: Optional[Context] = None) -> Context:
+def get_layer_context(
+    template_repo_dir: Path,
+    context_for_prompting: dict,
+    initial_context: MutableMapping[str, Any],
+    full_context: Context,
+    no_input: bool = False,
+) -> dict:
     """
     Get the context for a layer pre-rendering values using previous layers contexts as defaults.
 
+    The layer context is the combination of several things:
+
+    - raw layer context (contents of the cookiecutter.json file)
+    - The user's default context (from the user's cookiecutter config file)
+    - initial context set in the template composition (or {} if not a composition or not set)
+    - initial context passed in by user (as set from the command line.
+        This is merged into the layer's inital context when the layer is deserialized. See
+        :func:`cookie_composer.io.get_composition_from_path_or_url`)
+    - context from previous layers
+
+
     Args:
-        layer_config: The configuration for this layer
-        user_config: The user's cookiecutter configuration
+        template_repo_dir: The location of the template repo to use for rendering
+        context_for_prompting: The raw context from the cookiecutter.json file with user defaults applied
+        initial_context: The initial context from the layer configuration
         full_context: A full context from previous layers.
+        no_input: If ``False`` do not prompt for missing values and use defaults instead.
 
     Returns:
-        The context for rendering the layer
+        A dict containing the context for rendering the layer
     """
-    full_context = full_context or Context()
-    repo_dir = layer_config.template.repo.cached_source
-    import_patch = _patch_import_path_for_repo(str(repo_dir))
-    context_file = layer_config.template.context_file_path
-
-    # _copy_without_render is template-specific and fails if overridden,
-    # So we are going to remove it from the "defaults" when generating the context
-    user_config["default_context"].pop("_copy_without_render", None)
-
-    # This pulls in the template context and overrides the values with the user config defaults
-    #   and the defaults specified in the layer.
-    context_for_prompting = generate_context(
-        context_file=context_file,
-        default_context=user_config["default_context"],
-        extra_context={},
-    )
-
+    import_patch = _patch_import_path_for_repo(template_repo_dir)
     with import_patch:
-        if context_for_prompting["cookiecutter"]:
-            prompted_context = prompt_for_config(
-                context_for_prompting, full_context, layer_config.initial_context, layer_config.no_input
-            )
-            context_for_prompting["cookiecutter"].update(prompted_context)
-        if "template" in context_for_prompting["cookiecutter"]:
-            # TODO: decide how to deal with nested configuration files.
-            #  For now, we are just going to ignore them.
-            pass
-    return full_context.new_child(dict(context_for_prompting["cookiecutter"]))
+        prompted_context = prompt_for_config(context_for_prompting, full_context, initial_context, no_input)
+        context_for_prompting.update(prompted_context)
+    return dict(context_for_prompting)
 
 
 def render_layers(

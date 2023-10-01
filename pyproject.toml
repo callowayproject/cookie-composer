@@ -21,7 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "click-log",
-    "cookiecutter>=2.2.0",
+    "cookiecutter>=2.4.0",
     "fsspec",
     "ghapi",
     "gitpython>=3.1.35",
@@ -50,14 +50,15 @@ dev = [
     "pip-tools",
 ]
 docs = [
+    "astroid<3.0.0",  # astroid 3.0.0 breaks sphinx-autodoc2 0.4.2
     "ghp-import",
     "linkify-it-py",
     "myst-parser",
-    "furo",
-    "Sphinx>=4.3.0",
-    "sphinx-autodoc-typehints",
+    "Sphinx>=7.2.0",
+    "sphinx-autodoc2",
     "sphinx-click",
     "sphinx-copybutton",
+    "sphinx-material",
 ]
 test = [
     "coverage>=6.1.2",

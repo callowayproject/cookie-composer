@@ -44,7 +44,9 @@ def deserialize_layer(layer_info: dict, local_path: Optional[Path] = None, **kwa
         ),
         directory=layer_info.pop("directory", ""),
     )
-    layer_info["initial_context"] = layer_info.pop("context", {})
+    initial_context = layer_info.pop("context", {})  # Context from the composition file
+    extra_context = kwargs.get("extra_context", {})  # Context from the command line
+    layer_info["initial_context"] = comprehensive_merge(initial_context, extra_context)
     layer_info["template"] = template
     return LayerConfig(**layer_info)
 
@@ -235,6 +237,7 @@ def get_composition_from_path_or_url(
             checkout=checkout,
             no_input=no_input or default_config,
             skip_if_file_exists=skip_if_file_exists,
+            extra_context=initial_context or {},
         )
         logger.info(f"Rendering composition {path_or_url} to {output_dir}.")
     else:
