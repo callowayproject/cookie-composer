@@ -7,13 +7,12 @@ import shutil
 import tempfile
 from collections import OrderedDict
 from enum import Enum
-from functools import reduce
 from pathlib import Path
 from typing import Any, Dict, List, MutableMapping, Optional
 
 import click
 from cookiecutter.config import get_user_config
-from cookiecutter.generate import generate_files
+from cookiecutter.generate import apply_overwrites_to_context, generate_files
 from cookiecutter.main import _patch_import_path_for_repo
 from pydantic import BaseModel, DirectoryPath, Field, model_validator
 
@@ -23,6 +22,7 @@ from cookie_composer.matching import matches_any_glob
 from cookie_composer.merge_files import MERGE_FUNCTIONS
 
 from .templates.types import Template
+from .utils import echo
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class LayerConfig(BaseModel):
         """The name of the template layer."""
         return self.template.name
 
-    def generate_prompt_context(
+    def generate_context(
         self,
         default_context: MutableMapping[str, Any],
     ) -> OrderedDict:
@@ -95,7 +95,7 @@ class LayerConfig(BaseModel):
         Get the context for prompting the user for values.
 
         The order of precedence is:
-        1.` initial_context` from the composition or command-line
+        1. `initial_context` from the composition or command-line
         2. `default_context` from the user_config
         3. `raw context` from the template
 
@@ -122,7 +122,15 @@ class LayerConfig(BaseModel):
 
         # This pulls in the template context and overrides the values with the user config defaults
         #   and the defaults specified in the layer.
-        return OrderedDict(reduce(comprehensive_merge, [raw_context, user_context, layer_initial_context], {}))
+        if default_context:
+            try:
+                apply_overwrites_to_context(raw_context, default_context)
+            except ValueError as error:
+                echo(f"Invalid user default received: {error}")
+        if layer_initial_context:
+            apply_overwrites_to_context(raw_context, layer_initial_context)
+
+        return OrderedDict(raw_context)
 
 
 class RenderedLayer(BaseModel):
@@ -239,10 +247,12 @@ def render_layer(
     full_context = full_context or Context()
     user_config = get_user_config(config_file=None, default_config=False)
     repo_dir = layer_config.template.cached_path
+
     default_context = user_config.get("default_context", {})
-    context_for_prompting = layer_config.generate_prompt_context(
+    context = layer_config.generate_context(
         default_context=default_context,
     )
+    context_for_prompting = {k: v for k, v in context.items() if k not in full_context}
     layer_context = get_layer_context(
         template_repo_dir=repo_dir,
         context_for_prompting=context_for_prompting,
@@ -315,7 +325,7 @@ def get_layer_context(
     with import_patch:
         prompted_context = prompt_for_config(context_for_prompting, full_context, initial_context, no_input)
         context_for_prompting.update(prompted_context)
-    return dict(context_for_prompting)
+    return context_for_prompting
 
 
 def render_layers(

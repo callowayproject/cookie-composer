@@ -299,7 +299,7 @@ def test_layer_config_generate_prompt_context(
     4. raw context from the template
     """
     layer_conf = LayerConfig(template=template_two, initial_context=initial_context, no_input=True)
-    context = layer_conf.generate_prompt_context(default_context=default_context)
+    context = layer_conf.generate_context(default_context=default_context)
     assert context == expected
 
 
@@ -307,7 +307,7 @@ def test_get_layer_context(fixtures_path: Path, template_one: Template, tmp_path
     layer_conf = LayerConfig(template=template_one, no_input=True)
     user_config = get_user_config(config_file=None, default_config=False)
 
-    prompt_context = layer_conf.generate_prompt_context(user_config)
+    prompt_context = layer_conf.generate_context(user_config)
     context = layers.get_layer_context(
         template_one.repo.cached_source,
         prompt_context,
@@ -317,15 +317,7 @@ def test_get_layer_context(fixtures_path: Path, template_one: Template, tmp_path
     )
     assert context == {
         "_requirements": {"bar": ">=5.0.0", "foo": ""},
-        "abbreviations": {
-            "bb": "https://bitbucket.org/{0}",
-            "gh": "https://github.com/{0}.git",
-            "gl": "https://gitlab.com/{0}.git",
-        },
-        "cookiecutters_dir": str(tmp_path.joinpath("home/.cookiecutters")),
-        "default_context": {},
         "project_name": "Fake Project Template",
-        "replay_dir": str(tmp_path.joinpath("home/.cookiecutter_replay")),
         "repo_name": "fake-project-template",
         "repo_slug": "fake-project-template",
         "service_name": "foo",
@@ -348,7 +340,7 @@ def test_get_layer_context_with_extra(fixtures_path: Path, template_two: Templat
             }
         )
     )
-    prompt_context = layer_conf.generate_prompt_context(user_config)
+    prompt_context = layer_conf.generate_context(user_config)
     layer_context = layers.get_layer_context(
         template_two.repo.cached_source,
         prompt_context,
@@ -356,31 +348,16 @@ def test_get_layer_context_with_extra(fixtures_path: Path, template_two: Templat
         full_context,
         no_input=layer_conf.no_input,
     )
-    assert (
-        layer_context
-        == Context(
-            OrderedDict(
-                {
-                    "project_name": "Fake Project Template2",
-                    "repo_name": "fake-project-template2",
-                    "project_slug": "fake-project-template-two",
-                    "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
-                    "lower_project_name": "fake project template2",
-                    "repo_slug": "fake-project-template-two",
-                    "service_name": "foo",
-                }
-            ),
-            OrderedDict(
-                {
-                    "project_name": "Fake Project Template2",
-                    "repo_name": "fake-project-template2",
-                    "repo_slug": "fake-project-template-two",
-                    "service_name": "foo",
-                    "_requirements": {"foo": "", "bar": ">=5.0.0"},
-                }
-            ),
-        ).flatten()
-    )
+    expected = {
+        "project_name": "Fake Project Template2",
+        "repo_name": "fake-project-template2",
+        "project_slug": "fake-project-template-two",
+        "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
+        "lower_project_name": "fake project template2",
+        "repo_slug": "fake-project-template-two",
+        "service_name": "foo",
+    }
+    assert layer_context == expected
 
 
 @pytest.mark.parametrize(
