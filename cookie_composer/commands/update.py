@@ -3,14 +3,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional
 
-from cookie_composer.composition import RenderedComposition
+from cookie_composer.composition import RenderedComposition, get_context_for_layer
 from cookie_composer.diff import get_diff
 from cookie_composer.git_commands import apply_patch, checkout_branch, get_repo
 from cookie_composer.io import read_rendered_composition, write_rendered_composition
 from cookie_composer.layers import RenderedLayer, render_layers
 from cookie_composer.utils import (
     echo,
-    get_context_for_layer,
     get_deleted_files,
     remove_paths,
 )

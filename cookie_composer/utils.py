@@ -2,35 +2,7 @@
 import os
 import stat
 from pathlib import Path
-from typing import IO, Any, Callable, Dict, Optional, Set
-
-from cookie_composer.composition import RenderedComposition
-from cookie_composer.data_merge import comprehensive_merge
-
-
-def get_context_for_layer(composition: RenderedComposition, index: Optional[int] = None) -> dict:
-    """
-    Merge the contexts for all layers up to index.
-
-    An ``index`` of ``None`` does all the layers.
-
-    Args:
-        composition: The rendered composition
-        index: Merge the contexts of the layers up to this 0-based index. ``None`` to do all layers.
-
-    Returns:
-        The comprehensively merged context
-    """
-    full_context: Dict[str, Any] = {}
-    if index is None:
-        layers = composition.layers
-    else:
-        layers = composition.layers[: index + 1]
-
-    for layer in layers:
-        full_context = comprehensive_merge(full_context, layer.rendered_context)
-
-    return full_context
+from typing import IO, Any, Callable, Optional, Set
 
 
 def echo(
