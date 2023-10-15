@@ -1,8 +1,10 @@
 """Tests for cookie_composer.git_commands."""
 from pathlib import Path
+from typing import Optional
 
 import pytest
-from git import Actor, Repo
+from pytest import param
+from git import Repo
 
 from cookie_composer import git_commands
 from cookie_composer.exceptions import GitError
@@ -84,3 +86,26 @@ def test_clone_existing_repo(default_repo):
     repo_path = Path(default_repo.working_tree_dir)
     repo = git_commands.clone("git://someplace/else.git", repo_path)
     assert repo.working_tree_dir == str(repo_path)
+
+
+@pytest.mark.parametrize(
+    ["checkout", "commit", "expected_ref"],
+    [
+        param(None, None, "master", id="default"),
+        param("remote-branch", None, "remote-branch", id="checkout branch"),
+        param("v1.0.0", None, "v1.0.0", id="checkout tag"),
+        param(None, "HEAD~1", "HEAD~1", id="checkout commit"),
+    ],
+)
+def test_temp_git_worktree_dir(
+    default_origin: Repo, tmp_path: Path, checkout: Optional[str], commit: Optional[str], expected_ref: str
+):
+    """Should return the path to the worktree and check out the appropriate ref."""
+
+    dest_path = tmp_path / "dest"
+    with git_commands.temp_git_worktree_dir(
+        Path(default_origin.working_dir), dest_path, branch=checkout, commit=commit
+    ) as wtree_dir:
+        assert wtree_dir == dest_path
+        r = git_commands.get_repo(wtree_dir)
+        assert r.head.commit.hexsha == default_origin.commit(expected_ref).hexsha

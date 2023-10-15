@@ -119,6 +119,7 @@ def test_update_command(git_project: dict, mocker):
     mocker.patch("cookie_composer.templates.source.identify_repo", return_value=(TemplateFormat.GIT, Locality.REMOTE))
     repo = get_repo(git_project["project_path"])
     assert repo.active_branch.name == "master"
+
     current_items = {item.name for item in os.scandir(git_project["project_path"])}
     assert current_items == {
         ".composition.yaml",
@@ -159,9 +160,11 @@ def test_update_command(git_project: dict, mocker):
     assert repo.active_branch.commit.hexsha == previous_sha
 
 
-def test_update_command_no_update_required(git_project: dict, capsys):
+def test_update_command_no_update_required(git_project: dict, mocker, capsys):
     """Should output a message and do nothing."""
+    mocker.patch("cookie_composer.templates.source.identify_repo", return_value=(TemplateFormat.GIT, Locality.REMOTE))
     repo = get_repo(git_project["project_path"])
+    assert repo.active_branch.name == "master"
 
     # rewrite the composition to change the commit to the latest of the template
     rendered_comp_path = Path(git_project["project_path"] / ".composition.yaml")

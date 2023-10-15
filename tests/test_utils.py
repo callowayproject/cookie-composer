@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from pytest import param
 
+from cookie_composer.composition import get_context_for_layer
 from cookie_composer import utils
 from cookie_composer.io import read_rendered_composition
 
@@ -12,18 +13,18 @@ def test_get_context_for_layer(fixtures_path: Path):
     """Return a context for a given layer."""
     rendered_comp = read_rendered_composition(fixtures_path / "rendered_composition.yaml")
 
-    result1 = utils.get_context_for_layer(rendered_comp, 0)
+    result1 = get_context_for_layer(rendered_comp, 0)
     assert result1 == rendered_comp.layers[0].rendered_context
 
-    result2 = utils.get_context_for_layer(rendered_comp, 1)
+    result2 = get_context_for_layer(rendered_comp, 1)
     assert "project_slug" in result2
     assert len(result2) == len(result1) + 1
 
-    result3 = utils.get_context_for_layer(rendered_comp, 2)
+    result3 = get_context_for_layer(rendered_comp, 2)
     assert "_docs_requirements" in result3
     assert len(result3) == len(result2) + 1
 
-    result4 = utils.get_context_for_layer(rendered_comp)
+    result4 = get_context_for_layer(rendered_comp)
     assert result4 == result3
 
 

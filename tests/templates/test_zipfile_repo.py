@@ -41,9 +41,8 @@ def test_unzip_local_file(mocker, fixtures_path: Path, tmp_path: Path):
         "cookie_composer.templates.zipfile_repo.prompt_and_delete", return_value=True, autospec=True
     )
     zipfile_path = fixtures_path.joinpath("fake-repo-tmpl.zip")
-    output_dir = zipfile_repo.unzip(str(zipfile_path), is_remote=False, cache_dir=tmp_path)
-
-    assert str(output_dir).startswith(tempfile.gettempdir())
+    output_dir = zipfile_repo.cache_source(str(zipfile_path), is_remote=False, cache_dir=tmp_path)
+    assert str(output_dir).startswith(str(fixtures_path))
     assert not mock_prompt_and_delete.called
 
 
@@ -53,32 +52,25 @@ def test_unzip_local_protected_file(mocker, fixtures_path: Path, tmp_path: Path)
         "cookie_composer.templates.zipfile_repo.prompt_and_delete", return_value=True, autospec=True
     )
     zipfile_path = fixtures_path.joinpath("protected-fake-repo-tmpl.zip")
-    output_dir = zipfile_repo.unzip(str(zipfile_path), is_remote=False, cache_dir=tmp_path, password="sekrit")
+    output_dir = zipfile_repo.cache_source(str(zipfile_path), is_remote=False, cache_dir=tmp_path)
 
-    assert str(output_dir).startswith(tempfile.gettempdir())
+    assert str(output_dir).startswith(str(fixtures_path))
     assert not mock_prompt_and_delete.called
 
 
 def test_extract_protected_local_file_environment_password(fixtures_path: Path):
     """In `extract_zipfile()`, the environment can be used to provide a repo password."""
     zipfile_path = fixtures_path.joinpath("protected-fake-repo-tmpl.zip")
-    output_dir = zipfile_repo.extract_zipfile(zipfile_path, no_input=True, password="sekrit")
+    output_dir = zipfile_repo.extract_zipfile(zipfile_path, password="sekrit")
 
     assert str(output_dir).startswith(tempfile.gettempdir())
 
 
 def test_extract_protected_local_file_bad_environment_password(mocker, fixtures_path: Path):
     """In `extract_zipfile()`, an error occurs if the environment has a bad password."""
-    mock_prompt_and_delete = mocker.patch(
-        "cookie_composer.templates.zipfile_repo.read_repo_password", return_value="still-wrong"
-    )
     zipfile_path = fixtures_path.joinpath("protected-fake-repo-tmpl.zip")
     with pytest.raises(InvalidZipPasswordError):
-        zipfile_repo.extract_zipfile(
-            zipfile_path,
-            no_input=False,
-            password="not-the-right-password",
-        )
+        zipfile_repo.extract_zipfile(zipfile_path, password="not-the-right-password")
 
 
 def test_extract_protected_local_file_user_password_with_noinput(fixtures_path: Path):
@@ -86,27 +78,7 @@ def test_extract_protected_local_file_user_password_with_noinput(fixtures_path: 
 
     zipfile_path = fixtures_path.joinpath("protected-fake-repo-tmpl.zip")
     with pytest.raises(InvalidZipPasswordError):
-        zipfile_repo.extract_zipfile(
-            zipfile_path,
-            no_input=True,
-            password=None,
-        )
-
-
-def test_extract_protected_local_file_user_password(mocker, fixtures_path: Path):
-    """A password-protected local file reference can be unzipped."""
-    mock_read_repo_password = mocker.patch(
-        "cookie_composer.templates.zipfile_repo.read_repo_password", return_value="sekrit"
-    )
-    zipfile_path = fixtures_path.joinpath("protected-fake-repo-tmpl.zip")
-    output_dir = zipfile_repo.extract_zipfile(
-        zipfile_path,
-        no_input=False,
-        password=None,
-    )
-
-    assert str(output_dir).startswith(tempfile.gettempdir())
-    assert mock_read_repo_password.called
+        zipfile_repo.extract_zipfile(zipfile_path, password=None)
 
 
 def test_validate_empty_zip_file(fixtures_path: Path):
@@ -286,8 +258,8 @@ def test_template_repo_from_zipfile(fixtures_path: Path, tmp_path: Path):
 
     assert template_repo.source == str(zipfile_path)
     assert template_repo.cached_source.exists()
-    assert template_repo.cached_source.is_dir()
-    assert template_repo.cached_source.name == "fake-repo-tmpl"
+    assert template_repo.cached_source.is_file()
+    assert template_repo.cached_source.name == "fake-repo-tmpl.zip"
     assert template_repo.format == "zip"
     assert template_repo.locality == Locality.LOCAL
     assert template_repo.checkout is None
