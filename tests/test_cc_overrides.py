@@ -94,15 +94,15 @@ def test_prompt_for_config_with_human_prompts(monkeypatch, context):
     """Verify call `read_user_variable` on request when human-readable prompts."""
     monkeypatch.setattr(
         "cookie_composer.cc_overrides.read_user_variable",
-        lambda var, default, prompts: default,
+        lambda var, default, prompts, prefix: default,
     )
     monkeypatch.setattr(
         "cookie_composer.cc_overrides.read_user_yes_no",
-        lambda var, default, prompts: default,
+        lambda var, default, prompts, prefix: default,
     )
     monkeypatch.setattr(
         "cookiecutter.prompt.read_user_choice",  # This is called by `prompt_choice_for_config`
-        lambda var, default, prompts: default,
+        lambda var, default, prompts, prefix: default,
     )
 
     cookiecutter_dict = cc_overrides.prompt_for_config(context, Context(), None)
@@ -156,7 +156,7 @@ def test_prompt_for_config_dict(monkeypatch):
     """Verify `prompt_for_config` call `read_user_variable` on dict request."""
     monkeypatch.setattr(
         "cookie_composer.cc_overrides.read_user_dict",
-        lambda var, default, prompts: {"key": "value", "integer": 37},
+        lambda var, default, prompts, prefix: {"key": "value", "integer": 37},
     )
     context = {"details": {}}
 
@@ -224,7 +224,9 @@ def test_should_render_deep_dict():
 
 def test_prompt_for_templated_config(monkeypatch):
     """Verify Jinja2 templating works in unicode prompts."""
-    monkeypatch.setattr("cookie_composer.cc_overrides.read_user_variable", lambda var, default, prompts: default)
+    monkeypatch.setattr(
+        "cookie_composer.cc_overrides.read_user_variable", lambda var, default, prompts, prefix: default
+    )
     context = OrderedDict(
         [
             ("project_name", "A New Project"),
@@ -348,7 +350,7 @@ class TestReadUserChoice:
 
         assert not read_user_variable.called
         assert prompt_choice.called
-        read_user_choice.assert_called_once_with("orientation", choices, {})
+        read_user_choice.assert_called_once_with("orientation", choices, {}, "  [dim][1/1][/] ")
         assert cookiecutter_dict == {"orientation": "all"}
 
     def test_should_invoke_read_user_variable(self, mocker):
@@ -366,7 +368,7 @@ class TestReadUserChoice:
 
         assert not prompt_choice.called
         assert not read_user_choice.called
-        read_user_variable.assert_called_once_with("full_name", "Your Name", {})
+        read_user_variable.assert_called_once_with("full_name", "Your Name", {}, "  [dim][1/1][/] ")
         assert cookiecutter_dict == {"full_name": "Audrey Roy"}
 
     def test_should_render_choices(self, mocker):
@@ -399,6 +401,6 @@ class TestReadUserChoice:
         }
         cookiecutter_dict = cc_overrides.prompt_for_config(context, Context({}), None)
 
-        read_user_variable.assert_called_once_with("project_name", "A New Project", {})
-        read_user_choice.assert_called_once_with("pkg_name", rendered_choices, {})
+        read_user_variable.assert_called_once_with("project_name", "A New Project", {}, "  [dim][1/2][/] ")
+        read_user_choice.assert_called_once_with("pkg_name", rendered_choices, {}, "  [dim][2/2][/] ")
         assert cookiecutter_dict == expected

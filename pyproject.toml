@@ -20,15 +20,14 @@ classifiers = [
     "Topic :: Software Development :: Code Generators",
 ]
 dependencies = [
-    "backports.shutil-copytree",
     "click-log",
-    "cookiecutter>=2.2.0",
+    "cookiecutter>=2.4.0",
     "fsspec",
     "ghapi",
-    "gitpython",
+    "gitpython>=3.1.35",
     "immutabledict",
     "orjson",
-    "pydantic<2.0.0",
+    "pydantic>2.0.0",
     "questionary",
     "requests",
     "rich-click",
@@ -45,20 +44,21 @@ requires-python = ">=3.8"
 
 [project.optional-dependencies]
 dev = [
-    "bump-my-version",
+    "bump-my-version>=0.11.0",
     "git-fame>=1.12.2",
     "generate-changelog",
     "pip-tools",
 ]
 docs = [
+    "astroid<3.0.0",  # astroid 3.0.0 breaks sphinx-autodoc2 0.4.2
     "ghp-import",
     "linkify-it-py",
     "myst-parser",
-    "furo",
-    "Sphinx>=4.3.0",
-    "sphinx-autodoc-typehints",
+    "Sphinx>=7.2.0",
+    "sphinx-autodoc2",
     "sphinx-click",
     "sphinx-copybutton",
+    "sphinx-material",
 ]
 test = [
     "coverage>=6.1.2",
@@ -155,6 +155,7 @@ ignore = [
     "ANN002", "ANN003", "ANN101", "ANN102", "ANN204", "ANN401",
     "S101", "S104", "S603",
     "D106", "D107", "D200", "D212",
+    "PLW1510",
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
@@ -233,7 +234,7 @@ convention = "google"
 allow_dirty = true
 commit = true
 commit_args = "--no-verify"
-current_version = "0.10.3"
+current_version = "0.11.0"
 message = "Version updated from {current_version} to {new_version}"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\+\\w+-(?P<dev>\\d+))?"
 serialize = [
@@ -254,3 +255,11 @@ search = "Unreleased"
 filename = "CHANGELOG.md"
 search = "{current_version}...HEAD"
 replace = "{current_version}...{new_version}"
+
+[tool.pydoclint]
+style = "google"
+exclude = '\.git|tests'
+require-return-section-when-returning-nothing = false
+arg-type-hints-in-docstring = false
+check-return-types = false
+quiet = true

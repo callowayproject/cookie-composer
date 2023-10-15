@@ -1,11 +1,17 @@
 """Functions for using git."""
+import logging
+import shutil
 import subprocess
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, Iterator
 
 from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
+
+logger = logging.getLogger(__name__)
 
 
 def get_repo(
@@ -37,6 +43,27 @@ def get_repo(
             "Some cookie composer commands only work on git repositories. "
             "Please make the destination directory a git repo."
         ) from e
+
+
+def clone(repo_url: str, dest_path: Optional[Path] = None) -> Repo:
+    """
+    Clone a repo.
+
+    Args:
+        repo_url: Repo URL or local path.
+        dest_path: The path to clone to.
+
+    Returns:
+        The repository.
+    """
+    dest_path = dest_path or Path.cwd()
+
+    if dest_path.exists():
+        logger.debug(f"Found {dest_path}, attempting to update")
+        return get_repo(dest_path, ensure_clean=True)
+    else:
+        logger.debug(f"Cloning {repo_url} into {dest_path}")
+        return Repo.clone_from(repo_url, dest_path)
 
 
 def branch_exists(repo: Repo, branch_name: str) -> bool:
@@ -71,6 +98,17 @@ def remote_branch_exists(repo: Repo, branch_name: str, remote_name: str = "origi
     return False
 
 
+def checkout_ref(repo: Repo, ref: str) -> None:
+    """
+    Checkout a ref.
+
+    Args:
+        repo: The repository to check out
+        ref: The ref to check out
+    """
+    repo.git.checkout(ref)
+
+
 def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -> None:
     """Checkout a local or remote branch."""
     if repo.is_dirty():
@@ -80,45 +118,15 @@ def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -
         )
     if len(repo.remotes) > 0:
         repo.remotes[0].fetch()
+
     if branch_exists(repo, branch_name):
         repo.heads[branch_name].checkout()
     elif remote_branch_exists(repo, branch_name, remote_name):
         repo.create_head(branch_name, f"origin/{branch_name}")
         repo.heads[branch_name].checkout()
-
-    repo.create_head(branch_name)
-    repo.heads[branch_name].checkout()
-
-
-def branch_from_first_commit(repo: Repo, branch_name: str) -> None:
-    """Create and checkout a branch from the repo's first commit."""
-    if repo.is_dirty():
-        raise GitError(
-            "Cookie composer cannot apply updates on an unclean git project."
-            " Please make sure your git working tree is clean before proceeding."
-        )
-    first_commit = next(iter(repo.iter_commits("HEAD", max_parents=0, max_count=1)))
-    repo.create_head(branch_name, first_commit.hexsha)
-    repo.heads[branch_name].checkout()
-
-
-def get_latest_template_commit(template_path: str) -> Optional[str]:
-    """
-    Get the hexsha of the latest commit on the template path.
-
-    If the path is not a git repository, it returns ``None``.
-
-    Args:
-        template_path: The path to the potentially-cloned template
-
-    Returns:
-        The hexsha of the latest commit or ``None``
-    """
-    try:
-        repo = get_repo(template_path, search_parent_directories=True)
-        return repo.head.commit.hexsha
-    except GitError:
-        return None
+    else:
+        repo.create_head(branch_name)
+        repo.heads[branch_name].checkout()
 
 
 def apply_patch(repo: Repo, diff: str) -> None:
@@ -130,9 +138,6 @@ def apply_patch(repo: Repo, diff: str) -> None:
     Args:
         repo: The git repo to apply the patch to
         diff: The previously calculated diff
-
-    Raises:
-        subprocess.CalledProcessError if there is a problem running the git-appy command
     """
     three_way_command = [
         "git",
@@ -165,3 +170,45 @@ def apply_patch(repo: Repo, diff: str) -> None:
             check=True,
             cwd=repo.working_dir,
         )
+
+
+@contextmanager
+def temp_git_worktree_dir(
+    repo_path: Path, worktree_path: Optional[Path] = None, branch: str = "master", commit: Optional[str] = None
+) -> Iterator[Path]:
+    """
+    Context Manager for a temporary working directory of a branch in a git repo.
+
+    Inspired by https://github.com/thomasjahoda/cookiecutter_project_upgrader/blob/master/
+    cookiecutter_project_upgrader/logic.py
+
+    Args:
+        repo_path: The path to the template git repo
+        worktree_path: The path put the worktree in. Defaults to a temporary directory.
+        branch: The branch to check out
+        commit: The optional commit to check out
+
+    Yields:
+        The worktree_path
+    """
+    # Create a temporary working directory of a branch in a git repo.
+    repo = get_repo(repo_path)
+    tmp_dir = Path(tempfile.mkdtemp(prefix=repo_path.name))
+    worktree_path = worktree_path or tmp_dir
+    # if worktree_path.exists():
+    #     raise GitError(f"Temporary directory already exists: {worktree_path}")
+
+    worktree_path.mkdir(parents=True, exist_ok=True)
+    repo.git.worktree(
+        "add",
+        # "--no-checkout",
+        str(worktree_path),
+        commit or branch,
+    )
+    try:
+        yield Path(worktree_path)
+    finally:
+        # Clean up the temporary working directory.
+        shutil.rmtree(worktree_path)
+        shutil.rmtree(tmp_dir)
+        repo.git.worktree("prune")
