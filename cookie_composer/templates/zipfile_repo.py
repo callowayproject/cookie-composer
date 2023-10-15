@@ -6,7 +6,6 @@ from typing import Optional
 from zipfile import BadZipFile, ZipFile
 
 import requests
-from cookiecutter.prompt import read_repo_password
 from cookiecutter.utils import make_sure_path_exists, prompt_and_delete
 
 from cookie_composer.exceptions import (
@@ -22,7 +21,7 @@ def template_repo_from_zipfile(
     zip_uri: str, locality: Locality, cache_dir: Path, no_input: bool = False, password: Optional[str] = None
 ) -> TemplateRepo:
     """Return a template repo from a zipfile URI."""
-    cached_source = unzip(zip_uri, locality == Locality.REMOTE, cache_dir, no_input, password)
+    cached_source = cache_source(zip_uri, locality == Locality.REMOTE, cache_dir, no_input)
     return TemplateRepo(
         source=zip_uri,
         cached_source=cached_source,
@@ -54,12 +53,11 @@ def download_zipfile(url: str, cache_dir: Path, no_input: bool = False) -> Path:
     return zip_path
 
 
-def unzip(
+def cache_source(
     zip_uri: str,
     is_remote: bool,
     cache_dir: Path,
     no_input: bool = False,
-    password: Optional[str] = None,
 ) -> Path:
     """
     Download and unpack a zipfile at a given URI.
@@ -72,7 +70,6 @@ def unzip(
         is_remote: Is the zip URI a URL or a file?
         cache_dir: The cookiecutter repository directory to put the archive into.
         no_input: Do not prompt for user input and eventually force a refresh of cached resources.
-        password: The password to use when unpacking the repository.
 
     Returns:
         The path to the unpacked zipfile.
@@ -88,7 +85,7 @@ def unzip(
 
     # Now unpack the repository into a temporary directory
     validate_zipfile(zip_path, zip_uri)
-    return extract_zipfile(zip_path, no_input, password)
+    return zip_path
 
 
 def validate_zipfile(zip_path: Path, zip_uri: str) -> None:
@@ -118,13 +115,13 @@ def validate_zipfile(zip_path: Path, zip_uri: str) -> None:
         raise InvalidZipRepositoryError(zip_uri) from e
 
 
-def extract_zipfile(zip_path: Path, no_input: bool, password: Optional[str] = None) -> Path:
+def extract_zipfile(zip_path: Path, output_dir: Optional[Path] = None, password: Optional[str] = None) -> Path:
     """
     Extract a zipfile into a temporary directory.
 
     Args:
         zip_path: The path to the zipfile.
-        no_input: Don't prompt for user input.
+        output_dir: Optional path to extract the zipfile to. Defaults to a temporary directory.
         password: The password for a password-protected zipfile.
 
     Raises:
@@ -140,24 +137,13 @@ def extract_zipfile(zip_path: Path, no_input: bool, password: Optional[str] = No
     project_name = zip_file.namelist()[0][:-1]
 
     # Construct the final target directory
-    unzip_base = tempfile.mkdtemp()
-    unzip_path = os.path.join(unzip_base, project_name)
+    output_dir = output_dir or Path(tempfile.mkdtemp())
+    unzip_path = os.path.join(output_dir, project_name)
 
     # Extract the zip file into the temporary directory
     try:
-        zip_file.extractall(path=unzip_base, pwd=password_bytes)
+        zip_file.extractall(path=output_dir, pwd=password_bytes)
     except RuntimeError as e:
-        if no_input:
-            raise InvalidZipPasswordError() from e
-        retry = 0
-        while retry is not None:
-            try:
-                password = read_repo_password("Repo password")
-                zip_file.extractall(path=unzip_base, pwd=password.encode("utf-8"))
-                retry = None
-            except RuntimeError as e2:
-                retry += 1
-                if retry == 3:
-                    raise InvalidZipPasswordError() from e2
+        raise InvalidZipPasswordError() from e
 
     return Path(unzip_path)
