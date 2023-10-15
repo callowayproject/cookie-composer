@@ -15,7 +15,7 @@ from cookie_composer.templates.types import Template
 
 def serialize_layer(layer: LayerConfig) -> dict:
     """Serialize the layer configuration for outputting in a rendered layer."""
-    layer_info = layer.model_dump(exclude={"template"})
+    layer_info = layer.model_dump(exclude={"template", "_commit"})
     layer_info.update(
         {
             "template": layer.template.repo.source,

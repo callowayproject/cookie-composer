@@ -47,7 +47,7 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
         latest_template_sha = rendered_layer.layer.template.repo.latest_sha
         if latest_template_sha is None or latest_template_sha != rendered_layer.rendered_commit:
             requires_updating = True
-        new_layer = rendered_layer.layer.model_copy(deep=True, update={"commit": latest_template_sha})
+        new_layer = rendered_layer.layer.model_copy(deep=True, update={"_commit": latest_template_sha})
         update_layers.append(new_layer)
 
     if not requires_updating:
@@ -57,10 +57,14 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
     with TemporaryDirectory() as tempdir:
         current_state_dir = Path(tempdir) / "current_state"
         current_state_dir.mkdir(exist_ok=True)
-        updated_state_dir = Path(tempdir) / "update_state"
-        updated_state_dir.mkdir(exist_ok=True)
 
-        current_layers = [layer.layer for layer in proj_composition.layers]
+        current_layers = []
+        for layer in proj_composition.layers:
+            layer_config = layer.layer
+            layer_config._commit = layer.rendered_commit
+            layer_config.initial_context = layer.rendered_context
+            current_layers.append(layer_config)
+
         current_rendered_layers = render_layers(
             current_layers,
             current_state_dir,
@@ -74,6 +78,8 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
         deleted_paths = get_deleted_files(current_state_dir, project_dir.parent)
         deleted_paths.add(Path(".git"))  # don't want the .git dir, if it exists
 
+        updated_state_dir = Path(tempdir) / "update_state"
+        updated_state_dir.mkdir(exist_ok=True)
         updated_rendered_layers = render_layers(
             update_layers,
             updated_state_dir,
@@ -112,14 +118,14 @@ def update_rendered_composition_layers(
     """
     Update ``base.layers`` with ``updated_layers`` where layer names match.
 
-    If for some reason a layer exists in ``updated_layers`` but not in ``base``, it is discarded.
+    If, for some reason, a layer exists in ``updated_layers`` but not in ``base``, it is discarded.
 
     Args:
         base: The base composition whose layers are to be updated
         updated_layers: The new rendered layers
 
     Raises:
-        RuntimeError: If a layer's location  ``render_dir`` properties don't match
+        RuntimeError: If a layer's location ``render_dir`` properties don't match
         RuntimeError: If the compositions' ``rendered_name`` properties don't match
 
     Returns:

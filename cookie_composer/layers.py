@@ -82,6 +82,9 @@ class LayerConfig(BaseModel):
     merge_strategies: Dict[str, str] = Field(default_factory=lambda: {"*": DO_NOT_MERGE})
     """The method to merge specific paths or glob patterns."""
 
+    _commit: Optional[str] = None
+    """Used when updating layers."""
+
     @property
     def layer_name(self) -> str:
         """The name of the template layer."""
@@ -228,7 +231,11 @@ def get_template_rendered_name(template: Template, context: MutableMapping) -> s
 
 
 def render_layer(
-    layer_config: LayerConfig, render_dir: Path, full_context: Optional[Context] = None, accept_hooks: str = "yes"
+    layer_config: LayerConfig,
+    render_dir: Path,
+    full_context: Optional[Context] = None,
+    commit: Optional[str] = None,
+    accept_hooks: str = "yes",
 ) -> RenderedLayer:
     """
     Process one layer of the template composition.
@@ -239,6 +246,7 @@ def render_layer(
         layer_config: The configuration of the layer to render
         render_dir: Where to render the template
         full_context: The extra context from all layers in the composition
+        commit: The commit to checkout if the template is a git repo
         accept_hooks: Accept pre- and post-hooks if set to ``True``
 
     Returns:
@@ -270,18 +278,22 @@ def render_layer(
     rendered_name = get_template_rendered_name(layer_config.template, cookiecutter_context)
 
     # call cookiecutter's generate files function
-    generate_files(
-        repo_dir=repo_dir,
-        context=cookiecutter_context,
-        overwrite_if_exists=False,
-        output_dir=str(render_dir),
-        accept_hooks=_accept_hooks,
-    )
+    with layer_config.template.repo.render_source(commit=commit) as repo_dir:
+        if layer_config.template.directory:
+            repo_dir = repo_dir / layer_config.template.directory  # NOQA: PLW2901
+        generate_files(
+            repo_dir=repo_dir,
+            context=cookiecutter_context,
+            overwrite_if_exists=False,
+            output_dir=str(render_dir),
+            accept_hooks=_accept_hooks,
+        )
 
     rendered_layer = RenderedLayer(
         layer=layer_config,
         location=render_dir,
         rendered_context=copy.deepcopy(layer_context),
+        rendered_commit=commit,
         rendered_name=rendered_name,
     )
 
@@ -356,7 +368,9 @@ def render_layers(
     for layer_config, accept_hook in zip(layers, accept_hooks_layers):
         layer_config.no_input = True if no_input else layer_config.no_input
         with tempfile.TemporaryDirectory() as render_dir:
-            rendered_layer = render_layer(layer_config, Path(render_dir), full_context, accept_hook)
+            rendered_layer = render_layer(
+                layer_config, Path(render_dir), full_context, layer_config._commit, accept_hook
+            )
             merge_layers(destination, rendered_layer)
             full_context.update(rendered_layer.rendered_context)
         rendered_layer.location = destination
