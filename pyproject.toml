@@ -24,7 +24,7 @@ dependencies = [
     "cookiecutter>=2.4.0",
     "fsspec",
     "ghapi",
-    "gitpython>=3.1.35",
+    "gitpython>=3.1.37",
     "immutabledict",
     "orjson",
     "pydantic>2.0.0",

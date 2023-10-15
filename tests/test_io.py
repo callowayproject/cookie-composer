@@ -61,7 +61,7 @@ def rendered_layer_info(fixtures_path: Path) -> Tuple[dict, RenderedLayer]:
     return layer_info, rendered_layer
 
 
-def test_deserialize_rendered_layer(rendered_layer_info: tuple[dict, RenderedLayer], fixtures_path: Path):
+def test_deserialize_rendered_layer(rendered_layer_info: Tuple[dict, RenderedLayer], fixtures_path: Path):
     """A rendered layer dict should be serialized into a RenderedLayer."""
     layer_info = rendered_layer_info[0]
     expected_layer = rendered_layer_info[1]
@@ -69,7 +69,7 @@ def test_deserialize_rendered_layer(rendered_layer_info: tuple[dict, RenderedLay
     assert rendered_layer == expected_layer
 
 
-def test_serialize_rendered_layer(rendered_layer_info: tuple[dict, RenderedLayer]):
+def test_serialize_rendered_layer(rendered_layer_info: Tuple[dict, RenderedLayer]):
     """A rendered layer should be serialized into a dict."""
     layer_info = rendered_layer_info[0]
     rendered_layer = rendered_layer_info[1]
