@@ -5,11 +5,13 @@ Templates are a representation of source templates used to generate projects.
 """
 import json
 import shutil
+import tempfile
 from collections import OrderedDict
+from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Iterator, Optional
 
 
 class Locality(str, Enum):
@@ -84,6 +86,46 @@ class TemplateRepo:
             template_repo.remotes[0].fetch()
             return template_repo.remotes[0].refs[0].commit.hexsha
         return template_repo.head.object.hexsha
+
+    @contextmanager
+    def render_source(self, output_dir: Optional[Path] = None, commit: Optional[str] = None) -> Iterator[Path]:
+        """
+        A context manager that provides the source from which to render the template.
+
+        For git repositories, this will create a temporary working tree of the repository and yield the path
+        to the working tree.
+
+        For Zip archives, this will extract the archive to a temporary directory and yield the path
+
+        For plain repos, it will yield the path to the directory.
+
+        Args:
+            output_dir: The directory to extract the template to. If not provided, a temporary directory will be used.
+            commit: The commit to checkout if the template is a git repository.
+
+        Yields:
+            The path to the rendered template
+        """
+        output_dir = output_dir or Path(tempfile.mkdtemp())
+
+        if self.format == TemplateFormat.GIT:
+            from cookie_composer.git_commands import temp_git_worktree_dir
+
+            with temp_git_worktree_dir(
+                self.cached_source, output_dir, branch=self.checkout, commit=commit
+            ) as worktree_dir:
+                yield worktree_dir
+        elif self.format == TemplateFormat.ZIP:
+            from cookie_composer.templates.zipfile_repo import extract_zipfile
+
+            zip_dir = extract_zipfile(self.cached_source, output_dir=output_dir, password=self.password)
+            yield zip_dir
+            shutil.rmtree(zip_dir)
+        elif self.format == TemplateFormat.PLAIN:
+            from cookie_composer.utils import temporary_copy
+
+            with temporary_copy(self.cached_source) as temp_dir:
+                yield temp_dir
 
 
 @dataclass

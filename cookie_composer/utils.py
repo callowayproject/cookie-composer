@@ -1,8 +1,9 @@
 """Utilities not easily categorized."""
 import os
 import stat
+from contextlib import contextmanager
 from pathlib import Path
-from typing import IO, Any, Callable, Optional, Set
+from typing import IO, Any, Callable, Iterator, Optional, Set
 
 
 def echo(
@@ -108,3 +109,30 @@ def remove_single_path(path: Path) -> None:
             path.unlink()
         except Exception as exc:  # noqa: BLE001 pragma: no-coverage
             raise IOError("Failed to remove file.") from exc
+
+
+@contextmanager
+def temporary_copy(original_path: Path) -> Iterator[Path]:
+    """
+    Create a temporary copy of a file or directory.
+
+    Args:
+        original_path: The path to the file or directory to copy
+
+    Yields:
+        The path to the temporary copy
+    """
+    import tempfile
+    from shutil import copy2, copytree, rmtree
+
+    if original_path.is_dir():
+        temp_dir = tempfile.mkdtemp()
+        copytree(original_path, temp_dir, dirs_exist_ok=True)
+        yield Path(temp_dir)
+        rmtree(temp_dir)
+    else:
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file.close()
+        copy2(original_path, temp_file.name)
+        yield Path(temp_file.name)
+        os.remove(temp_file.name)

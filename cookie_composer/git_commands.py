@@ -2,9 +2,10 @@
 import logging
 import shutil
 import subprocess
+import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, Iterator
 
 from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 
@@ -172,7 +173,9 @@ def apply_patch(repo: Repo, diff: str) -> None:
 
 
 @contextmanager
-def temp_git_worktree_dir(worktree_path: Path, repo_path: Path, branch: str = "master"):
+def temp_git_worktree_dir(
+    repo_path: Path, worktree_path: Optional[Path] = None, branch: str = "master", commit: Optional[str] = None
+) -> Iterator[Path]:
     """
     Context Manager for a temporary working directory of a branch in a git repo.
 
@@ -180,29 +183,32 @@ def temp_git_worktree_dir(worktree_path: Path, repo_path: Path, branch: str = "m
     cookiecutter_project_upgrader/logic.py
 
     Args:
-        worktree_path: The path to the temporary directory
         repo_path: The path to the template git repo
+        worktree_path: The path put the worktree in. Defaults to a temporary directory.
         branch: The branch to check out
+        commit: The optional commit to check out
 
     Yields:
-        Nothing, but the worktree_path is available.
+        The worktree_path
     """
     # Create a temporary working directory of a branch in a git repo.
     repo = get_repo(repo_path)
+    tmp_dir = Path(tempfile.mkdtemp(prefix=repo_path.name))
+    worktree_path = worktree_path or tmp_dir
+    # if worktree_path.exists():
+    #     raise GitError(f"Temporary directory already exists: {worktree_path}")
 
-    if worktree_path.exists():
-        raise GitError(f"Temporary directory already exists: {worktree_path}")
-
-    worktree_path.mkdir(parents=True)
+    worktree_path.mkdir(parents=True, exist_ok=True)
     repo.git.worktree(
         "add",
-        "--no-checkout",
-        worktree_path,
-        branch,
+        # "--no-checkout",
+        str(worktree_path),
+        commit or branch,
     )
     try:
-        yield
+        yield Path(worktree_path)
     finally:
         # Clean up the temporary working directory.
         shutil.rmtree(worktree_path)
+        shutil.rmtree(tmp_dir)
         repo.git.worktree("prune")
