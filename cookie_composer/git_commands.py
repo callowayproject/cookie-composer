@@ -5,11 +5,12 @@ import subprocess
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional, Union, Iterator
+from typing import Iterator, Optional, Union
 
 from git import InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
+from cookie_composer.utils import echo
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +130,35 @@ def checkout_branch(repo: Repo, branch_name: str, remote_name: str = "origin") -
         repo.heads[branch_name].checkout()
 
 
+def _apply_patch_with_reject(repo: Repo, diff: str) -> None:
+    """
+    Apply a patch to a destination directory.
+
+    Args:
+        repo: The git repo to apply the patch to
+        diff: The previously calculated diff
+    """
+    reject_command = ["git", "apply", "--reject"]
+    try:
+        echo("Attempting to apply patch with rejections.")
+        subprocess.run(
+            reject_command,
+            input=diff.encode(),
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            check=True,
+            cwd=repo.working_dir,
+        )
+        echo("Patch applied successfully.", fg="green")
+    except subprocess.CalledProcessError as e2:
+        echo(e2.stderr.decode(), err=True, fg="red")
+        echo(
+            "Project directory may have *.rej files reflecting merge conflicts with the update."
+            " Please resolve those conflicts manually.",
+            fg="yellow",
+        )
+
+
 def apply_patch(repo: Repo, diff: str) -> None:
     """
     Apply a patch to a destination directory.
@@ -147,6 +177,7 @@ def apply_patch(repo: Repo, diff: str) -> None:
     ]
 
     try:
+        echo("Attempting to apply patch with 3-way merge.")
         subprocess.run(
             three_way_command,
             input=diff.encode(),
@@ -155,21 +186,10 @@ def apply_patch(repo: Repo, diff: str) -> None:
             check=True,
             cwd=repo.working_dir,
         )
-    except subprocess.CalledProcessError:
-        reject_command = [
-            "git",
-            "apply",
-            "--3way",
-            "--whitespace=fix",
-        ]
-        subprocess.run(
-            reject_command,
-            input=diff.encode(),
-            stderr=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            check=True,
-            cwd=repo.working_dir,
-        )
+        echo("Patch applied successfully.", fg="green")
+    except subprocess.CalledProcessError as e:
+        echo(f"There was a problem with the 3-way merge: {e.stderr.decode()}", err=True, fg="red")
+        _apply_patch_with_reject(repo, diff)
 
 
 @contextmanager
@@ -195,13 +215,9 @@ def temp_git_worktree_dir(
     repo = get_repo(repo_path)
     tmp_dir = Path(tempfile.mkdtemp(prefix=repo_path.name))
     worktree_path = worktree_path or tmp_dir
-    # if worktree_path.exists():
-    #     raise GitError(f"Temporary directory already exists: {worktree_path}")
-
     worktree_path.mkdir(parents=True, exist_ok=True)
     repo.git.worktree(
         "add",
-        # "--no-checkout",
         str(worktree_path),
         commit or branch,
     )
