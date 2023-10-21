@@ -1,8 +1,10 @@
 """Exceptions raised when bad things happen."""
 from typing import Optional
 
+from click.exceptions import UsageError
 
-class MissingCompositionFileError(Exception):
+
+class MissingCompositionFileError(UsageError):
     """The composition is missing or inaccessible."""
 
     def __init__(self, path_or_url: str):
@@ -10,7 +12,7 @@ class MissingCompositionFileError(Exception):
         super().__init__(msg)
 
 
-class MergeError(Exception):
+class MergeError(UsageError):
     """There was a problem merging a file."""
 
     def __init__(
@@ -26,13 +28,13 @@ class MergeError(Exception):
         super().__init__(error_message)
 
 
-class GitError(Exception):
+class GitError(UsageError):
     """There was a problem doing git operations."""
 
     pass
 
 
-class ChangesetUnicodeError(Exception):
+class ChangesetUnicodeError(UsageError):
     """Raised when `cookie-composer update` is unable to generate the diff."""
 
     def __init__(self):
@@ -44,7 +46,7 @@ class ChangesetUnicodeError(Exception):
         )
 
 
-class InvalidZipRepositoryError(Exception):
+class InvalidZipRepositoryError(UsageError):
     """Raised when a zip repository is invalid."""
 
     def __init__(self, message: str = ""):
