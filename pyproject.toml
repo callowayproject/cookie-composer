@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
     "click-log",
     "cookiecutter>=2.4.0",
-    "fsspec",
+    "fsspec[http]",
     "ghapi",
     "gitpython>=3.1.37",
     "immutabledict",
