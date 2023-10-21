@@ -64,6 +64,7 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
         "checkout": None,
         "commit": git_template["first_commit"],
         "context": {
+            "_copy_without_render": ["demo.jinja"],
             "_requirements": {"bar": ">=5.0.0", "foo": ""},
             "project_name": "Fake Project Template",
             "repo_name": "fake-project-template",
@@ -90,6 +91,7 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
         ".composition.yaml",
         ".git",
         "README.md",
+        "demo.jinja",
         "dontmerge.json",
         "merge.yaml",
         "requirements.txt",
@@ -100,6 +102,7 @@ def git_project(fixtures_path, tmp_path, git_template: dict) -> dict:
             ".composition.yaml",
             "README.md",
             "dontmerge.json",
+            "demo.jinja",
             "merge.yaml",
             "requirements.txt",
         ]
@@ -125,6 +128,7 @@ def test_update_command(git_project: dict, mocker):
         ".composition.yaml",
         ".git",
         "README.md",
+        "demo.jinja",
         "dontmerge.json",
         "merge.yaml",
         "requirements.txt",
@@ -139,6 +143,7 @@ def test_update_command(git_project: dict, mocker):
         "README.md",
         "dontmerge.json",
         "merge.yaml",
+        "demo.jinja",
         "newfile.txt",
         "requirements.txt",
     }

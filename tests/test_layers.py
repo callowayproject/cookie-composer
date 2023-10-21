@@ -192,7 +192,7 @@ def test_render_layers(fixtures_path: Path, tmp_path: Path, template_one: Templa
     rendered_project = tmp_path / rendered_layers[0].rendered_name
     rendered_items = {item.name for item in os.scandir(rendered_project)}
 
-    assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt"}
+    assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt", "demo.jinja", "doc.rst"}
 
 
 def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
@@ -229,7 +229,11 @@ def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
     assert rendered_layer == expected
     assert rendered_layer.latest_commit == latest_sha
     assert rendered_layer.layer.template.repo.latest_sha == latest_sha
-    assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {"README.md", "requirements.txt"}
+    assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {
+        "README.md",
+        "requirements.txt",
+        "demo.jinja",
+    }
 
 
 @pytest.mark.parametrize(
@@ -240,6 +244,7 @@ def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
             {},
             Context(),
             {
+                "_copy_without_render": ["doc.rst"],
                 "_requirements": {"bar": ">=5.0.0", "baz": ""},
                 "lower_project_name": "{{ cookiecutter.project_name|lower }}",
                 "project_name": "Fake Project Template",
@@ -254,6 +259,7 @@ def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
             {},
             Context(),
             {
+                "_copy_without_render": ["doc.rst"],
                 "_requirements": {"bar": ">=5.0.0", "baz": ""},
                 "lower_project_name": "{{ cookiecutter.project_name|lower }}",
                 "project_name": "Fake Project Template",
@@ -270,6 +276,7 @@ def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
                 {},
             ),
             {
+                "_copy_without_render": ["doc.rst"],
                 "_requirements": {"bar": ">=5.0.0", "baz": ""},
                 "lower_project_name": "{{ cookiecutter.project_name|lower }}",
                 "project_name": "Fake Project Template",
@@ -300,7 +307,7 @@ def test_layer_config_generate_prompt_context(
     """
     layer_conf = LayerConfig(template=template_two, initial_context=initial_context, no_input=True)
     context = layer_conf.generate_context(default_context=default_context)
-    assert context == expected
+    assert dict(context) == expected
 
 
 def test_get_layer_context(fixtures_path: Path, template_one: Template, tmp_path: Path):
@@ -321,6 +328,7 @@ def test_get_layer_context(fixtures_path: Path, template_one: Template, tmp_path
         "repo_name": "fake-project-template",
         "repo_slug": "fake-project-template",
         "service_name": "foo",
+        "_copy_without_render": ["demo.jinja"],
     }
 
 
@@ -353,6 +361,7 @@ def test_get_layer_context_with_extra(fixtures_path: Path, template_two: Templat
         "repo_name": "fake-project-template2",
         "project_slug": "fake-project-template-two",
         "_requirements": OrderedDict([("bar", ">=5.0.0"), ("baz", "")]),
+        "_copy_without_render": ["doc.rst"],
         "lower_project_name": "fake project template2",
         "repo_slug": "fake-project-template-two",
         "service_name": "foo",

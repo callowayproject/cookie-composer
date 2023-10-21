@@ -121,7 +121,6 @@ class LayerConfig(BaseModel):
         # So we are going to remove it from the "defaults" when generating the context
         user_context.pop("_copy_without_render", None)
         layer_initial_context.pop("_copy_without_render", None)
-        raw_context.pop("_copy_without_render", None)
 
         # This pulls in the template context and overrides the values with the user config defaults
         #   and the defaults specified in the layer.
@@ -260,7 +259,7 @@ def render_layer(
     context = layer_config.generate_context(
         default_context=default_context,
     )
-    context_for_prompting = {k: v for k, v in context.items() if k not in full_context}
+    context_for_prompting = {k: v for k, v in context.items() if (k not in full_context or k.startswith("_"))}
     layer_context = get_layer_context(
         template_repo_dir=repo_dir,
         context_for_prompting=context_for_prompting,
@@ -293,7 +292,7 @@ def render_layer(
         layer=layer_config,
         location=render_dir,
         rendered_context=copy.deepcopy(layer_context),
-        rendered_commit=commit,
+        rendered_commit=commit or layer_config.template.repo.latest_sha,
         rendered_name=rendered_name,
     )
 

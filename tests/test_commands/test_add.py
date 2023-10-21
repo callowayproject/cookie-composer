@@ -27,7 +27,15 @@ def create_base_repo(fixtures_path, tmp_path):
     repo.index.commit(
         message="new: first commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-01 10:00:00"
     )
-    expected_files = {"README.md", "requirements.txt", ".composition.yaml", "merge.yaml", "dontmerge.json", ".git"}
+    expected_files = {
+        "README.md",
+        "requirements.txt",
+        "demo.jinja",
+        ".composition.yaml",
+        "merge.yaml",
+        "dontmerge.json",
+        ".git",
+    }
     dest_files = {item.name for item in os.scandir(dest_path)}
     assert dest_files == expected_files
     return dest_path
@@ -45,6 +53,8 @@ def test_render_template(fixtures_path: Path, create_base_repo: Path):
         ".git",
         "ABOUT.md",
         "README.md",
+        "demo.jinja",
+        "doc.rst",
         "dontmerge.json",
         "merge.yaml",
         "requirements.txt",
@@ -74,6 +84,8 @@ def test_render_composition(fixtures_path, create_base_repo, tmp_path):
         ".git",
         "ABOUT.md",
         "README.md",
+        "demo.jinja",
+        "doc.rst",
         "dontmerge.json",
         "merge.yaml",
         "requirements.txt",
