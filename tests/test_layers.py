@@ -225,6 +225,7 @@ def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
         layer=layer_conf,
         location=render_dir,
         rendered_context=expected_context,
+        rendered_commit=latest_sha,
     )
     assert rendered_layer == expected
     assert rendered_layer.latest_commit == latest_sha
