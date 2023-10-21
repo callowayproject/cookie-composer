@@ -1,8 +1,10 @@
 """Exceptions raised when bad things happen."""
 from typing import Optional
 
+from click.exceptions import UsageError
 
-class MissingCompositionFileError(Exception):
+
+class MissingCompositionFileError(UsageError):
     """The composition is missing or inaccessible."""
 
     def __init__(self, path_or_url: str):
@@ -10,7 +12,7 @@ class MissingCompositionFileError(Exception):
         super().__init__(msg)
 
 
-class MergeError(Exception):
+class MergeError(UsageError):
     """There was a problem merging a file."""
 
     def __init__(
@@ -26,13 +28,13 @@ class MergeError(Exception):
         super().__init__(error_message)
 
 
-class GitError(Exception):
+class GitError(UsageError):
     """There was a problem doing git operations."""
 
     pass
 
 
-class ChangesetUnicodeError(Exception):
+class ChangesetUnicodeError(UsageError):
     """Raised when `cookie-composer update` is unable to generate the diff."""
 
     def __init__(self):
@@ -42,3 +44,32 @@ class ChangesetUnicodeError(Exception):
                 "unicode. Typically a result of hidden binary files in project folder."
             )
         )
+
+
+class InvalidZipRepositoryError(UsageError):
+    """Raised when a zip repository is invalid."""
+
+    def __init__(self, message: str = ""):
+        message = message or "Invalid zip repository."
+        super().__init__(message)
+
+
+class EmptyZipRepositoryError(InvalidZipRepositoryError):
+    """Raised when a zip repository is empty."""
+
+    def __init__(self, url: str):
+        super().__init__(f"Zip repository at {url} is empty.")
+
+
+class NoZipDirectoryError(InvalidZipRepositoryError):
+    """Raised when a zip repository does not contain a directory."""
+
+    def __init__(self, url: str):
+        super().__init__(f"Zip repository at {url} does not contain a top-level directory.")
+
+
+class InvalidZipPasswordError(InvalidZipRepositoryError):
+    """Raised when a zip repository is password-protected."""
+
+    def __init__(self):
+        super().__init__("Zip repository is password-protected and the password is missing or wrong.")

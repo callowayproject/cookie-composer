@@ -4,12 +4,7 @@ from pathlib import Path
 import toml
 
 from cookie_composer import data_merge
-from cookie_composer.composition import (
-    COMPREHENSIVE,
-    DO_NOT_MERGE,
-    NESTED_OVERWRITE,
-    OVERWRITE,
-)
+from cookie_composer.data_merge import COMPREHENSIVE, DO_NOT_MERGE, NESTED_OVERWRITE, OVERWRITE
 from cookie_composer.exceptions import MergeError
 
 
