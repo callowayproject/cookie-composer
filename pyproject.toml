@@ -265,4 +265,5 @@ exclude = '\.git|tests'
 require-return-section-when-returning-nothing = false
 arg-type-hints-in-docstring = false
 check-return-types = false
+check-yield-types = false
 quiet = true

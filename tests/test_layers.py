@@ -237,6 +237,58 @@ def test_render_layer_git_template(fixtures_path: Path, tmp_path: Path):
     }
 
 
+def test_render_layer_git_template_branch(fixtures_path: Path, tmp_path: Path):
+    """Render a layer of a git-based template specifying a branch."""
+    from git import Actor, Repo
+
+    template_path = fixtures_path / "template1"
+    git_tmpl_path = copytree(template_path, tmp_path / "template1")
+    repo = Repo.init(str(git_tmpl_path))
+    repo.git.add(".")
+    repo.index.commit(
+        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
+    )
+    repo.create_head("my-branch")
+    repo.heads["my-branch"].checkout()
+    git_tmpl_path.joinpath("newfile.md").write_text("Hello World!\n\nThis is a test.\n\nThis is a new line.")
+    repo.index.add(["newfile.md"])
+    repo.index.commit(
+        message="first commit on a branch",
+        committer=Actor("Bob", "bob@example.com"),
+        commit_date="2022-01-01 12:00:00",
+    )
+    latest_sha = repo.head.commit.hexsha
+
+    assert latest_sha is not None
+
+    template = Template(
+        repo=get_template_repo(str(git_tmpl_path), tmp_path, checkout="my-branch"),
+    )
+    assert template.repo.format == "git"
+    assert template.repo.latest_sha == latest_sha
+
+    layer_conf = LayerConfig(template=template, no_input=True)
+    render_dir = tmp_path / "render"
+    rendered_layer = layers.render_layer(layer_conf, render_dir)
+    expected_context = template.context
+    expected_context["repo_name"] = "fake-project-template"
+    expected_context["repo_slug"] = "fake-project-template"
+    expected = RenderedLayer(
+        layer=layer_conf,
+        location=render_dir,
+        rendered_context=expected_context,
+        rendered_commit=latest_sha,
+    )
+    assert rendered_layer == expected
+    assert rendered_layer.latest_commit == latest_sha
+    assert rendered_layer.layer.template.repo.latest_sha == latest_sha
+    assert {x.name for x in Path(render_dir / "fake-project-template").iterdir()} == {
+        "README.md",
+        "requirements.txt",
+        "demo.jinja",
+    }
+
+
 @pytest.mark.parametrize(
     ("default_context", "initial_context", "full_context", "expected"),
     [

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, Optional, Union
 
-from git import InvalidGitRepositoryError, NoSuchPathError, Repo
+from git import GitCommandError, InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
 from cookie_composer.utils import echo
@@ -194,13 +194,21 @@ def apply_patch(repo: Repo, diff: str) -> None:
 
 @contextmanager
 def temp_git_worktree_dir(
-    repo_path: Path, worktree_path: Optional[Path] = None, branch: str = "master", commit: Optional[str] = None
+    repo_path: Path, worktree_path: Optional[Path] = None, branch: Optional[str] = None, commit: Optional[str] = None
 ) -> Iterator[Path]:
     """
     Context Manager for a temporary working directory of a branch in a git repo.
 
     Inspired by https://github.com/thomasjahoda/cookiecutter_project_upgrader/blob/master/
     cookiecutter_project_upgrader/logic.py
+
+    Logic for checking out a branch or commit:
+
+    - If a commit is provided, use that
+    - If a branch is provided, and it is not the current branch, use that
+    - If a branch is provided, and it is the current branch, use the current commit
+    - If neither a branch nor a commit is provided, use the current branch and commit
+
 
     Args:
         repo_path: The path to the template git repo
@@ -210,19 +218,27 @@ def temp_git_worktree_dir(
 
     Yields:
         The worktree_path
+
+    Raises:
+        GitError: If the worktree could not be created
     """
     # Create a temporary working directory of a branch in a git repo.
     repo = get_repo(repo_path)
+
     tmp_dir = Path(tempfile.mkdtemp(prefix=repo_path.name))
     worktree_path = worktree_path or tmp_dir
     worktree_path.mkdir(parents=True, exist_ok=True)
-    repo.git.worktree(
-        "add",
-        str(worktree_path),
-        commit or branch,
-    )
+
+    branch_is_active_branch = branch is None or branch == repo.active_branch.name
+    git_cmd = ["add", str(worktree_path), commit or branch]
+    if branch_is_active_branch and commit is None:
+        git_cmd = ["add", "-d", str(worktree_path)]
+
     try:
+        repo.git.worktree(*git_cmd)
         yield Path(worktree_path)
+    except GitCommandError as e:
+        raise GitError(f"Could not create a worktree for {repo_path}") from e
     finally:
         # Clean up the temporary working directory.
         shutil.rmtree(worktree_path)
