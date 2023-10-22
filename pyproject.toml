@@ -236,13 +236,16 @@ commit = true
 commit_args = "--no-verify"
 current_version = "0.11.0"
 message = "Version updated from {current_version} to {new_version}"
-parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\+\\w+-(?P<dev>\\d+))?"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\.(?P<release_candidate>rc)(?P<release_num>\\d+)\\.dev(?P<revision>\\d+))?"
 serialize = [
-    "{major}.{minor}.{patch}+{$BRANCH_NAME}-{dev}",
+    "{major}.{minor}.{patch}.{release_candidate}{$PR_NUMBER}.dev{$REVISION}",
     "{major}.{minor}.{patch}"
 ]
 tag = true
 tag_name = "{new_version}"
+
+[tool.bumpversion.parts.release_candidate]
+values = ["release", "rc"]
 
 [[tool.bumpversion.files]]
 filename = "cookie_composer/__init__.py"

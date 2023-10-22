@@ -100,3 +100,32 @@ valid_author_tokens:
   - helped-by
   - improved-by
   - original-patch-by
+
+
+# Rules applied to commits to determine the type of release to suggest.
+release_hint_rules:
+  - match_result: release-candidate
+    branch: ^((?!master|main).)*$
+  - match_result: patch
+    path: requirements/prod.in
+    branch: master|main
+  - match_result: patch
+    grouping: Other
+    path: cookie_composer/*
+    branch: master|main
+  - match_result: patch
+    grouping: Fixes
+    path: cookie_composer/*
+    branch: master|main
+  - match_result: minor
+    grouping: Updates
+    path: cookie_composer/*
+    branch: master|main
+  - match_result: minor
+    grouping: New
+    path: cookie_composer/*
+    branch: master|main
+  - match_result: major
+    grouping: Breaking Changes
+    path: cookie_composer/*
+    branch: master|main
