@@ -104,7 +104,7 @@ valid_author_tokens:
 
 # Rules applied to commits to determine the type of release to suggest.
 release_hint_rules:
-  - match_result: release-candidate
+  - match_result: dev
     branch: ^((?!master|main).)*$
   - match_result: patch
     path: requirements/prod.in
