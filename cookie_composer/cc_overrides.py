@@ -17,7 +17,7 @@ from jinja2.ext import Extension
 from cookie_composer.data_merge import Context
 
 
-def jsonify_context(value: Any) -> dict:
+def jsonify_context(value: Any) -> MutableMapping:
     """Convert a ``Context`` to a dict."""
     if isinstance(value, Context):
         return value.flatten()
@@ -29,7 +29,6 @@ class JsonifyContextExtension(Extension):
     """Jinja2 extension to convert a Python object to JSON."""
 
     def __init__(self, environment: Environment):
-        """Initialize the extension with the given environment."""
         super().__init__(environment)
 
         def jsonify(obj: Any) -> str:  # pragma: no cover
@@ -97,9 +96,6 @@ def prompt_for_config(
         layer_context: A dictionary of defaults defined in the layer
         no_input: If ``True`` Don't prompt the user at command line for manual configuration
 
-    Raises:
-        UndefinedVariableInTemplate: If a variable in a prompt defaults is not in the context
-
     Returns:
         A new configuration context
     """
@@ -127,7 +123,7 @@ def prompt_for_config(
     return context
 
 
-def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict) -> None:
+def _render_dicts(context: MutableMapping, env: Environment, no_input: bool, prompts: dict) -> None:
     """
     Render dictionaries.
 
@@ -146,7 +142,12 @@ def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict
         UndefinedVariableInTemplate: If a variable in a prompt defaults is not in the context
     """
     # Second pass; handle the dictionaries.
-    for key, raw in prompts.items():
+    count = 0
+    all_prompts = prompts.items()
+    visible_prompts = [k for k, _ in all_prompts if not k.startswith("_")]
+    size = len(visible_prompts)
+
+    for key, raw in all_prompts:
         # Skip private type dicts not ot be rendered.
         if key.startswith("_") and not key.startswith("__"):
             continue
@@ -154,10 +155,12 @@ def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict
         try:
             if isinstance(raw, dict):
                 # We are dealing with a dict variable
+                count += 1
+                prefix = f"  [dim][{count}/{size}][/] "
                 val = render_variable(env, raw, context)
 
                 if not no_input and not key.startswith("__"):
-                    val = read_user_dict(key, val, prompts)
+                    val = read_user_dict(key, val, prompts, prefix)
 
                 context[key] = val
         except UndefinedError as err:
@@ -165,7 +168,9 @@ def _render_dicts(context: dict, env: Environment, no_input: bool, prompts: dict
             raise UndefinedVariableInTemplate(msg, err, context) from err
 
 
-def _render_simple(context: dict, context_prompts: dict, env: Environment, no_input: bool, prompts: dict) -> None:
+def _render_simple(
+    context: MutableMapping, context_prompts: dict, env: Environment, no_input: bool, prompts: dict
+) -> None:
     """
     Render simple variables, raw variables, and choices.
 
@@ -186,7 +191,12 @@ def _render_simple(context: dict, context_prompts: dict, env: Environment, no_in
     """
     import copy
 
-    for key, raw in prompts.items():
+    count = 0
+    all_prompts = prompts.items()
+    visible_prompts = [k for k, _ in all_prompts if not k.startswith("_")]
+    size = len(visible_prompts)
+    prefix = ""
+    for key, raw in all_prompts:
         if key.startswith("_") and not key.startswith("__"):
             context[key] = raw
             continue
@@ -196,23 +206,27 @@ def _render_simple(context: dict, context_prompts: dict, env: Environment, no_in
         elif key in context:
             raw = copy.deepcopy(context[key])  # noqa: PLW2901
 
+        if not isinstance(raw, dict):
+            count += 1
+            prefix = f"  [dim][{count}/{size}][/] "
+
         try:
             if isinstance(raw, list):
                 # We are dealing with a choice variable
-                val = prompt_choice_for_config(context, env, key, raw, no_input, context_prompts)
+                val = prompt_choice_for_config(context, env, key, raw, no_input, context_prompts, prefix)
                 context[key] = val
             elif isinstance(raw, bool):
                 # We are dealing with a boolean variable
                 if no_input:
                     context[key] = render_variable(env, raw, context)
                 else:
-                    context[key] = read_user_yes_no(key, raw, context_prompts)
+                    context[key] = read_user_yes_no(key, raw, context_prompts, prefix)
             elif not isinstance(raw, dict):
                 # We are dealing with a regular variable
                 val = render_variable(env, raw, context)
 
                 if not no_input:
-                    val = read_user_variable(key, val, context_prompts)
+                    val = read_user_variable(key, val, context_prompts, prefix)
 
                 context[key] = val
         except UndefinedError as err:

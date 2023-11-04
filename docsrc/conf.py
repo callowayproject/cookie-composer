@@ -7,7 +7,7 @@ from datetime import date
 
 sys.path.insert(0, os.path.abspath(".."))
 
-import cookie_composer  # NOQA
+import cookie_composer  # NOQA: E402
 
 project = "Cookie Composer"
 author = "Corey Oordt"

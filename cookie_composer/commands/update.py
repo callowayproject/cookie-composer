@@ -3,18 +3,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional
 
-from cookie_composer.composition import (
-    RenderedComposition,
-    RenderedLayer,
-    read_rendered_composition,
-    write_rendered_composition,
-)
+from cookie_composer.composition import RenderedComposition, get_context_for_layer
 from cookie_composer.diff import get_diff
 from cookie_composer.git_commands import apply_patch, checkout_branch, get_repo
-from cookie_composer.layers import render_layers
+from cookie_composer.io import read_rendered_composition, write_rendered_composition
+from cookie_composer.layers import RenderedLayer, render_layers
 from cookie_composer.utils import (
     echo,
-    get_context_for_layer,
     get_deleted_files,
     remove_paths,
 )
@@ -49,10 +44,10 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
     update_layers = []
     requires_updating = False
     for rendered_layer in proj_composition.layers:
-        latest_template_sha = rendered_layer.latest_template_sha()
-        if latest_template_sha is None or latest_template_sha != rendered_layer.layer.commit:
+        latest_template_sha = rendered_layer.layer.template.repo.latest_sha
+        if latest_template_sha is None or latest_template_sha != rendered_layer.rendered_commit:
             requires_updating = True
-        new_layer = rendered_layer.layer.copy(deep=True, update={"commit": latest_template_sha})
+        new_layer = rendered_layer.layer.model_copy(deep=True, update={"_commit": latest_template_sha})
         update_layers.append(new_layer)
 
     if not requires_updating:
@@ -62,10 +57,14 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
     with TemporaryDirectory() as tempdir:
         current_state_dir = Path(tempdir) / "current_state"
         current_state_dir.mkdir(exist_ok=True)
-        updated_state_dir = Path(tempdir) / "update_state"
-        updated_state_dir.mkdir(exist_ok=True)
 
-        current_layers = [layer.layer for layer in proj_composition.layers]
+        current_layers = []
+        for layer in proj_composition.layers:
+            layer_config = layer.layer
+            layer_config._commit = layer.rendered_commit
+            layer_config.initial_context = layer.rendered_context
+            current_layers.append(layer_config)
+
         current_rendered_layers = render_layers(
             current_layers,
             current_state_dir,
@@ -79,6 +78,8 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
         deleted_paths = get_deleted_files(current_state_dir, project_dir.parent)
         deleted_paths.add(Path(".git"))  # don't want the .git dir, if it exists
 
+        updated_state_dir = Path(tempdir) / "update_state"
+        updated_state_dir.mkdir(exist_ok=True)
         updated_rendered_layers = render_layers(
             update_layers,
             updated_state_dir,
@@ -117,14 +118,14 @@ def update_rendered_composition_layers(
     """
     Update ``base.layers`` with ``updated_layers`` where layer names match.
 
-    If for some reason a layer exists in ``updated_layers`` but not in ``base``, it is discarded.
+    If, for some reason, a layer exists in ``updated_layers`` but not in ``base``, it is discarded.
 
     Args:
         base: The base composition whose layers are to be updated
         updated_layers: The new rendered layers
 
     Raises:
-        RuntimeError: If a layer's location  ``render_dir`` properties don't match
+        RuntimeError: If a layer's location ``render_dir`` properties don't match
         RuntimeError: If the compositions' ``rendered_name`` properties don't match
 
     Returns:

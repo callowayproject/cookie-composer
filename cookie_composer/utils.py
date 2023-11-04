@@ -1,63 +1,9 @@
 """Utilities not easily categorized."""
 import os
 import stat
+from contextlib import contextmanager
 from pathlib import Path
-from typing import IO, Any, Callable, Dict, Optional, Set
-
-from cookie_composer.composition import RenderedComposition
-from cookie_composer.data_merge import comprehensive_merge
-
-
-def get_context_for_layer(composition: RenderedComposition, index: Optional[int] = None) -> dict:
-    """
-    Merge the contexts for all layers up to index.
-
-    An ``index`` of ``None`` does all the layers.
-
-    Args:
-        composition: The rendered composition
-        index: Merge the contexts of the layers up to this 0-based index. ``None`` to do all layers.
-
-    Returns:
-        The comprehensively merged context
-    """
-    full_context: Dict[str, Any] = {}
-    if index is None:
-        layers = composition.layers
-    else:
-        layers = composition.layers[: index + 1]
-
-    for layer in layers:
-        full_context = comprehensive_merge(full_context, layer.new_context)
-
-    return full_context
-
-
-def get_template_name(path_or_url: str, directory: Optional[str] = None, checkout: Optional[str] = None) -> str:
-    """
-    Get the name of the template using the path or URL.
-
-    Args:
-        path_or_url: The URL or path to the template
-        directory: Directory within a git repository template that holds the cookiecutter.json file.
-        checkout: The branch, tag or commit to use if template is a git repository.
-
-    Raises:
-        ValueError: If the path_or_url is not parsable
-
-    Returns:
-        The name of the template without extensions
-    """
-    from urllib.parse import urlparse
-
-    path = urlparse(path_or_url).path
-    if not path:
-        raise ValueError("There is no path.")
-
-    base_path = Path(path).stem
-    dir_name = Path(directory).name if directory else None
-    parts = [base_path, dir_name, checkout]
-    return "-".join([x for x in parts if x])
+from typing import IO, Any, Callable, Iterator, Optional, Set
 
 
 def echo(
@@ -79,8 +25,8 @@ def echo(
     Args:
         message: The string or bytes to output. Other objects are converted to strings.
         file: The file to write to. Defaults to stdout.
-        err: Write to stderr instead of stdout.
         nl: Print a newline after the message. Enabled by default.
+        err: Write to stderr instead of stdout.
         color: Force showing or hiding colors and other styles. By default Click will remove color if the output
             does not look like an interactive terminal.
         **styles: Style keyword arguments
@@ -163,3 +109,30 @@ def remove_single_path(path: Path) -> None:
             path.unlink()
         except Exception as exc:  # noqa: BLE001 pragma: no-coverage
             raise IOError("Failed to remove file.") from exc
+
+
+@contextmanager
+def temporary_copy(original_path: Path) -> Iterator[Path]:
+    """
+    Create a temporary copy of a file or directory.
+
+    Args:
+        original_path: The path to the file or directory to copy
+
+    Yields:
+        The path to the temporary copy
+    """
+    import tempfile
+    from shutil import copy2, copytree, rmtree
+
+    if original_path.is_dir():
+        temp_dir = tempfile.mkdtemp()
+        copytree(original_path, temp_dir, dirs_exist_ok=True)
+        yield Path(temp_dir)
+        rmtree(temp_dir)
+    else:
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file.close()
+        copy2(original_path, temp_file.name)
+        yield Path(temp_file.name)
+        os.remove(temp_file.name)

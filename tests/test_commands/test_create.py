@@ -10,7 +10,7 @@ def test_render_template(fixtures_path, tmp_path):
     project_path = create.create_cmd(str(template_path), tmp_path, no_input=True)
     rendered_items = {item.name for item in os.scandir(project_path)}
 
-    assert rendered_items == {"README.md", "requirements.txt", ".composition.yaml"}
+    assert rendered_items == {"README.md", "requirements.txt", ".composition.yaml", "demo.jinja"}
 
 
 def test_render_composition(fixtures_path, tmp_path):
@@ -19,7 +19,14 @@ def test_render_composition(fixtures_path, tmp_path):
     project_path = create.create_cmd(str(template_path), tmp_path, no_input=True)
     rendered_items = {item.name for item in os.scandir(project_path)}
 
-    assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt", ".composition.yaml"}
+    assert rendered_items == {
+        "ABOUT.md",
+        "README.md",
+        "requirements.txt",
+        ".composition.yaml",
+        "demo.jinja",
+        "doc.rst",
+    }
 
 
 def test_render_relative_composition(fixtures_path, tmp_path):
@@ -28,4 +35,11 @@ def test_render_relative_composition(fixtures_path, tmp_path):
     project_path = create.create_cmd(str(template_path), tmp_path, no_input=True)
     rendered_items = {item.name for item in os.scandir(project_path)}
 
-    assert rendered_items == {"ABOUT.md", "README.md", "requirements.txt", ".composition.yaml"}
+    assert rendered_items == {
+        "ABOUT.md",
+        "README.md",
+        "requirements.txt",
+        ".composition.yaml",
+        "demo.jinja",
+        "doc.rst",
+    }
