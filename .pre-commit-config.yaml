@@ -5,6 +5,7 @@ repos:
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
+        exclude: test.*
   - repo: https://github.com/psf/black
     rev: 23.10.1
     hooks:
@@ -34,7 +35,6 @@ repos:
       - id: fix-byte-order-marker
       - id: fix-encoding-pragma
         args: ["--remove"]
-      - id: requirements-txt-fixer
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.6.1
     hooks:
@@ -42,15 +42,12 @@ repos:
         exclude: test.*
         args: [--no-strict-optional, --ignore-missing-imports]
         additional_dependencies: ["pydantic", "toml", "types-all"]
-  - repo: https://github.com/terrencepreilly/darglint
-    rev: v1.8.1
+  - repo: https://github.com/jsh9/pydoclint
+    rev: 0.3.8
     hooks:
-      - id: darglint
-        exclude: test.*
+      - id: pydoclint
         args:
-          - -v 2
-          - "--message-template={path}:{line} in `{obj}`:\n        {msg_id}: {msg}"
-          - --strictness=short
+          - "--config=pyproject.toml"
   - repo: https://github.com/econchick/interrogate
     rev: 1.5.0  # or master if you're bold
     hooks:

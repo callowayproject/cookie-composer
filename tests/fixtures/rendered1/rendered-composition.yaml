@@ -1,5 +1,5 @@
 checkout: null
-commit: 5388df7cb4abe6f460a6f4ddd71f24cb9b02012f
+commit: null
 context:
   _requirements:
     bar: '>=5.0.0'
@@ -14,6 +14,7 @@ no_input: true
 overwrite: []
 overwrite_exclude: []
 password: null
+rendered_name: fake-project-template
 skip_generation: []
 skip_hooks: false
 skip_if_file_exists: true

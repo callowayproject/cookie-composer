@@ -1,5 +1,103 @@
 # Changelog
 
+## Unreleased (2023-10-21)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.11.0...HEAD)
+
+### Fixes
+
+- Fixed missing commit sha in test. [c9997be](https://github.com/coordt/cookie-composer/commit/c9997beaa26858e32e3abbae8627941208731c3a)
+    
+- Fixed error handling with patching. [f35864d](https://github.com/coordt/cookie-composer/commit/f35864d8d02189eafe545a16e8857e6c2d052fc1)
+    
+- Fixed Exception handling for click. [c481ad7](https://github.com/coordt/cookie-composer/commit/c481ad7afc642ef402add996ba7fe54fb6400281)
+    
+- Fixed _copy_without_render bug. [4edc4bf](https://github.com/coordt/cookie-composer/commit/4edc4bf1306a3931b44ddfebe191a50eca3ada20)
+    
+- Fixed test type annotation. [4a4a7c0](https://github.com/coordt/cookie-composer/commit/4a4a7c06d9a73680d4aece212c9b0bb7fbafb07e)
+    
+- Fixed rendering layers from previous commits. [0fefdbc](https://github.com/coordt/cookie-composer/commit/0fefdbc578ec5545447a81f6925a7419276a8811)
+    
+- Fixed issue with generate_prompt_context. [4756660](https://github.com/coordt/cookie-composer/commit/475666052f1ba555c054e779537ef93c0742a3d7)
+    
+- Fixed issue with determining rendered layer names. [06bad39](https://github.com/coordt/cookie-composer/commit/06bad3913a4a899f37acdcd2342bd2053c1419e6)
+    
+  Added `get_template_rendered_name` to proactively determine the name of the rendered template.
+- Fixed resiliency issue with git template repos. [a9bb80d](https://github.com/coordt/cookie-composer/commit/a9bb80df0657008bb5bda157cda7aa96ff0004a1)
+    
+  Provided better error checking for bad cached repos.
+- Fixed issue with relative paths in local files. [7f1b354](https://github.com/coordt/cookie-composer/commit/7f1b354d416515ef44126853827174914a5c54cb)
+    
+  You can pass a local_path to use to resolve relative local paths for I/O and template determination.
+- Fixed data merge organization. [4bba0f4](https://github.com/coordt/cookie-composer/commit/4bba0f4de123d11624fc96ec5f49f8341d958108)
+    
+  - Moved data merge constants and functions from composition.py to data_merge.py
+### New
+
+- Added context managers for temporary copies. [90fa24c](https://github.com/coordt/cookie-composer/commit/90fa24cb6e5d4b03e74cca3c1df9891780e2cdcf)
+    
+- Added convenience functions to the template classes. [0b62c44](https://github.com/coordt/cookie-composer/commit/0b62c440ec481356f283bc62fbaca27c0ec1cdf6)
+    
+- Added interface to get template repositories. [cf9ff4a](https://github.com/coordt/cookie-composer/commit/cf9ff4a412d19eeba47919deb0387b57380ccb4a)
+    
+- Added git template repositories. [02bf112](https://github.com/coordt/cookie-composer/commit/02bf112dcd1d951b3ac5c0d38a6295ce5aa72848)
+    
+- Added zipfile template repositories. [8190cb6](https://github.com/coordt/cookie-composer/commit/8190cb64f808c9ad2229c8c503b3e0125501b7f6)
+    
+- Added git shortcuts for cloning. [6ad76a3](https://github.com/coordt/cookie-composer/commit/6ad76a3c32a90cfbaeee72b7ab5688c7b0377ed0)
+    
+### Other
+
+- Moved `get_context_for_layer` from utils.py to composition.py. [6641a91](https://github.com/coordt/cookie-composer/commit/6641a9102ac0fce22df4b30fee3dd141a3fb6c9b)
+    
+- Moved `get_template_name` tests. [1c0c054](https://github.com/coordt/cookie-composer/commit/1c0c05454f97068414a7e1155de126ad65aa1878)
+    
+- [pre-commit.ci] pre-commit autoupdate. [db151ef](https://github.com/coordt/cookie-composer/commit/db151ef49453ade797eb1437de9ff98e6b186b08)
+    
+  **updates:** - [github.com/astral-sh/ruff-pre-commit: v0.0.287 → v0.0.290](https://github.com/astral-sh/ruff-pre-commit/compare/v0.0.287...v0.0.290)
+
+- [pre-commit.ci] pre-commit autoupdate. [7335d97](https://github.com/coordt/cookie-composer/commit/7335d9722973db509fa2636999c724d361a488b7)
+    
+  **updates:** - [github.com/astral-sh/ruff-pre-commit: v0.0.287 → v0.0.292](https://github.com/astral-sh/ruff-pre-commit/compare/v0.0.287...v0.0.292)
+
+- [pre-commit.ci] pre-commit autoupdate. [bc33fbd](https://github.com/coordt/cookie-composer/commit/bc33fbd383107379b00c7a9932f83a62442b872f)
+    
+  **updates:** - https://github.com/charliermarsh/ruff-pre-commit → https://github.com/astral-sh/ruff-pre-commit
+
+### Updates
+
+- Updated requirement lock files. [026cd2d](https://github.com/coordt/cookie-composer/commit/026cd2dcbd045b2e88031abda0a9b75190ad300d)
+    
+- Updated pre-commit config. [57d6cff](https://github.com/coordt/cookie-composer/commit/57d6cff1f362ff1ba04ce34b2128913eff9bf92f)
+    
+- Updated requirements. [8d83ba0](https://github.com/coordt/cookie-composer/commit/8d83ba0be0edd4013cdb7e42064156310589eb41)
+    
+- Updated tests. [5d3c51f](https://github.com/coordt/cookie-composer/commit/5d3c51f18d1d3833563a6d5062960994130f30d8)
+    
+- Renamed `zipfile_repo.unzip` to `cache_source`. [60a2393](https://github.com/coordt/cookie-composer/commit/60a23939fa462a599a3a0eaee52ff0b2337fb6d6)
+    
+- Updated commands to use refactored methods. [14d2781](https://github.com/coordt/cookie-composer/commit/14d27811f04062ad0f720fa536102ba3874d78d5)
+    
+- Refactored (de)serialization and I/O methods into `io` module. [3c64a3e](https://github.com/coordt/cookie-composer/commit/3c64a3e2aae7efc54cf87caf16d96bfe06900b65)
+    
+- Refactored `layers`. [e8af7d5](https://github.com/coordt/cookie-composer/commit/e8af7d5279f7c6be9af163f2d8ac008b6e34cc5f)
+    
+  - Integrated `Template` with `LayerConfig`
+      - `template` attribute is now a `Template` instance
+      - removed `directory`, `checkout`, `password`, and `commit`
+      - renamed `context` to `initial_context` to distiguish it from the `Template`'s context
+  - Updated `RenderedLayer` to use templates
+      - renamed `new_context` to `rendered_context` to better describe it.
+      - renamed `latest_commit` to `rendered_commit` for better clarity
+      - added `latest_commit` convenience function
+  - Simplified `render_layer` using the new template functions
+- Removed get_latest_template_commit from git_commands. [af84ff4](https://github.com/coordt/cookie-composer/commit/af84ff404a62cf1c36329f9211c4370795230792)
+    
+  It is now part of the template repo
+- Updated requirements to use Pydantic 2. [b24a158](https://github.com/coordt/cookie-composer/commit/b24a15818aec12f622b60caa456d8e67d7445078)
+    
+- Refactored layer context to fix #39. [300578f](https://github.com/coordt/cookie-composer/commit/300578f067df5582bc8041f1eaf2fec3bc3761f6)
+    
+
 ## 0.11.0 (2023-07-27)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.10.3...0.11.0)
 

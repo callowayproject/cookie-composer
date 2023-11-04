@@ -1,8 +1,10 @@
 """Tests for cookie_composer.git_commands."""
 from pathlib import Path
+from typing import Optional
 
 import pytest
-from git import Actor, Repo
+from pytest import param
+from git import Repo
 
 from cookie_composer import git_commands
 from cookie_composer.exceptions import GitError
@@ -46,7 +48,7 @@ def test_remote_branch_exists(default_repo):
 
 
 def test_remote_branch_exists_missing(default_repo):
-    """Should return False if there is no remotes."""
+    """Should return False if there are no remotes."""
     assert not git_commands.remote_branch_exists(default_repo, "missingbranch", "missingremote")
 
 
@@ -79,37 +81,31 @@ def test_checkout_branch_missing_branch(default_repo):
     assert default_repo.active_branch.name == "local-branch"
 
 
-def test_branch_from_first_commit_dirty(default_repo):
-    """Should raise an error if the repo is dirty."""
-    new_file_path = Path(default_repo.working_tree_dir) / "new-file.txt"
-    new_file_path.write_text("hello")
-    default_repo.index.add(str(new_file_path))
-
-    with pytest.raises(GitError):
-        git_commands.branch_from_first_commit(default_repo, "mybranch")
+def test_clone_existing_repo(default_repo):
+    """Should return the same repo if the repo already exists."""
+    repo_path = Path(default_repo.working_tree_dir)
+    repo = git_commands.clone("git://someplace/else.git", repo_path)
+    assert repo.working_tree_dir == str(repo_path)
 
 
-def test_branch_from_first_commit(default_repo):
-    """Should raise an error if the repo is dirty."""
-    first_commit_sha = next(default_repo.iter_commits()).hexsha
-    default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
-    )
-    git_commands.branch_from_first_commit(default_repo, "newbranch")
-    assert default_repo.head.commit.hexsha == first_commit_sha
+@pytest.mark.parametrize(
+    ["checkout", "commit", "expected_ref"],
+    [
+        param(None, None, "master", id="default"),
+        param("remote-branch", None, "remote-branch", id="checkout branch"),
+        param("v1.0.0", None, "v1.0.0", id="checkout tag"),
+        param(None, "HEAD~1", "HEAD~1", id="checkout commit"),
+    ],
+)
+def test_temp_git_worktree_dir(
+    default_origin: Repo, tmp_path: Path, checkout: Optional[str], commit: Optional[str], expected_ref: str
+):
+    """Should return the path to the worktree and check out the appropriate ref."""
 
-
-def test_get_latest_template_commit(default_repo):
-    """Should return the latest hexsha."""
-    first_sha = default_repo.head.commit.hexsha
-    assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == first_sha
-
-    second_commit = default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 10:00:00"
-    )
-    assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == second_commit.hexsha
-
-    third_commit = default_repo.index.commit(
-        message="Another commit", committer=Actor("Bob", "bob@example.com"), commit_date="2022-01-02 11:00:00"
-    )
-    assert git_commands.get_latest_template_commit(default_repo.working_tree_dir) == third_commit.hexsha
+    dest_path = tmp_path / "dest"
+    with git_commands.temp_git_worktree_dir(
+        Path(default_origin.working_dir), dest_path, branch=checkout, commit=commit
+    ) as wtree_dir:
+        assert wtree_dir == dest_path
+        r = git_commands.get_repo(wtree_dir)
+        assert r.head.commit.hexsha == default_origin.commit(expected_ref).hexsha
