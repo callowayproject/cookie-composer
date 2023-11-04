@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased (2023-10-21)
-[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.11.0...HEAD)
+## 0.12.0 (2023-11-04)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.11.0...0.12.0)
 
 ### Fixes
 
+- Fixed git worktree issue. [e27636c](https://github.com/coordt/cookie-composer/commit/e27636c5e2bd6c75ded8fe077a5095133a019205)
+    
+  - uses the correct git command depending on the parameters passed.
 - Fixed missing commit sha in test. [c9997be](https://github.com/coordt/cookie-composer/commit/c9997beaa26858e32e3abbae8627941208731c3a)
     
 - Fixed error handling with patching. [f35864d](https://github.com/coordt/cookie-composer/commit/f35864d8d02189eafe545a16e8857e6c2d052fc1)
@@ -33,6 +36,8 @@
   - Moved data merge constants and functions from composition.py to data_merge.py
 ### New
 
+- Added new workflow for versioning. [2232682](https://github.com/coordt/cookie-composer/commit/2232682391e491b8511e532ef270bb2a24d56a8f)
+    
 - Added context managers for temporary copies. [90fa24c](https://github.com/coordt/cookie-composer/commit/90fa24cb6e5d4b03e74cca3c1df9891780e2cdcf)
     
 - Added convenience functions to the template classes. [0b62c44](https://github.com/coordt/cookie-composer/commit/0b62c440ec481356f283bc62fbaca27c0ec1cdf6)
@@ -58,6 +63,23 @@
 - [pre-commit.ci] pre-commit autoupdate. [7335d97](https://github.com/coordt/cookie-composer/commit/7335d9722973db509fa2636999c724d361a488b7)
     
   **updates:** - [github.com/astral-sh/ruff-pre-commit: v0.0.287 → v0.0.292](https://github.com/astral-sh/ruff-pre-commit/compare/v0.0.287...v0.0.292)
+
+- Bump urllib3 from 2.0.4 to 2.0.7 in /requirements. [6f5dd07](https://github.com/coordt/cookie-composer/commit/6f5dd07ae6576ce65c1c0e4a27f527491d74d71a)
+    
+  Bumps [urllib3](https://github.com/urllib3/urllib3) from 2.0.4 to 2.0.7.
+  - [Release notes](https://github.com/urllib3/urllib3/releases)
+  - [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)
+  - [Commits](https://github.com/urllib3/urllib3/compare/2.0.4...2.0.7)
+
+  ---
+  **updated-dependencies:** - dependency-name: urllib3
+dependency-type: direct:production
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- [pre-commit.ci] pre-commit autoupdate. [94b1833](https://github.com/coordt/cookie-composer/commit/94b18336a59d7495ed2dd9055e9d8013e72eb927)
+    
+  **updates:** - [github.com/astral-sh/ruff-pre-commit: v0.0.287 → v0.1.3](https://github.com/astral-sh/ruff-pre-commit/compare/v0.0.287...v0.1.3)
 
 - [pre-commit.ci] pre-commit autoupdate. [bc33fbd](https://github.com/coordt/cookie-composer/commit/bc33fbd383107379b00c7a9932f83a62442b872f)
     
