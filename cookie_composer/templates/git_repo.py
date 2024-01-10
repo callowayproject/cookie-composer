@@ -37,8 +37,9 @@ def template_repo_from_git(
     """
     if locality == Locality.LOCAL:
         ensure_clean = checkout is not None
-        logger.debug("Getting local repo %s", git_uri)
-        repo = get_repo(git_uri, search_parent_directories=True, ensure_clean=ensure_clean)
+        local_path = cache_dir.joinpath(git_uri).expanduser().resolve()
+        logger.debug("Getting local repo %s", local_path)
+        repo = get_repo(local_path, search_parent_directories=True, ensure_clean=ensure_clean)
     else:
         repo = get_cached_remote(git_uri, cache_dir, checkout)
 
