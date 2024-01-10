@@ -59,7 +59,7 @@ ghapi==1.0.4
     # via cookie-composer (pyproject.toml)
 gitdb==4.0.11
     # via gitpython
-gitpython==3.1.40
+gitpython==3.1.41
     # via cookie-composer (pyproject.toml)
 identify==2.5.30
     # via pre-commit
