@@ -1,4 +1,5 @@
 """Tools for merging data."""
+
 import copy
 import logging
 from collections import ChainMap, OrderedDict

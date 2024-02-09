@@ -1,4 +1,5 @@
 """This overrides the default cookie cutter environment."""
+
 import json
 from typing import Any, List, MutableMapping, Optional
 

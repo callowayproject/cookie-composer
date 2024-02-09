@@ -1,4 +1,5 @@
 """Test merging INI files."""
+
 import configparser
 import shutil
 from io import StringIO

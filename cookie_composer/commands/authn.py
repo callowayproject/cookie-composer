@@ -1,4 +1,5 @@
 """Authentication subcommands."""
+
 import sys
 
 import rich_click as click

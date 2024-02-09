@@ -1,4 +1,5 @@
 """Tests for the template types module."""
+
 import pytest
 from pytest import param
 

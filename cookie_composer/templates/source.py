@@ -1,4 +1,5 @@
 """Entry point for cookiecutter templates."""
+
 from pathlib import Path
 from typing import Optional, Tuple
 from urllib.parse import urlparse

@@ -3,6 +3,7 @@ Generating the difference between two directories.
 
 Nabbed from Cruft: https://github.com/cruft/cruft/
 """
+
 from pathlib import Path
 from re import sub
 from subprocess import PIPE, run  # nosec

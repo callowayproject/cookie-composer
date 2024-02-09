@@ -1,13 +1,14 @@
 """
 Sphinx configuration.
 """
+
 import os
 import sys
 from datetime import date
 
 sys.path.insert(0, os.path.abspath(".."))
 
-import cookie_composer  # NOQA: E402
+import cookie_composer
 
 project = "Cookie Composer"
 author = "Corey Oordt"

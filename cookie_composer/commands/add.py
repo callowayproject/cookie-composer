@@ -1,4 +1,5 @@
 """The implementation of the add command."""
+
 import logging
 from pathlib import Path
 from typing import Any, MutableMapping, Optional

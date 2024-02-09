@@ -1,4 +1,5 @@
 """Merge two .ini files into one."""
+
 import configparser
 from collections import defaultdict
 from pathlib import Path

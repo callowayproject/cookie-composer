@@ -1,4 +1,5 @@
 """Command line setup."""
+
 import logging
 from collections import OrderedDict
 from pathlib import Path

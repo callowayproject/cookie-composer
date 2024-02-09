@@ -1,4 +1,5 @@
 """Tests for the io module."""
+
 from pathlib import Path
 from typing import Tuple
 
