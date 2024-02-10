@@ -1,4 +1,5 @@
 """Utilities not easily categorized."""
+
 import os
 import stat
 from contextlib import contextmanager

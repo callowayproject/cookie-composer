@@ -1,4 +1,5 @@
 """Test the update command."""
+
 import os
 import re
 import shutil

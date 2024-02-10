@@ -1,4 +1,5 @@
 """Tests for the templates.source module."""
+
 from typing import Tuple
 
 from cookiecutter.config import get_user_config

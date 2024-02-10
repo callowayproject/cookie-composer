@@ -1,4 +1,5 @@
 """Merge two toml files into one."""
+
 from pathlib import Path
 
 import toml

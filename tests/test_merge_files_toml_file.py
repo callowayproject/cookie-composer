@@ -1,4 +1,5 @@
 """Test merging TOML files."""
+
 import shutil
 
 import pytest

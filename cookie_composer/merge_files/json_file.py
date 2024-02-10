@@ -1,4 +1,5 @@
 """Merge two json files into one."""
+
 from pathlib import Path
 from typing import Any
 

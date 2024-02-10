@@ -1,4 +1,5 @@
 """Test for git_repo template."""
+
 from pathlib import Path
 
 from git import Repo

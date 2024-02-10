@@ -3,6 +3,7 @@ Datatypes for templates.
 
 Templates are a representation of source templates used to generate projects.
 """
+
 import json
 import shutil
 import tempfile

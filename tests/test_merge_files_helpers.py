@@ -1,4 +1,5 @@
 """Test the merge_files.helpers functions."""
+
 from collections import OrderedDict
 from typing import Any
 

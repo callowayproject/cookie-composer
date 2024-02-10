@@ -1,4 +1,5 @@
 """Tests for the commands.add module."""
+
 import os
 import shutil
 from pathlib import Path

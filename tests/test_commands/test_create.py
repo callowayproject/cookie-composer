@@ -1,4 +1,5 @@
 """Tests for the commands.create module."""
+
 import os
 
 from cookie_composer.commands import create

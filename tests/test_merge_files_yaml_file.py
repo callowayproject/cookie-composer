@@ -1,4 +1,5 @@
 """Test merging YAML files."""
+
 import shutil
 
 import pytest

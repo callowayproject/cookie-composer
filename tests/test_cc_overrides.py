@@ -1,4 +1,5 @@
 """Tests of the cc_overrides module."""
+
 import platform
 from collections import OrderedDict
 

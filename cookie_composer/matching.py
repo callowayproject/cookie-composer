@@ -1,4 +1,5 @@
 """Matching files and patterns."""
+
 from fnmatch import fnmatch
 from pathlib import Path
 from typing import List, Union

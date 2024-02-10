@@ -1,4 +1,5 @@
 """The implementation of the link command."""
+
 from pathlib import Path
 from typing import Any, MutableMapping, Optional
 

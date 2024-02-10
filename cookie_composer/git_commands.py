@@ -1,4 +1,5 @@
 """Functions for using git."""
+
 import logging
 import shutil
 import subprocess

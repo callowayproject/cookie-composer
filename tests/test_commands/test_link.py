@@ -1,4 +1,5 @@
 """Test the link command."""
+
 import shutil
 from pathlib import Path
 

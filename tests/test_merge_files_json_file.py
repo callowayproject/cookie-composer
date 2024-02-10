@@ -1,4 +1,5 @@
 """Test merging JSON files."""
+
 import json
 import shutil
 

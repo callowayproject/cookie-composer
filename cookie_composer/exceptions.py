@@ -1,4 +1,5 @@
 """Exceptions raised when bad things happen."""
+
 from typing import Optional
 
 from click.exceptions import UsageError

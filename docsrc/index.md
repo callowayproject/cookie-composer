@@ -15,7 +15,7 @@ tutorial/index
 topic-guides/index
 how-to/index
 cli
-api
+apidocs/index
 contributing
 changelog
 ```

@@ -1,4 +1,5 @@
 """Testing configuration."""
+
 import shutil
 from pathlib import Path
 
