@@ -222,9 +222,9 @@ def get_template_rendered_name(template: Template, context: MutableMapping) -> s
     """Find and render the template's root directory's name."""
     from cookiecutter.find import find_template
 
-    template_dir = find_template(template.cached_path)
     envvars = context.get("cookiecutter", {}).get("_jinja2_env_vars", {})
     env = CustomStrictEnvironment(context=context, keep_trailing_newline=True, **envvars)
+    template_dir = find_template(template.cached_path, env)
     name_tmpl = env.from_string(template_dir.name)
     return name_tmpl.render(**context)
 

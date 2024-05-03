@@ -100,7 +100,7 @@ def remove_single_path(path: Path) -> None:
     if path.is_dir():
         try:
             rmtree(path, ignore_errors=False, onerror=remove_readonly_bit)
-        except Exception as e:  # noqa: BLE001 pragma: no-coverage
+        except Exception as e:  # pragma: no-coverage
             raise IOError("Failed to remove directory.") from e
     elif path.is_file():
         try:
@@ -108,7 +108,7 @@ def remove_single_path(path: Path) -> None:
         except PermissionError:  # pragma: no-coverage
             path.chmod(stat.S_IWRITE)
             path.unlink()
-        except Exception as exc:  # noqa: BLE001 pragma: no-coverage
+        except Exception as exc:  # pragma: no-coverage
             raise IOError("Failed to remove file.") from exc
 
 
