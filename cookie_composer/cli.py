@@ -36,7 +36,7 @@ def validate_context_params(ctx: Any, param: Any, value: list) -> Optional[Order
 
     Convert a tuple to a dict
 
-     e.g.: ``('program_name=foobar', 'startsecs=66')`` -> ``{'program_name': 'foobar', 'startsecs': '66'}``
+     e.g.: `('program_name=foobar', 'startsecs=66')` -> `{'program_name': 'foobar', 'startsecs': '66'}`
 
     Arguments:
         ctx: Click context (unused)
@@ -44,10 +44,10 @@ def validate_context_params(ctx: Any, param: Any, value: list) -> Optional[Order
         value: Click parameter value
 
     Returns:
-        An ordered dict of the parameter values or ``None`` if no parameters.
+        An ordered dict of the parameter values or `None` if no parameters.
 
     Raises:
-        BadParameter: If the parameters are not ``key=value``.
+        BadParameter: If the parameters are not `key=value`.
     """
     for string in value:
         if "=" not in string:

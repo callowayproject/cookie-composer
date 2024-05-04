@@ -72,10 +72,10 @@ class TemplateRepo:
         """
         Return the latest SHA of this template's repo.
 
-        If the template is not a git repository, it will always return ``None``.
+        If the template is not a git repository, it will always return `None`.
 
         Returns:
-            The latest hexsha of the template or ``None`` if the template isn't a git repo
+            The latest hexsha of the template or `None` if the template isn't a git repo
         """
         from cookie_composer.git_commands import get_repo
 

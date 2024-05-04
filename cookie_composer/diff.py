@@ -56,7 +56,7 @@ def replace_diff_prefixes(diff: str, repo0_path: str, repo1_path: str) -> str:
     """
     Replace the changed file prefixes in the diff output.
 
-    Our ``git diff --no-index`` command will output full paths like so::
+    Our `git diff --no-index` command will output full paths like so::
 
         --- upstream-template-old/tmp/tmpmp34g21y/remote/.coveragerc
         +++ upstream-template-new/tmp/tmpmp34g21y/local/.coveragerc
@@ -68,8 +68,8 @@ def replace_diff_prefixes(diff: str, repo0_path: str, repo1_path: str) -> str:
         +++ upstream-template-new/.coveragerc
 
 
-    NIX OPs have ``{prefix}/folder/file``
-    WIN OPS have ``{prefix}/c:/folder/file``
+    NIX OPs have `{prefix}/folder/file`
+    WIN OPS have `{prefix}/c:/folder/file`
 
     More info on git-diff can be found here: http://git-scm.com/docs/git-diff
 

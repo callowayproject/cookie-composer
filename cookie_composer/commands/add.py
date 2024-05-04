@@ -31,7 +31,7 @@ def add_cmd(
     Args:
         path_or_url: A URL or string to add the template or configuration
         destination_dir: The project directory to add the layer to
-        no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+        no_input: If `True` force each layer's `no_input` attribute to `True`
         checkout: The branch, tag or commit to check out after git clone
         directory: Directory within repo that holds cookiecutter.json file
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists

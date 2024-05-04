@@ -139,10 +139,10 @@ DO_NOT_MERGE = "do-not-merge"
 """Do not merge the data, use the file path to determine what to do."""
 
 NESTED_OVERWRITE = "nested-overwrite"
-"""Merge deeply nested structures and overwrite at the lowest level; A deep ``dict.update()``."""
+"""Merge deeply nested structures and overwrite at the lowest level; A deep `dict.update()`."""
 
 OVERWRITE = "overwrite"
-"""Overwrite at the top level like ``dict.update()``."""
+"""Overwrite at the top level like `dict.update()`."""
 
 COMPREHENSIVE = "comprehensive"
 """Comprehensively merge the two data structures.
@@ -157,7 +157,7 @@ def get_merge_strategy(path: Path, merge_strategies: Dict[str, str]) -> str:
     """
     Return the merge strategy of the path based on the layer configured rules.
 
-    Files that are not mergable return :attr:`~cookie_composer.composition.DO_NOT_MERGE`
+    Files that are not mergable return [DO_NOT_MERGE][cookie_composer.data_merge.DO_NOT_MERGE].
 
     Args:
         path: The file path to evaluate.

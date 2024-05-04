@@ -44,7 +44,7 @@ def get_template_repo(
         password: The password to use if template is a password-protected Zip archive.
 
     Returns:
-        A :class:`TemplateRepo` object.
+        A [TemplateRepo][cookie_composer.templates.types.TemplateRepo] object.
     """
     user_config = get_user_config()
     tmpl_format, locality = identify_repo(url, local_path)

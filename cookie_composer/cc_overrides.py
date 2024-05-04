@@ -19,7 +19,7 @@ from cookie_composer.data_merge import Context
 
 
 def jsonify_context(value: Any) -> MutableMapping:
-    """Convert a ``Context`` to a dict."""
+    """Convert a `Context` to a dict."""
     if isinstance(value, Context):
         return value.flatten()
 
@@ -61,7 +61,7 @@ class CustomStrictEnvironment(StrictEnvironment):
         list instead.
 
         Args:
-            context: A ``dict`` possibly containing the ``_extensions`` key
+            context: A `dict` possibly containing the `_extensions` key
 
         Returns:
             List of extensions as str to be passed on to the Jinja2 env
@@ -95,7 +95,7 @@ def prompt_for_config(
         prompts: A dictionary of configuration prompts and default values
         aggregated_context: An existing configuration to use as a basis
         layer_context: A dictionary of defaults defined in the layer
-        no_input: If ``True`` Don't prompt the user at command line for manual configuration
+        no_input: If `True` Don't prompt the user at command line for manual configuration
 
     Returns:
         A new configuration context

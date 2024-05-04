@@ -26,7 +26,7 @@ class RenderedComposition(BaseModel):
     render_dir: DirectoryPath
     """The directory in which the layers were rendered.
 
-    The ``render_dir`` + ``rendered_name`` is the location of the project."""
+    The `render_dir` + `rendered_name` is the location of the project."""
 
     rendered_name: str
     """The name of the rendered project."""
@@ -41,11 +41,11 @@ def get_context_for_layer(composition: RenderedComposition, index: Optional[int]
     """
     Merge the contexts for all layers up to index.
 
-    An ``index`` of ``None`` does all the layers.
+    An `index` of `None` does all the layers.
 
     Args:
         composition: The rendered composition
-        index: Merge the contexts of the layers up to this 0-based index. ``None`` to do all layers.
+        index: Merge the contexts of the layers up to this 0-based index. `None` to do all layers.
 
     Returns:
         The comprehensively merged context

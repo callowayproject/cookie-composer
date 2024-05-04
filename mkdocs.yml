@@ -85,9 +85,11 @@ plugins:
         python:
           import:
             - https://docs.python.org/3/objects.inv
-            - https://numpy.org/doc/stable/objects.inv
-            - https://pandas.pydata.org/docs/objects.inv
-            - https://api.python.langchain.com/en/latest/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
+            - https://jinja.palletsprojects.com/en/3.1.x/objects.inv
+            - https://cookiecutter.readthedocs.io/en/stable/objects.inv
+            - https://gitpython.readthedocs.io/en/stable/objects.inv
+            - https://click.palletsprojects.com/en/8.1.x/objects.inv
           options:
             allow_inspection: true
             docstring_style: google

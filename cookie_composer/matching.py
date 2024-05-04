@@ -6,7 +6,7 @@ from typing import List, Union
 
 
 def rel_fnmatch(name: str, pat: str) -> bool:
-    """Force a relative match of the pattern by prefixing a ``*``."""
+    """Force a relative match of the pattern by prefixing a `*`."""
     return fnmatch(name, pat) if pat.startswith("*") else fnmatch(name, f"*{pat}")
 
 
@@ -19,6 +19,6 @@ def matches_any_glob(path: Union[str, Path], patterns: List[str]) -> bool:
         patterns: A list of glob patterns
 
     Returns:
-        ``True`` if it matches any of the patterns
+        `True` if it matches any of the patterns
     """
     return any(rel_fnmatch(str(path), pat) for pat in patterns)

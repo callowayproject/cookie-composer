@@ -13,12 +13,12 @@ def echo(
     nl: bool = True,
     err: bool = False,
     color: Optional[bool] = None,
-    **styles,
+    **styles: Any,
 ) -> None:
     """
     A local abstraction for printing messages.
 
-    Default behavior is that of ``click.secho`` .
+    Default behavior is that of [click.secho][].
 
     This is to allow user feedback without every function requiring a click dependency.
     Especially during testing.
@@ -64,13 +64,13 @@ def get_deleted_files(template_dir: Path, project_dir: Path) -> Set[Path]:
 
 def remove_paths(root: Path, paths_to_remove: Set[Path]) -> None:
     """
-    Remove all paths in ``paths_to_remove`` from ``root``.
+    Remove all paths in `paths_to_remove` from `root`.
 
     Nabbed from Cruft: https://github.com/cruft/cruft/
 
     Args:
         root: The absolute path of the directory requiring path removal
-        paths_to_remove: The set of relative paths to remove from ``root``
+        paths_to_remove: The set of relative paths to remove from `root`
     """
     # There is some redundancy here in chmod-ing dirs and/or files differently.
     abs_paths_to_remove = [root / path_to_remove for path_to_remove in paths_to_remove]

@@ -3,8 +3,6 @@ Methods for merging data files.
 
 The merging functions should look similar to the following:
 
-::
-
     def merge_generic_files(origin: Path, destination: Path, merge_strategy: str):
         '''
         Merge two ??? files into one.
@@ -20,7 +18,7 @@ Args:
 
 The function must write the file to destination.
 
-The function must wrap any errors into a :py:exc:`~cookie_composer.exceptions.MergeError` and raise it.
+The function must wrap any errors into a [MergeError][cookie_composer.exceptions.MergeError] and raise it.
 """
 
 from pathlib import Path

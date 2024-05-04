@@ -24,8 +24,8 @@ def get_repo(
 
     Args:
         project_dir: The directory containing the .git folder
-        search_parent_directories: if ``True``, all parent directories will be searched for a valid repo as well.
-        ensure_clean: if ``True``, raise an error if the repo is dirty
+        search_parent_directories: if `True`, all parent directories will be searched for a valid repo as well.
+        ensure_clean: if `True`, raise an error if the repo is dirty
 
     Raises:
         GitError: If the directory is not a git repo
@@ -77,7 +77,7 @@ def branch_exists(repo: Repo, branch_name: str) -> bool:
         branch_name: The name of the branch to check for
 
     Returns:
-        ``True`` if the branch exists
+        `True` if the branch exists
     """
     return branch_name in repo.refs
 
@@ -89,10 +89,10 @@ def remote_branch_exists(repo: Repo, branch_name: str, remote_name: str = "origi
     Args:
         repo: The repository to check
         branch_name: The name of the branch to check for
-        remote_name: The name of the remote reference. Defaults to ``origin``
+        remote_name: The name of the remote reference. Defaults to `origin`
 
     Returns:
-        ``True`` if the branch exists in the remote repository
+        `True` if the branch exists in the remote repository
     """
     if remote_name in repo.remotes:
         return branch_name in repo.remotes[remote_name].refs
