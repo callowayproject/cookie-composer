@@ -69,7 +69,7 @@ gitdb==4.0.11
     # via gitpython
 gitpython==3.1.41
     # via cookie-composer (pyproject.toml)
-idna==3.4
+idna==3.7
     # via
     #   requests
     #   yarl
