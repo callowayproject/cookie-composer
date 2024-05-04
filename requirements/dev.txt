@@ -281,7 +281,7 @@ tomli==2.0.1
     #   sphinx-autodoc2
 tomlkit==0.12.1
     # via bump-my-version
-tqdm==4.66.1
+tqdm==4.66.3
     # via git-fame
 typer==0.9.0
     # via generate-changelog
