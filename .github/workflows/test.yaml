@@ -29,7 +29,7 @@ jobs:
           - "3.12"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: ./.github/actions/setup-python
+      - uses: ./.github/actions/setup-python-and-git
         with:
           python-version: ${{ matrix.python-version }}
       - name: Check git is working
