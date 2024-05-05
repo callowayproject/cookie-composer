@@ -1,10 +1,15 @@
 """Testing configuration."""
 
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
 from git import Actor, Repo
+
+from cookie_composer.utils import remove_single_path
+
+skip_if_windows = pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows yet")
 
 
 @pytest.fixture(autouse=True)
@@ -62,7 +67,7 @@ def default_origin(tmp_path: Path) -> Repo:
     tmp_repo.remotes.origin.push("remote-branch")
     tmp_repo.remotes.origin.push("v1.0.0")
 
-    shutil.rmtree(tmp_repo_path)
+    remove_single_path(tmp_repo_path)
     return origin
 
 

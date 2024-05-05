@@ -1,7 +1,6 @@
 """Functions for using git."""
 
 import logging
-import shutil
 import subprocess
 import tempfile
 from contextlib import contextmanager
@@ -11,7 +10,7 @@ from typing import Iterator, Optional, Union
 from git import GitCommandError, InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
-from cookie_composer.utils import echo
+from cookie_composer.utils import echo, remove_single_path
 
 logger = logging.getLogger(__name__)
 
@@ -242,6 +241,6 @@ def temp_git_worktree_dir(
         raise GitError(f"Could not create a worktree for {repo_path}") from e
     finally:
         # Clean up the temporary working directory.
-        shutil.rmtree(worktree_path)
-        shutil.rmtree(tmp_dir)
+        remove_single_path(worktree_path)
+        remove_single_path(tmp_dir)
         repo.git.worktree("prune")
