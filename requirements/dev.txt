@@ -141,7 +141,7 @@ myst-parser==2.0.0
     # via cookie-composer (pyproject.toml)
 nodeenv==1.8.0
     # via pre-commit
-orjson==3.9.9
+orjson==3.9.15
     # via cookie-composer (pyproject.toml)
 packaging==23.2
     # via
