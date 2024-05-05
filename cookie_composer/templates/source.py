@@ -14,7 +14,7 @@ from cookie_composer.templates.zipfile_repo import template_repo_from_zipfile
 def identify_repo(url: str, local_path: Optional[Path] = None) -> Tuple[TemplateFormat, Locality]:
     """Identify the repo format and locality from the URL."""
     parsed_url = urlparse(url)
-    locality = Locality.LOCAL if parsed_url.scheme in {"", "file"} else Locality.REMOTE
+    locality = Locality.LOCAL if parsed_url.scheme in {"", "file", "a", "b", "c", "d"} else Locality.REMOTE
 
     if url.endswith(".zip"):
         return TemplateFormat.ZIP, locality
@@ -44,7 +44,7 @@ def get_template_repo(
         password: The password to use if template is a password-protected Zip archive.
 
     Returns:
-        A :class:`TemplateRepo` object.
+        A [TemplateRepo][cookie_composer.templates.types.TemplateRepo] object.
     """
     user_config = get_user_config()
     tmpl_format, locality = identify_repo(url, local_path)

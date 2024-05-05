@@ -1,7 +1,6 @@
 """Utility functions for handling and fetching repo archives in git format."""
 
 import logging
-import shutil
 from pathlib import Path
 from typing import Optional
 
@@ -10,6 +9,7 @@ from git import Repo
 
 from cookie_composer.git_commands import checkout_ref, clone, get_repo
 from cookie_composer.templates.types import Locality, TemplateFormat, TemplateRepo
+from cookie_composer.utils import remove_single_path
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +80,6 @@ def get_cached_remote(git_uri: str, cache_dir: Path, checkout: Optional[str] = N
     repo = clone(git_uri, repo_dir)
     if repo.head.is_detached and repo.head.object.hexsha != checkout:
         logger.info("The cached repo is not on the expected checkout, deleting and re-cloning.")
-        shutil.rmtree(repo_dir)
+        remove_single_path(repo_dir)
         repo = clone(git_uri, repo_dir)
     return repo

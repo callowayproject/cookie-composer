@@ -98,11 +98,13 @@ class LayerConfig(BaseModel):
         Get the context for prompting the user for values.
 
         The order of precedence is:
+
         1. `initial_context` from the composition or command-line
         2. `default_context` from the user_config
         3. `raw context` from the template
 
-        Equivalent to `cookiecutter.generate.generate_context` but with the following differences:
+        Equivalent to [cookiecutter.generate.generate_context][] but with the following differences:
+
         1. Reading the raw context file is handled by the layer's template
         2. The layer's initial context is treated as the `extra_context`
         3. Does not namespace the context with `{"cookiecutter": ...}`
@@ -161,7 +163,7 @@ class RenderedLayer(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def set_rendered_name(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        """Set the :attr:`~.RenderedLayer.layer_name`` to the name of the rendered template directory."""
+        """Set the [cookie_composer.layers.RenderedLayer.layer_name] to the name of the rendered template directory."""
         if "rendered_name" in values:
             return values
 
@@ -222,9 +224,9 @@ def get_template_rendered_name(template: Template, context: MutableMapping) -> s
     """Find and render the template's root directory's name."""
     from cookiecutter.find import find_template
 
-    template_dir = find_template(template.cached_path)
     envvars = context.get("cookiecutter", {}).get("_jinja2_env_vars", {})
     env = CustomStrictEnvironment(context=context, keep_trailing_newline=True, **envvars)
+    template_dir = find_template(template.cached_path, env)
     name_tmpl = env.from_string(template_dir.name)
     return name_tmpl.render(**context)
 
@@ -246,7 +248,7 @@ def render_layer(
         render_dir: Where to render the template
         full_context: The extra context from all layers in the composition
         commit: The commit to checkout if the template is a git repo
-        accept_hooks: Accept pre- and post-hooks if set to ``True``
+        accept_hooks: Accept pre- and post-hooks if set to `True`
 
     Returns:
         The rendered layer information
@@ -318,7 +320,7 @@ def get_layer_context(
     - initial context set in the template composition (or {} if not a composition or not set)
     - initial context passed in by user (as set from the command line.
         This is merged into the layer's inital context when the layer is deserialized. See
-        :func:`cookie_composer.io.get_composition_from_path_or_url`)
+        [cookie_composer.io.get_composition_from_path_or_url][])
     - context from previous layers
 
 
@@ -327,7 +329,7 @@ def get_layer_context(
         context_for_prompting: The raw context from the cookiecutter.json file with user defaults applied
         initial_context: The initial context from the layer configuration
         full_context: A full context from previous layers.
-        no_input: If ``False`` do not prompt for missing values and use defaults instead.
+        no_input: If `False` do not prompt for missing values and use defaults instead.
 
     Returns:
         A dict containing the context for rendering the layer
@@ -350,10 +352,10 @@ def render_layers(
     Render layers to a destination.
 
     Args:
-        layers: A list of ``LayerConfig`` to render
+        layers: A list of `LayerConfig` to render
         destination: The location to merge the rendered layers to
         initial_context: An initial context to pass to the rendering
-        no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+        no_input: If `True` force each layer's `no_input` attribute to `True`
         accept_hooks: How to process pre/post hooks.
 
     Returns:

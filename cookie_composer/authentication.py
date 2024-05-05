@@ -88,7 +88,7 @@ def add_auth_to_url(url: str) -> str:
 
 def github_auth_device(n_polls: int = 9999) -> Optional[str]:  # pragma: no cover
     """
-    Authenticate with GitHub, polling up to ``n_polls`` times to wait for completion.
+    Authenticate with GitHub, polling up to `n_polls` times to wait for completion.
     """
     from ghapi.auth import GhDeviceAuth
 

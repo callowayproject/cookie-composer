@@ -11,6 +11,7 @@ from git import Actor, Repo
 from cookie_composer.commands import update
 from cookie_composer.git_commands import checkout_branch, get_repo
 from cookie_composer.templates.types import TemplateFormat, Locality
+from cookie_composer.utils import remove_single_path
 
 
 @pytest.fixture(scope="module")
@@ -36,7 +37,7 @@ def git_template(fixtures_path: Path, tmp_path_factory) -> dict:
     origin = Repo.init(origin_path, bare=True)
     tmp_repo.create_remote("origin", str(origin_path))
     tmp_repo.remotes.origin.push("master")
-    shutil.rmtree(tmp_repo_path)
+    remove_single_path(tmp_repo_path)
 
     template_updated_sha = origin.heads.master.commit.hexsha
     template_initial_sha = origin.heads.master.commit.parents[0].hexsha

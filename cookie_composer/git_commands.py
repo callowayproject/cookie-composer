@@ -1,7 +1,6 @@
 """Functions for using git."""
 
 import logging
-import shutil
 import subprocess
 import tempfile
 from contextlib import contextmanager
@@ -11,7 +10,7 @@ from typing import Iterator, Optional, Union
 from git import GitCommandError, InvalidGitRepositoryError, NoSuchPathError, Repo
 
 from cookie_composer.exceptions import GitError
-from cookie_composer.utils import echo
+from cookie_composer.utils import echo, remove_single_path
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +23,8 @@ def get_repo(
 
     Args:
         project_dir: The directory containing the .git folder
-        search_parent_directories: if ``True``, all parent directories will be searched for a valid repo as well.
-        ensure_clean: if ``True``, raise an error if the repo is dirty
+        search_parent_directories: if `True`, all parent directories will be searched for a valid repo as well.
+        ensure_clean: if `True`, raise an error if the repo is dirty
 
     Raises:
         GitError: If the directory is not a git repo
@@ -77,7 +76,7 @@ def branch_exists(repo: Repo, branch_name: str) -> bool:
         branch_name: The name of the branch to check for
 
     Returns:
-        ``True`` if the branch exists
+        `True` if the branch exists
     """
     return branch_name in repo.refs
 
@@ -89,10 +88,10 @@ def remote_branch_exists(repo: Repo, branch_name: str, remote_name: str = "origi
     Args:
         repo: The repository to check
         branch_name: The name of the branch to check for
-        remote_name: The name of the remote reference. Defaults to ``origin``
+        remote_name: The name of the remote reference. Defaults to `origin`
 
     Returns:
-        ``True`` if the branch exists in the remote repository
+        `True` if the branch exists in the remote repository
     """
     if remote_name in repo.remotes:
         return branch_name in repo.remotes[remote_name].refs
@@ -242,6 +241,6 @@ def temp_git_worktree_dir(
         raise GitError(f"Could not create a worktree for {repo_path}") from e
     finally:
         # Clean up the temporary working directory.
-        shutil.rmtree(worktree_path)
-        shutil.rmtree(tmp_dir)
+        remove_single_path(worktree_path)
+        remove_single_path(tmp_dir)
         repo.git.worktree("prune")

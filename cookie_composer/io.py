@@ -28,7 +28,7 @@ def serialize_layer(layer: LayerConfig) -> dict:
     return layer_info
 
 
-def deserialize_layer(layer_info: dict, local_path: Optional[Path] = None, **kwargs) -> LayerConfig:
+def deserialize_layer(layer_info: dict, local_path: Optional[Path] = None, **kwargs: Any) -> LayerConfig:
     """Deserialize a layer configuration from a rendered layer."""
     from cookie_composer.templates.source import get_template_repo
 
@@ -145,20 +145,20 @@ def write_yaml(path: Path, contents: List[dict]) -> None:
 
 def is_composition_file(path_or_url: Union[str, Path]) -> bool:
     """
-    Return ``True`` if the filename a composition file.
+    Return `True` if the filename a composition file.
 
     Args:
         path_or_url: The path or URL to check
 
     Returns:
-        ``True`` if the path is a configuration file.
+        `True` if the path is a configuration file.
     """
     return Path(path_or_url).suffix in {".yaml", ".yml"}
 
 
-def read_composition(path_or_url: Union[str, Path], **kwargs) -> Composition:
+def read_composition(path_or_url: Union[str, Path], **kwargs: Any) -> Composition:
     """
-    Read a YAML file and return a :class:`~.Composition`.
+    Read a YAML file and return a [Composition][cookie_composer.composition.Composition].
 
     Args:
         path_or_url: The location of the configuration file
@@ -176,7 +176,7 @@ def read_composition(path_or_url: Union[str, Path], **kwargs) -> Composition:
 
 def read_rendered_composition(path: Path) -> RenderedComposition:
     """
-    Read a ``.composition.yaml`` from a rendered project.
+    Read a `.composition.yaml` from a rendered project.
 
     Args:
         path: The path to the .composition.yaml file to read
@@ -214,14 +214,14 @@ def get_composition_from_path_or_url(
     initial_context: Optional[MutableMapping[str, Any]] = None,
 ) -> Composition:
     """
-    Generate a :class:`Composition` from a path or URL.
+    Generate a [Composition][cookie_composer.composition.Composition] from a path or URL.
 
     Args:
         path_or_url: The path or url to the composition file or template
         checkout: The branch, tag or commit to check out after git clone
         default_config: Do not load a config file. Use the defaults instead
         directory: Directory within repo that holds cookiecutter.json file
-        no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+        no_input: If `True` force each layer's `no_input` attribute to `True`
         output_dir: Where to generate the project
         overwrite_if_exists: Overwrite the contents of the output directory if it already exists
         skip_if_file_exists: Skip the files in the corresponding directories if they already exist

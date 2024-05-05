@@ -7,7 +7,8 @@ from typing import Optional
 from zipfile import BadZipFile, ZipFile
 
 import requests
-from cookiecutter.utils import make_sure_path_exists, prompt_and_delete
+from cookiecutter.prompt import prompt_and_delete
+from cookiecutter.utils import make_sure_path_exists
 
 from cookie_composer.exceptions import (
     EmptyZipRepositoryError,

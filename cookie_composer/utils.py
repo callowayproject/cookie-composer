@@ -13,12 +13,12 @@ def echo(
     nl: bool = True,
     err: bool = False,
     color: Optional[bool] = None,
-    **styles,
+    **styles: Any,
 ) -> None:
     """
     A local abstraction for printing messages.
 
-    Default behavior is that of ``click.secho`` .
+    Default behavior is that of [click.secho][].
 
     This is to allow user feedback without every function requiring a click dependency.
     Especially during testing.
@@ -64,13 +64,13 @@ def get_deleted_files(template_dir: Path, project_dir: Path) -> Set[Path]:
 
 def remove_paths(root: Path, paths_to_remove: Set[Path]) -> None:
     """
-    Remove all paths in ``paths_to_remove`` from ``root``.
+    Remove all paths in `paths_to_remove` from `root`.
 
     Nabbed from Cruft: https://github.com/cruft/cruft/
 
     Args:
         root: The absolute path of the directory requiring path removal
-        paths_to_remove: The set of relative paths to remove from ``root``
+        paths_to_remove: The set of relative paths to remove from `root`
     """
     # There is some redundancy here in chmod-ing dirs and/or files differently.
     abs_paths_to_remove = [root / path_to_remove for path_to_remove in paths_to_remove]
@@ -100,7 +100,7 @@ def remove_single_path(path: Path) -> None:
     if path.is_dir():
         try:
             rmtree(path, ignore_errors=False, onerror=remove_readonly_bit)
-        except Exception as e:  # noqa: BLE001 pragma: no-coverage
+        except Exception as e:  # pragma: no-coverage
             raise IOError("Failed to remove directory.") from e
     elif path.is_file():
         try:
@@ -108,7 +108,7 @@ def remove_single_path(path: Path) -> None:
         except PermissionError:  # pragma: no-coverage
             path.chmod(stat.S_IWRITE)
             path.unlink()
-        except Exception as exc:  # noqa: BLE001 pragma: no-coverage
+        except Exception as exc:  # pragma: no-coverage
             raise IOError("Failed to remove file.") from exc
 
 

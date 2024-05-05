@@ -22,7 +22,7 @@ def update_cmd(project_dir: Optional[Path] = None, no_input: bool = False) -> No
 
     Args:
         project_dir: The project directory to update. Defaults to current directory.
-        no_input: If ``True`` force each layer's ``no_input`` attribute to ``True``
+        no_input: If `True` force each layer's `no_input` attribute to `True`
 
     Raises:
         GitError: If the destination_dir is not a git repository
@@ -117,17 +117,17 @@ def update_rendered_composition_layers(
     base: RenderedComposition, updated_layers: List[RenderedLayer]
 ) -> RenderedComposition:
     """
-    Update ``base.layers`` with ``updated_layers`` where layer names match.
+    Update `base.layers` with `updated_layers` where layer names match.
 
-    If, for some reason, a layer exists in ``updated_layers`` but not in ``base``, it is discarded.
+    If, for some reason, a layer exists in `updated_layers` but not in `base`, it is discarded.
 
     Args:
         base: The base composition whose layers are to be updated
         updated_layers: The new rendered layers
 
     Raises:
-        RuntimeError: If a layer's location ``render_dir`` properties don't match
-        RuntimeError: If the compositions' ``rendered_name`` properties don't match
+        RuntimeError: If a layer's location `render_dir` properties don't match
+        RuntimeError: If the compositions' `rendered_name` properties don't match
 
     Returns:
         A new composition with updated layers

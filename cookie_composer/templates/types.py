@@ -5,7 +5,6 @@ Templates are a representation of source templates used to generate projects.
 """
 
 import json
-import shutil
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
@@ -13,6 +12,8 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Iterator, Optional
+
+from cookie_composer.utils import remove_single_path
 
 
 class Locality(str, Enum):
@@ -72,10 +73,10 @@ class TemplateRepo:
         """
         Return the latest SHA of this template's repo.
 
-        If the template is not a git repository, it will always return ``None``.
+        If the template is not a git repository, it will always return `None`.
 
         Returns:
-            The latest hexsha of the template or ``None`` if the template isn't a git repo
+            The latest hexsha of the template or `None` if the template isn't a git repo
         """
         from cookie_composer.git_commands import get_repo
 
@@ -121,7 +122,7 @@ class TemplateRepo:
 
             zip_dir = extract_zipfile(self.cached_source, output_dir=output_dir, password=self.password)
             yield zip_dir
-            shutil.rmtree(zip_dir)
+            remove_single_path(zip_dir)
         elif self.format == TemplateFormat.PLAIN:
             from cookie_composer.utils import temporary_copy
 
@@ -144,7 +145,7 @@ class Template:
     def cleanup(self) -> None:
         """Remove the cached template if it is a Zipfile."""
         if self.repo.format == TemplateFormat.ZIP and self.repo.cached_source.exists():
-            shutil.rmtree(self.repo.cached_source)
+            remove_single_path(self.repo.cached_source)
 
     @property
     def name(self) -> str:

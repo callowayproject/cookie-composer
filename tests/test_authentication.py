@@ -5,6 +5,7 @@ import os
 from typing import Optional
 
 from cookie_composer import authentication
+from tests.conftest import skip_if_windows
 
 
 class MockPath:
@@ -59,6 +60,7 @@ def create_mock_path(contents: str = "") -> MockPath:
     return MockPath(contents=contents)
 
 
+@skip_if_windows
 def test_get_hosts_file(mocker):
     """Getting the host file should return the correct path."""
     mocker.patch(
@@ -71,6 +73,7 @@ def test_get_hosts_file(mocker):
     assert path.read_text() == "{}"
 
 
+@skip_if_windows
 def test_login_to_svc_with_no_hosts_file(mocker):
     """Login to the service with no hosts file."""
     mocked_path = create_mock_path("")
@@ -94,6 +97,7 @@ def test_login_to_svc_with_no_hosts_file(mocker):
     }
 
 
+@skip_if_windows
 def test_get_cached_token(mocker):
     """When the cached token exists, it gets returned."""
     mocked_path = create_mock_path(
@@ -104,6 +108,7 @@ def test_get_cached_token(mocker):
     assert authentication.get_cached_token("idon'texist") is None
 
 
+@skip_if_windows
 def test_add_auth_to_url(mocker):
     """A host with a cached token returns a new URL."""
     mocked_path = create_mock_path(
