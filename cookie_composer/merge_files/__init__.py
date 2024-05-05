@@ -3,18 +3,9 @@ Methods for merging data files.
 
 The merging functions should look similar to the following:
 
-    def merge_generic_files(origin: Path, destination: Path, merge_strategy: str):
-        '''
-        Merge two ??? files into one.
-
-Raises:
-            MergeError: If something goes wrong
-
-Args:
-            origin: The path to the data file to merge
-            destination: The path to the data file to merge into and write out.
-            merge_strategy: How to do the merge
-        '''
+```
+def merge_generic_files(origin: Path, destination: Path, merge_strategy: str) -> None:
+```
 
 The function must write the file to destination.
 
