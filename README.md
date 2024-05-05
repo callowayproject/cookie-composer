@@ -30,15 +30,15 @@ Cookie composer builds on the [cookie cutter](https://github.com/cookiecutter/co
 Cookie Cutter treats templates like sandwiches. There are templates for hamburgers, clubs, and any other kind of sandwich you can dream up. You might have options and defaults on a template, like `Hold the mustard?[False]:` or `Mustard type [dijon]:`, but those are decided by the template author. 
 
 
-<img src="https://raw.githubusercontent.com/coordt/cookie-composer/master/docsrc/_static/img/sandwiches.png" alt="Templates are treated like finished sandwiches" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/coordt/cookie-composer/master/docs/assets/img/sandwiches.png" alt="Templates are treated like finished sandwiches" style="zoom:50%;" />
 
 If you look closely at the sandwiches (templates), there is usually many things in common. What if we treated the templates as compositions of other templates:
 
-<img src="https://raw.githubusercontent.com/coordt/cookie-composer/master/docsrc/_static/img/compositions.png" alt="Sandwiches as a composition of layers" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/coordt/cookie-composer/master/docs/assets/img/compositions.png" alt="Sandwiches as a composition of layers" style="zoom:50%;" />
 
 You now can manage several smaller and specialized templates that provide functionality. Each template's options will be specific to what that template needs.
 
-<img src="https://raw.githubusercontent.com/coordt/cookie-composer/master/docsrc/_static/img/layers.png" alt="Templates broken out as layers on a sandwich" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/coordt/cookie-composer/master/docs/assets/img/layers.png" alt="Templates broken out as layers on a sandwich" style="zoom:50%;" />
 
 Cookie Composer uses a composition file to describe the layers required, and even override a template's default answers.
 

@@ -1,5 +1,95 @@
 # Changelog
 
+## 0.13.1 (2024-05-05)
+[Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.13.0...0.13.1)
+
+### Fixes
+
+- Fixed removing trees on windows. [98aa8e1](https://github.com/coordt/cookie-composer/commit/98aa8e14733ed06cbd51069d42fe4d4c52de4aea)
+    
+- Fixed parseurl with windows path. [9d14ae4](https://github.com/coordt/cookie-composer/commit/9d14ae4a8290a3b563ef8b25289cfc0e4bf5ebb3)
+    
+  Was making the drive letter the scheme.
+- Fixed test PyPI upload. [7c59fc2](https://github.com/coordt/cookie-composer/commit/7c59fc285a7dc831e7c1f907b8192ba69b1f7434)
+    
+- Fixed missing checkout in workflows. [95c9040](https://github.com/coordt/cookie-composer/commit/95c90402f695076cc63140e6e9fb1afb7abe33c5)
+    
+- Fixed a typo in the workflows. [aa8aed7](https://github.com/coordt/cookie-composer/commit/aa8aed70a6ae66a5a0d06d2d879df9f17c26366d)
+    
+- Fixed docstrings and doc rendering. [42f0392](https://github.com/coordt/cookie-composer/commit/42f0392a6d0bbf71d2ed586fd3ffcfcefa72d2e6)
+    
+- Fixed cookiecutter update incompatibilities. [9132c3c](https://github.com/coordt/cookie-composer/commit/9132c3cd1c1712945730b600e60c1cde307b351e)
+    
+  - fixed version to 2.6.0
+  - fixed outdated requirements management
+### Other
+
+- Bump aiohttp from 3.9.2 to 3.9.4 in /requirements. [9eb6f0c](https://github.com/coordt/cookie-composer/commit/9eb6f0c772f61874d1c97cac66fe518f006d3d2b)
+    
+  Bumps [aiohttp](https://github.com/aio-libs/aiohttp) from 3.9.2 to 3.9.4.
+  - [Release notes](https://github.com/aio-libs/aiohttp/releases)
+  - [Changelog](https://github.com/aio-libs/aiohttp/blob/master/CHANGES.rst)
+  - [Commits](https://github.com/aio-libs/aiohttp/compare/v3.9.2...v3.9.4)
+
+  ---
+  **updated-dependencies:** - dependency-name: aiohttp
+dependency-type: direct:production
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- Bump idna from 3.4 to 3.7 in /requirements. [61297b5](https://github.com/coordt/cookie-composer/commit/61297b5ab7cc3571fbd6ca796912a1273a2cedd2)
+    
+  Bumps [idna](https://github.com/kjd/idna) from 3.4 to 3.7.
+  - [Release notes](https://github.com/kjd/idna/releases)
+  - [Changelog](https://github.com/kjd/idna/blob/master/HISTORY.rst)
+  - [Commits](https://github.com/kjd/idna/compare/v3.4...v3.7)
+
+  ---
+  **updated-dependencies:** - dependency-name: idna
+dependency-type: direct:production
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- Bump tqdm from 4.66.1 to 4.66.3 in /requirements. [94421a6](https://github.com/coordt/cookie-composer/commit/94421a66c3eb53b6e096152923373eb392f807b6)
+    
+  Bumps [tqdm](https://github.com/tqdm/tqdm) from 4.66.1 to 4.66.3.
+  - [Release notes](https://github.com/tqdm/tqdm/releases)
+  - [Commits](https://github.com/tqdm/tqdm/compare/v4.66.1...v4.66.3)
+
+  ---
+  **updated-dependencies:** - dependency-name: tqdm
+dependency-type: direct:development
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- Bump orjson from 3.9.9 to 3.9.15 in /requirements. [ff8a8d6](https://github.com/coordt/cookie-composer/commit/ff8a8d6f2303b7016e72e5117add76a2adcf110b)
+    
+  Bumps [orjson](https://github.com/ijl/orjson) from 3.9.9 to 3.9.15.
+  - [Release notes](https://github.com/ijl/orjson/releases)
+  - [Changelog](https://github.com/ijl/orjson/blob/master/CHANGELOG.md)
+  - [Commits](https://github.com/ijl/orjson/compare/3.9.9...3.9.15)
+
+  ---
+  **updated-dependencies:** - dependency-name: orjson
+dependency-type: direct:production
+
+  **signed-off-by:** dependabot[bot] <support@github.com>
+
+- [pre-commit.ci] pre-commit autoupdate. [8a67e75](https://github.com/coordt/cookie-composer/commit/8a67e75ef5d81a2ac9b298f4cfdc53f68e4cfaa7)
+    
+  **updates:** - [github.com/astral-sh/ruff-pre-commit: v0.3.5 → v0.4.2](https://github.com/astral-sh/ruff-pre-commit/compare/v0.3.5...v0.4.2)
+
+- [pre-commit.ci] pre-commit autoupdate. [e610733](https://github.com/coordt/cookie-composer/commit/e61073314270428119d3b763a608e120662f4a91)
+    
+  **updates:** - [github.com/astral-sh/ruff-pre-commit: v0.2.0 → v0.3.5](https://github.com/astral-sh/ruff-pre-commit/compare/v0.2.0...v0.3.5)
+
+- Migrated docs to use MkDocs. [b4e7b57](https://github.com/coordt/cookie-composer/commit/b4e7b57a0709dfbf4d22e7f589252e39519b458b)
+    
+### Updates
+
+- Updated the GitHub workflows. [68a8602](https://github.com/coordt/cookie-composer/commit/68a86022692351fdf01c28cb7e134df79505b92b)
+    
+
 ## 0.13.0 (2024-02-10)
 [Compare the full difference.](https://github.com/coordt/cookie-composer/compare/0.11.0...HEAD)
 
