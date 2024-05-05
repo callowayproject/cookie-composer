@@ -12,6 +12,9 @@ defaults:
 env:
   PYTHONUTF8: "1"
 
+permissions:
+  id-token: write
+
 jobs:
 
   test:
