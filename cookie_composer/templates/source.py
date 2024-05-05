@@ -14,9 +14,8 @@ from cookie_composer.templates.zipfile_repo import template_repo_from_zipfile
 def identify_repo(url: str, local_path: Optional[Path] = None) -> Tuple[TemplateFormat, Locality]:
     """Identify the repo format and locality from the URL."""
     parsed_url = urlparse(url)
-    locality = Locality.LOCAL if parsed_url.scheme in {"", "file"} else Locality.REMOTE
-    print(locality)
-    print(parsed_url.scheme)
+    locality = Locality.LOCAL if parsed_url.scheme in {"", "file", "a", "b", "c", "d"} else Locality.REMOTE
+
     if url.endswith(".zip"):
         return TemplateFormat.ZIP, locality
 
