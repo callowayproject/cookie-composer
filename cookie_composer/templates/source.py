@@ -15,7 +15,8 @@ def identify_repo(url: str, local_path: Optional[Path] = None) -> Tuple[Template
     """Identify the repo format and locality from the URL."""
     parsed_url = urlparse(url)
     locality = Locality.LOCAL if parsed_url.scheme in {"", "file"} else Locality.REMOTE
-
+    print(locality)
+    print(parsed_url.scheme)
     if url.endswith(".zip"):
         return TemplateFormat.ZIP, locality
 
