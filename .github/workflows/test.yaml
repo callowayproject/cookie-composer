@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check --no-python-version-warning build
-          python -m pip install --disable-pip-version-check --no-python-version-warning -e .
+          python -m pip install --disable-pip-version-check --no-python-version-warning bump-my-version
 
       - name: Set dev version
         shell: bash
@@ -80,7 +80,7 @@ jobs:
           export PR_NUMBER=$(gh pr view --json number -q .number || echo "")
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "::notice::PR_NUMBER is: ${PR_NUMBER}"
-          bump-my-version bump dev bumpversion/__init__.py --no-commit --no-tag --no-configured-files -v
+          bump-my-version bump dev --no-commit --no-tag -v
         env:
           GH_TOKEN: ${{ secrets.PAT }}
 
