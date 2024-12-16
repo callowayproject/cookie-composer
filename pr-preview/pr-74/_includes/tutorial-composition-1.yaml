@@ -1,0 +1,3 @@
+template: https://github.com/rwxd/cookiecutter-github-project
+---
+template: https://github.com/kragniz/cookiecutter-pypackage-minimal

@@ -1,0 +1,10 @@
+template: https://github.com/rwxd/cookiecutter-github-project
+context:
+  full_name: Your Name
+  email: "{{ cookiecutter.full_name.lower().replace(' ', '_') }}@example.com"
+  github_username: "{{ cookiecutter.full_name.lower().replace(' ', '_') }}"
+  homepage: "https://{{ cookiecutter.github_username }}.github.io/{{ cookiecutter.project_slug }}"
+  project_short_description: ""
+  project_type: python
+---
+template: https://github.com/kragniz/cookiecutter-pypackage-minimal

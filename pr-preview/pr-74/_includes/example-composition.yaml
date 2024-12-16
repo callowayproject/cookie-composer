@@ -1,0 +1,20 @@
+template: "https://github.com/coordt/cookiecomposer-templates"
+directory: "cookiecutter-boilerplate"
+merge_strategies:
+  '*.json': "comprehensive"
+  '*.yaml': "comprehensive"
+  '*.yml': "comprehensive"
+---
+template: "https://github.com/coordt/cookiecomposer-templates"
+directory: "cookiecutter-package"
+merge_strategies:
+  '*.json': "comprehensive"
+  '*.yaml': "comprehensive"
+  '*.yml': "comprehensive"
+---
+template: "https://github.com/coordt/cookiecomposer-templates"
+directory: "cookiecutter-docs"
+merge_strategies:
+  '*.json': "comprehensive"
+  '*.yaml': "comprehensive"
+  '*.yml': "comprehensive"
